@@ -9,7 +9,7 @@ export function CatchLog() {
   return (
     <div className="space-y-3">
       <button className="w-full rounded-2xl bg-ocean-900 py-3 font-semibold text-white">+ Log a catch (stub)</button>
-      {SAMPLE.map((r) => <div key={r[0]} className="rounded-2xl bg-white p-3 ring-1 ring-slate-100 text-sm"><b>{r[2]} · {r[3]}</b> — {r[1]}, {r[0]}<div className="text-slate-500">{r[4]}</div></div>)}
+      {SAMPLE.map((r) => <div key={r[0]} className="rounded-2xl bg-white p-3 ring-1 ring-slate-100 text-sm"><b>{r[2]} · {r[3]}</b>, {r[1]}, {r[0]}<div className="text-slate-500">{r[4]}</div></div>)}
       <p className="text-xs text-slate-400">Mock entries. Production: Supabase table with RLS; photos in Supabase Storage.</p>
     </div>
   );

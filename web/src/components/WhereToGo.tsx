@@ -24,7 +24,7 @@ export function WhereToGo({ calls }: { calls: RegionCall[] }) {
         <>
           <div className="relative space-y-3" aria-hidden>
             {calls.slice(1, 4).map((c, i) => <div key={c.region} className="select-none blur-[3px]"><CallCard c={c} rank={i + 2} /></div>)}
-            <div className="absolute inset-0 flex items-center justify-center p-4"><div className="max-w-sm bg-white/95 rounded-2xl shadow"><Locked title={`See all ${calls.length} regions ranked`} body="Every region ranked for today and the next 10 days, with species and tactics for each." /></div></div>
+            <div className="absolute inset-0 flex items-center justify-center p-4"><div className="max-w-sm bg-white/95 rounded-2xl shadow"><Locked title={`See all ${calls.length} regions ranked`} body="Every region ranked on its best window in the next 3 days, with species and tactics for each." /></div></div>
           </div>
         </>
       )}

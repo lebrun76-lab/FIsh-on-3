@@ -9,7 +9,7 @@ export default function Page() {
   return (
     <div className="pt-6 space-y-4">
       <h1 className="text-2xl md:text-3xl font-bold">Where to go next</h1>
-      <p className="text-slate-600">Every NZ region ranked, with one plain-English call each for the next fishing day (today, or tomorrow once today’s light has gone): when, where, what to target and the legal size.</p>
+      <p className="text-slate-600">Every NZ region ranked, with one plain-English call each: the best window left in the next 3 days, where, what to target and the legal size. The score on each card is that window’s score.</p>
       <WhereToGo calls={regionCalls()} />
       <section className="space-y-2">
         <h2 className="text-lg font-bold">Where the warm water is</h2>

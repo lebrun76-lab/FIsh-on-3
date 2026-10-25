@@ -6,6 +6,7 @@ import { SstMap } from "./SstMap";
 import { DATUM_TEXT, latLon, speciesOf, confidenceText, noWindowText } from "@/lib/view";
 import { useAuth, isPaid } from "@/lib/auth";
 import { PhotoSlot, RatingBadge, RATING_STYLE } from "./ui";
+import { bestCall, targetList } from "@/lib/call";
 import { FavButton } from "./FavButton";
 import { Locked } from "./Locked";
 import { OfflineButton } from "./Offline";
@@ -82,28 +83,34 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
     : (pro ? hourly : f.hourly.slice(0, 48));
   const todayWins = f.windows.filter((w) => w.start.slice(0, 10) === today);
   const windows = pro ? f.windows : todayWins.slice().sort((a, b) => b.score - a.score).slice(0, 1);
-  const isPick = (w: FishingWindow) => f.verdict.window?.start === w.start;
-  const todayWin = f.windows.filter((w) => w.start.slice(0, 10) === today).sort((a, b) => b.score - a.score)[0];
+  // Badge, headline, advice and "the call" all come from ONE window (lib/call.ts).
+  const vc = bestCall(f, pro ? "horizon" : "day");
+  const isPick = (w: FishingWindow) => vc.start === w.start;
+  const todayWin = vc.window;
   const engineSpecies = speciesOf(f);
   const closed = engineSpecies.filter((x) => x.status === "closed");
   const targets = engineSpecies.filter((x) => x.status !== "closed").map((x) => x.name);
   const species = speciesFor(f.spot.species);
   const tgt = speciesFor(targets.length ? targets : f.spot.species);
   const hz = f.verdict.horizon_days ?? 3;
-  const todayLeast = d0.least_bad_window ?? null;
-  const noWin = pro ? f.verdict.window === null && !!f.verdict.no_window_reason : !todayWin && d0.best_window === null && !!d0.no_window_reason;
-  const noWinText = noWindowText(pro ? f.verdict.no_window_reason : d0.no_window_reason, pro ? `in the next ${hz} days` : todayWord);
-  const leastBad = pro ? f.verdict.least_bad ?? null : todayLeast;
-  const vDetail = pro ? f.windows.find((w) => w.start === f.verdict.window?.start)?.confidence_detail : todayWin?.confidence_detail;
+  const now = Date.now();
+  const future = <T extends { end: string } | null | undefined>(w: T) => (w && Date.parse(w.end) > now ? w : null);
+  const noWin = vc.kind === "none";
+  const passed = noWin && (pro ? !f.verdict.no_window_reason : !d0.no_window_reason); // engine had a window, it has gone by
+  const noWinText = noWindowText(pro ? f.verdict.no_window_reason : d0.no_window_reason, pro ? `left in the next ${hz} days` : `left ${todayWord}`);
+  const leastBad = noWin ? future(pro ? f.verdict.least_bad : d0.least_bad_window) ?? null : null;
+  const vDetail = vc.window?.confidence_detail;
   const later = f.verdict.best_later ?? null;
-  const laterBetter = !!later && (noWin || later.score > (pro ? f.verdict.score : todayWin?.score ?? 0));
-  const v = pro ? (noWin ? { ...f.verdict, advice: [noWinText.main, noWinText.conditions].filter(Boolean).join(" ") } : f.verdict) : todayWin
-    ? { ...f.verdict, rating: todayWin.rating, score: todayWin.score, headline: `Go ${todayWord}, ${clock(todayWin.start)}–${clock(todayWin.end)}`, advice: todayWin.advice, confidence: todayWin.confidence ?? f.verdict.confidence }
-    : noWin ? { ...f.verdict, rating: "poor" as const, score: todayLeast?.score ?? d0.score ?? 0, headline: `No fishable window ${todayWord}`, advice: [noWinText.main, noWinText.conditions].filter(Boolean).join(" "), confidence: d0.confidence ?? f.verdict.confidence }
-    : { ...f.verdict, rating: d0.rating, score: d0.score ?? 0, headline: (d0.score ?? 0) >= 4.5 ? `Fishable ${todayWord}, nothing special` : `Give ${todayWord} a miss`, advice: `${d0.best_window_text ?? d0.summary}.` };
+  const laterBetter = !!later && (noWin || later.score > vc.score);
+  const hourlyNote = vc.source === "hourly" ? `${vc.when[0].toUpperCase()}${vc.when.slice(1)} is the best of what's left, from the hourly scores (${vc.score.toFixed(1)}/10). The engine's own pick for the day has passed.` : "";
+  const v = {
+    ...f.verdict, rating: vc.rating, score: vc.score, headline: vc.headline,
+    advice: vc.window ? vc.window.advice : vc.source === "hourly" ? hourlyNote : [noWinText.main, passed ? "" : noWinText.conditions].filter(Boolean).join(" "),
+    confidence: vc.window?.confidence ?? d0.confidence ?? f.verdict.confidence,
+  };
   const mock = f.data_status === "mock-fallback";
   const rs = RATING_STYLE[v.rating];
-  const call = noWin ? `Stay home${pro ? ` for the next ${hz} days` : ` ${todayWord}`}.${laterBetter && later ? ` Next good chance: ${later.headline.replace(/ looks .*/, "")}.` : ""} If you do go, stay sheltered and watch the weather.` : `${v.headline.startsWith("Go") ? v.headline : v.headline + "."} ${(targets.length ? targets : f.spot.species).slice(0, 2).join("/").toLowerCase()}${tgt[0] ? ` · ${tgt[0].name.toLowerCase()} ${sizeText(tgt[0])}` : ""}`;
+  const call = noWin ? `Stay home${pro ? ` for the next ${hz} days` : ` ${todayWord}`}.${laterBetter && later ? ` Next good chance: ${later.headline.replace(/ looks .*/, "")}.` : ""} If you do go, stay sheltered and watch the weather.` : `${v.headline}. ${targetList((targets.length ? targets : f.spot.species).slice(0, 2))}${tgt[0] ? `. ${tgt[0].name}: ${sizeText(tgt[0])}` : ""}.`;
   const near = CLOSURES.filter((c) => Math.hypot(c.lat - f.spot.lat, c.lon - f.spot.lon) < 1.2);
   const safety = safetyCheck(dayHours(today), f.spot.coastal);
   return (
@@ -160,7 +167,8 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
             return (
               <div key={date}>
                 {pro && <div className="mb-1 text-sm font-semibold text-slate-700">{label} <span className="font-normal text-slate-400">· {ws.length ? `${ws.length} window${ws.length > 1 ? "s" : ""}` : "no fishable window"}</span></div>}
-                {ws.length ? <div className="grid gap-2 md:grid-cols-3">{ws.map((w) => <WindowCard key={w.start} w={w} pick={isPick(w)} />)}</div>
+                {!ws.length && vc.source === "hourly" && vc.date === date ? <p className="rounded-2xl bg-white p-4 text-slate-700 ring-1 ring-slate-100">{hourlyNote}</p>
+                  : ws.length ? <div className="grid gap-2 md:grid-cols-3">{ws.map((w) => <WindowCard key={w.start} w={w} pick={isPick(w)} />)}</div>
                   : day && (day.no_window_reason || day.least_bad_window) ? <NoWindowCard reason={day.no_window_reason} when={date === realToday ? "today" : `on ${dateLabel(date)}`} leastBad={day.least_bad_window} />
                   : <p className="rounded-2xl bg-white p-4 text-slate-600 ring-1 ring-slate-100">No standout window {date === realToday ? "today" : `on ${dateLabel(date)}`}. Forecasts update every few hours.</p>}
               </div>
@@ -174,6 +182,7 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
       {/* 4. Outlook */}
       <section>
         <h2 className="mb-2 text-lg font-bold">{pro ? `${f.days.length}-day outlook` : "Outlook"}</h2>
+        <p className="mb-2 text-xs text-slate-500">Day scores cover all of each day’s daylight, so they can sit above or below the best window.</p>
         <div className="flex gap-2 overflow-x-auto pb-1 snap-x">
           {f.days.map((d, i) => {
             const open = pro || i <= di;
@@ -181,10 +190,11 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
             return open ? (
               <div key={d.date} className="snap-start min-w-[8.5rem] rounded-2xl bg-white p-3 ring-1 ring-slate-100">
                 <div className="text-sm font-semibold">{d.date === realToday ? "Today" : dateLabel(d.date)}</div>
-                <div className="my-1">{d.score === null ? <span className="text-xs text-slate-400">—</span> : <RatingBadge rating={d.rating} score={d.score} />}</div>
+                <div className="my-1">{d.score === null ? <span className="text-xs text-slate-400">Light gone</span> : <RatingBadge rating={d.rating} score={d.score} />}</div>
                 <div className="text-xs text-slate-600">{d.summary}</div>
                 {d.score !== null && <div className="mt-1 text-xs text-slate-500">{s.level === "ok" ? "" : s.level === "caution" ? "Take care · " : "Unsafe · "}{d.wind_kn_avg} kn{d.wave_m_avg != null ? ` · sea ${d.wave_m_avg} m (swell ${d.swell_m_avg} m)` : d.swell_m_avg !== null ? ` · ${d.swell_m_avg} m` : ""}{d.sst_c_avg !== null ? ` · ${d.sst_c_avg}°C` : ""}</div>}
                 {d.score !== null && d.best_window === null && <div className="text-[10px] font-semibold text-rose-700">No fishable window</div>}
+                {d.date === realToday && d.best_window !== null && !f.windows.some((w) => w.start.slice(0, 10) === d.date) && <div className="text-[10px] font-semibold text-slate-600">Its best window has passed</div>}
                 {pro && d.windows ? <div className="text-[10px] text-slate-500">{d.windows} window{d.windows > 1 ? "s" : ""}</div> : null}
                 {d.confidence && d.score !== null && <div className="text-[10px] uppercase tracking-wide text-slate-400">{d.confidence} confidence</div>}
               </div>

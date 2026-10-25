@@ -131,7 +131,7 @@ export function buildForecast(spot: Spot, days = 10): SpotForecast {
         start: run[0].time, end, score: sc, rating: rt,
         headline: `${dayLong(run[0].time)} ${clock(run[0].time)}–${clock(end)} looks ${rt}`,
         advice: tideIn
-          ? `Get there for ${clock(run[0].time)}. Fish the ${tideIn.type === "high" ? "top of the tide" : "turn of the low"} around ${clock(tideIn.time)} — that's usually when they come on the bite.`
+          ? `Get there for ${clock(run[0].time)}. Fish the ${tideIn.type === "high" ? "top of the tide" : "turn of the low"} around ${clock(tideIn.time)}. That's usually when they come on the bite.`
           : `Settled conditions for ${run.length} hours. A good chance to get out without fighting the weather.`,
         reasons,
       });
@@ -150,10 +150,10 @@ export function buildForecast(spot: Spot, days = 10): SpotForecast {
   const top = windows[0];
   const verdict: Verdict = top
     ? { rating: top.rating, score: top.score, headline: top.rating === "great" ? `Go ${dayLong(top.start)} ${Number(top.start.slice(11, 13)) < 12 ? "morning" : "afternoon"}` : `Best chance: ${dayLong(top.start)}`, advice: `${top.headline}: ${top.reasons.slice(0, 2).join(", ").toLowerCase()}. ${top.advice}`, confidence: top.start.slice(0, 10) <= daysOut[2].date ? "high" : "medium" }
-    : { rating: bestDay.rating, score: bestDay.score ?? 0, headline: "Not a great week", advice: `Conditions look ${bestDay.rating} at best. ${dayLong(bestDay.date)} is the least-bad day — ${bestDay.summary.toLowerCase()}. Maybe one to sit out or try somewhere more sheltered.`, confidence: "medium" };
+    : { rating: bestDay.rating, score: bestDay.score ?? 0, headline: "Not a great week", advice: `Conditions look ${bestDay.rating} at best. ${dayLong(bestDay.date)} is the least-bad day: ${bestDay.summary.toLowerCase()}. Maybe one to sit out or try somewhere more sheltered.`, confidence: "medium" };
 
   return {
-    api_version: "1", spot, generated_at: `${nzTodayISO()}T05:00:00${OFFSET}`, model_run: "MOCK", sources: ["MOCK DATA — prototype only", "Production: Open-Meteo forecast + marine (CC BY 4.0)"],
+    api_version: "1", spot, generated_at: `${nzTodayISO()}T05:00:00${OFFSET}`, model_run: "MOCK", sources: ["MOCK DATA: prototype only", "Production: Open-Meteo forecast + marine (CC BY 4.0)"],
     verdict, days: daysOut, windows: windows.slice(0, 6), tides, hourly,
   };
 }

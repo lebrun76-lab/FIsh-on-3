@@ -11,6 +11,8 @@ import path from "node:path";
 import { SPOTS, buildForecast, getSpot } from "./mock";
 import type { SpotForecast } from "./types";
 import { nzTodayISO } from "./time";
+import { bestCall } from "./call";
+import { plainDeep } from "./plain";
 
 const DIR = process.env.SALTSUPPLY_FORECAST_DIR ?? process.env.FISHCAST_FORECAST_DIR /* deprecated */ ?? path.join(process.cwd(), "data", "forecasts");
 const STALE_H = 6;
@@ -40,7 +42,7 @@ function mockFallback(id: string, reason: string): SpotForecast | null {
   const spot = getSpot(id);
   if (!spot) return null;
   const m = buildForecast(spot, 10);
-  return { ...m, data_status: "mock-fallback", fallback_reason: reason, sources: ["MOCK FALLBACK - not a real forecast", ...m.sources] };
+  return withCurrentVerdict(plainDeep({ ...m, data_status: "mock-fallback" as const, fallback_reason: reason, sources: ["MOCK FALLBACK: not a real forecast", ...m.sources] }));
 }
 
 export function getForecast(id: string): SpotForecast | null {
@@ -52,24 +54,32 @@ export function getForecast(id: string): SpotForecast | null {
     const f = JSON.parse(raw) as SpotForecast;
     if (f.api_version !== "1" || !Array.isArray(f.days) || !f.days.length) throw new Error("bad payload");
     const ageH = (Date.now() - Date.parse(f.generated_at)) / 3.6e6;
-    const t = trim({ ...f, data_status: "engine", stale: ageH > STALE_H });
-    // Use the engine's verdict (next 3 days). Only re-derive it once its window has passed,
-    // and then only from windows still inside a 3-day horizon from now.
-    const vEnd = f.verdict.window?.end ? Date.parse(f.verdict.window.end) : null;
-    if (vEnd !== null && vEnd <= Date.now()) {
-      const horizon = Date.now() + (f.verdict.horizon_days ?? 3) * 864e5;
-      const bw = t.windows.filter((w) => Date.parse(w.start) < horizon).sort((a, b) => b.score - a.score)[0];
-      if (bw) t.verdict = { ...t.verdict, rating: bw.rating, score: bw.score, headline: (bw.rating === "great" || bw.rating === "good" ? "Go " : "Best chance: ") + bw.advice.split(",")[0], advice: bw.advice, confidence: bw.confidence ?? t.verdict.confidence, window: { start: bw.start, end: bw.end } };
-    }
-    return t;
+    const t = plainDeep(trim({ ...f, data_status: "engine", stale: ageH > STALE_H }));
+    return withCurrentVerdict(t);
   } catch (e) {
     return mockFallback(id, `Engine output unreadable: ${(e as Error).message}`);
   }
 }
 
+/** Keep verdict.rating/score/window/headline on the same window as bestCall("horizon"),
+ *  e.g. once the engine's pick has passed. Advice text follows the window. */
+function withCurrentVerdict(f: SpotForecast): SpotForecast {
+  const c = bestCall(f, "horizon");
+  const v = f.verdict;
+  if (c.kind === "window" && c.window && c.window.start === v.window?.start) return { ...f, verdict: { ...v, headline: c.headline } }; // engine's pick still stands
+  if (c.kind === "window") {
+    const w = c.window;
+    return { ...f, verdict: { ...v, rating: c.rating, score: c.score, headline: c.headline, advice: w?.advice ?? `${c.when[0].toUpperCase() + c.when.slice(1)}, worked out from the hourly scores after the engine's own windows passed.`, confidence: w?.confidence ?? v.confidence, window: { start: c.start!, end: c.end! }, no_window_reason: null, least_bad: null } };
+  }
+  const hadWindow = !!v.window;
+  return { ...f, verdict: { ...v, rating: "poor", score: hadWindow ? c.score : v.score, headline: c.headline, window: null,
+    no_window_reason: hadWindow ? `No fishable window left in the next ${v.horizon_days ?? 3} days: the good windows have passed.` : v.no_window_reason,
+    advice: hadWindow ? "The good windows in the next few days have passed." : v.advice } };
+}
+
 export const allForecasts = () => SPOTS.map((s) => getForecast(s.id)!).filter(Boolean);
 
 /** First day that still has fishable daylight (engine returns score=null late at night). */
-export const nextDayIndex = (f: SpotForecast) => Math.max(0, f.days.findIndex((d) => d.score !== null));
+export { nextDayIndex } from "./call";
 
 export { speciesOf } from "./view";
