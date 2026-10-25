@@ -1,4 +1,4 @@
-# Forecast Brain API — v1 contract
+# Forecast Brain API: v1 contract
 
 This is the boundary between the website and **Forecast Brain**, the Python forecast package another team member is building.
 The website only depends on these JSON shapes. Since 2026-10-25 the prototype serves **real engine output**: `jobs/run_forecasts.py` runs `fishon_engine` (PR #2) and writes v1 payloads to `web/data/forecasts/latest/*.json`, read by `src/lib/forecasts.ts`. `src/lib/mock.ts` is only a fallback, labelled `data_status: "mock-fallback"` and shown with a yellow MOCK FALLBACK banner.
@@ -42,7 +42,7 @@ Engine 2.0 output (no `api_version`) still goes through the old mapper, now `leg
 | Area | Fields | Site use |
 |---|---|---|
 | Hourly series | `hourly[]` every hour (`hourly_step_h: 1`, 240 rows for 10 days, all `+13:00`): `wind_kn, gust_kn, wind_dir_deg, wave_m` (total sea), `swell_m` (swell only), `swell_period_s, sst_c, tide_m, rain_mm, score, rating, wind_rel, light, tide_phase` | Charts (wind/gust, waves + swell, SST), safety check |
-| Windows + verdict | `windows[]`: up to 3 per day, time-ordered, each with `date, wind_kn, gust_max_kn, wind_from, wind_rel, wave_m, swell_m, swell_period_s, rain_mm, confidence`. `verdict` = engine's pick, incl. `window{start,end}`; advice adds "Also good: …" | Windows grouped by day; the verdict's window is badged "Engine pick". The loader only re-derives a verdict once `verdict.window.end` has passed. |
+| Windows + verdict | `windows[]`: time-ordered (2.2: up to 3 per day within 1.5 of the best; feat/windows-and-copy: every window ≥ 4.5, up to 4 a day), each with `date, wind_kn, gust_max_kn, wind_from, wind_rel, wave_m, swell_m, swell_period_s, rain_mm, confidence`. `verdict` = engine's pick, incl. `window{start,end}`; advice adds "Also good: …" | Windows grouped by day; the verdict's window is badged "The pick". The loader only re-derives a verdict once `verdict.window.end` has passed. |
 | Swell vs waves | `wave_m` / `days[].wave_m_avg` = total significant wave height (what scoring uses); `swell_m` / `swell_m_avg` = swell only | Both shown ("0.8 m waves (swell 0.3 m @ 5 s)"); safety uses `wave_m` |
 | Tides | `tides[].type` (was `kind`), per-event `datum: "chart_datum" \| "msl"` and `source`; `tide_datum` enum; `tide_source` (nearest LINZ standard or secondary port); `spot.tide_port_id/tide_port_km` | Friendly datum text; "tides: LINZ Mātiatia Bay (9.4 km away)" |
 | Provenance | `model_run` ("ECMWF IFS 2026-10-25T00:00Z (latest run …)"), `model_runs{model: init UTC}`, `spot.forecast_point{lat,lon,cell_selection,model_cell,note}`, `spot.marine_point`, `timezone`, `attribution[]`, `warnings[]` | Header strip on the spot page |
@@ -55,12 +55,22 @@ Ratings stay 4-band (great ≥ 7.5, good ≥ 6, marginal ≥ 4.5, poor).
 | Area | Fields | Site use |
 |---|---|---|
 | 3-day verdict | `verdict.horizon_days` (3), `horizon_end`; `score`/`rating`/`window` = best fishable window in the next 3 days | Label "Best in the next 3 days". The loader re-derives only after `verdict.window.end` has passed, and then only from windows starting within 3 days of now. |
-| Better later | `verdict.best_later{start,end,date,score,rating,headline,advice,confidence}` = best fishable window after the horizon (can be **lower** than the headline) | "🔭 Better later: …" (green) only when its score beats the headline or there is no window; otherwise a small grey "After that: …" line. Free users get "a great window shows up later — see it with Pro". |
+| Better later | `verdict.best_later{start,end,date,score,rating,headline,advice,confidence}` = best fishable window after the horizon (can be **lower** than the headline) | "Better later: …" (green) only when its score beats the headline or there is no window; otherwise a small grey "After that: …" line. Free users get "a great window shows up later this week. See it with Pro". |
 | No window | `verdict.window: null`, `verdict.no_window_reason`, `days[].best_window: null`, `days[].no_window_reason`; `windows[]` holds fishable windows only | Headline "No fishable window in the next 3 days"; the reason is rewritten in plain words (`noWindowText()`: "no stretch of daylight scores 4.5/10 or better. Even at the best time: wind…"). Day-by-day list shows a red "No fishable window" card for that day; outlook cards say "No fishable window". |
 | Least-bad | `verdict.least_bad`, `days[].least_bad_window` (window object, `label: "least-bad (not recommended)"`) | Separate grey dashed card "LEAST-BAD OPTION · NOT RECOMMENDED", never badged or styled like a window. "The call" says "Stay home … Next good chance: …". |
-| Confidence | `windows[].confidence_detail{level, lead_days, lead_level, agreement good/fair/poor/unknown, model_scores{"wind:ecmwf_ifs025":…}, score_spread, models_missing, gap_hours, downgrades[]}`; `days[].lead_confidence`. Spread < 0.75 good, < 1.5 fair, ≥ 1.5 poor; each 1.5 of spread drops one level (max 2), a data gap drops one; never above the lead level. | `confidenceText()`: "🎯 High confidence: the weather models broadly agree." / "Medium confidence: the weather models disagree (they score it anywhere from 6.9 to 8.4 out of 10)." / "…and it's 6 days out." Shown under the verdict and on every window card. |
+| Confidence | `windows[].confidence_detail{level, lead_days, lead_level, agreement good/fair/poor/unknown, model_scores{"wind:ecmwf_ifs025":…}, score_spread, models_missing, gap_hours, downgrades[]}`; `days[].lead_confidence`. Spread < 0.75 good, < 1.5 fair, ≥ 1.5 poor; each 1.5 of spread drops one level (max 2), a data gap drops one; never above the lead level. | `confidenceText()`: "High confidence: the weather models broadly agree." / "Medium confidence: the weather models disagree (they score it anywhere from 6.9 to 8.4 out of 10)." / "…and it's 6 days out." Shown under the verdict and on every window card. |
 | Daily gusts | `days[].gust_kn_max` / `wind_kn_max` now over **all** hours; `gust_kn_max_daylight` / `wind_kn_max_daylight` added | Outlook keeps `gust_kn_max` |
 | Marine point | `spot.marine_point{lat,lon,model_cell{elevation_m},note}` | Header strip |
+
+### New in feat/windows-and-copy (PR #8) and how the site uses it
+All additive. Older output without these fields still loads: `lib/call.ts` checks `listsAllWindows()` and falls back to the old rules.
+| Area | Fields | Site use |
+|---|---|---|
+| Every window | `windows[]` = every separate window scoring ≥ 4.5 (3 to 5 h, at least 2 h apart, up to 4 a day); `days[].windows` = count | Pro day-by-day list shows them all. The hourly-scores fallback in `bestCall()` now only runs on older output: once the engine's listed windows have passed there's nothing fishable left. |
+| near_best | `windows[].near_best` (bool, also on `days[].best_window` / `least_bad_window`): within 1.5 of the day's best | `Call.also` = other live near-best windows on the pick's day. Pro: "Also worth a look today: 6–9pm (good, 6.4)." under the call; free: "Another good window today too. See it with Pro." Window cards that aren't the pick say "Also worth a look" or "Fishable, but well short of the day's best". On older output `isNearBest()` works it out from the day's best score. The windows API takes `?near_best=1`. |
+| Today's score | `days[].score_remaining`, `remaining_from`, `score_full_day` | `dayScore()`: today shows `score_remaining` (falls back to `score`), headed "Rest of today, from 8am"; other days show `score`. `score_full_day` isn't shown. |
+| Stale today | `remaining_from` | `todayStale()`: if the current hour is past `remaining_from`, the header strip says "Today's score counts from 8am, when this forecast was made. A fresh one is due." The job has no on-demand refresh, so it's a note only. |
+| Copy | Engine sentences have no dashes | `lib/plain.ts` stays as a safety net for older output. Site copy checked by `scripts/check-calls.ts` (no em dashes or spaced dashes, no hype words). |
 
 ### SST map (PR #3)
 `fishon_engine.sstmap.fetch_grid()` → one batched Open-Meteo Marine POST for every sea cell of a 0.5° grid, coastal cells only since 2.2 (288 cells). **It costs ~469 Open-Meteo calls** (was ~663) against the Open-Meteo quota, so the job builds it once per run (engine-cached 6 h) and writes `web/data/sst/latest.json` (~67 KB: grid, 1 °C isotherms, Natural Earth land, the engine's plain-English `notes`, and per-spot `sst_c`, nearby isotherms and warm-edge `{min_c,max_c,warm_km,warm_dir}`) plus `web/public/sst/sst_latest.png` (engine render). Supabase: `sst_maps(run_id, valid_time, step_deg, api_calls, payload)`. `--no-sst` skips it.
@@ -90,7 +100,7 @@ Site: `SstMap` (server-renderable responsive SVG, no client JS). Spot pages (Pro
 ## Types (site copy: `web/src/lib/types.ts`)
 ```ts
 /**
- * Forecast Brain API contract (v1) — the boundary between the website and the
+ * Forecast Brain API contract (v1): the boundary between the website and the
  * Python forecast engine ("Forecast Brain"). The site only ever talks to these
  * shapes. Data now comes from the real engine (fishon_engine) via the local
  * scheduled job jobs/run_forecasts.py -> web/data/forecasts/latest/*.json

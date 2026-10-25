@@ -23,9 +23,10 @@ function rng(seed: string) {
   };
 }
 
+// Same bands as the engine (see ratingFor in call.ts).
 export function rate(score: number): Rating {
-  if (score >= 8) return "great";
-  if (score >= 6.5) return "good";
+  if (score >= 7.5) return "great";
+  if (score >= 6) return "good";
   if (score >= 4.5) return "marginal";
   return "poor";
 }

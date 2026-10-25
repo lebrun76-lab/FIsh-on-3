@@ -6,7 +6,7 @@ import { SstMap } from "./SstMap";
 import { DATUM_TEXT, latLon, speciesOf, confidenceText, noWindowText } from "@/lib/view";
 import { useAuth, isPaid } from "@/lib/auth";
 import { PhotoSlot, RatingBadge, RATING_STYLE } from "./ui";
-import { bestCall, targetList } from "@/lib/call";
+import { bestCall, dayScore, isNearBest, ratingFor, targetList, todayStale, whenText } from "@/lib/call";
 import { FavButton } from "./FavButton";
 import { Locked } from "./Locked";
 import { OfflineButton } from "./Offline";
@@ -20,10 +20,11 @@ const SAFETY = { ok: ["bg-emerald-50 ring-emerald-200 text-emerald-900", "Safe t
 const seaText = (wave?: number | null, swell?: number | null, period?: number | null) =>
   wave == null && swell == null ? "" : `${wave ?? swell} m waves${swell != null ? ` (swell ${swell} m${period ? ` @ ${Math.round(period)} s` : ""})` : ""}`;
 
-function WindowCard({ w, pick }: { w: FishingWindow; pick?: boolean }) {
+function WindowCard({ w, pick, near }: { w: FishingWindow; pick?: boolean; near?: boolean }) {
   return (
     <div className={`rounded-2xl bg-white p-4 ring-1 ${pick ? "ring-2 ring-emerald-400" : "ring-slate-100"}`}>
-      <div className="flex items-center justify-between gap-2"><span className="font-semibold">{clock(w.start)}–{clock(w.end)}{pick && <span className="ml-2 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-800">Engine pick</span>}</span><RatingBadge rating={w.rating} score={w.score} /></div>
+      <div className="flex items-center justify-between gap-2"><span className="font-semibold">{clock(w.start)}–{clock(w.end)}{pick && <span className="ml-2 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-800">The pick</span>}</span><RatingBadge rating={w.rating} score={w.score} /></div>
+      {!pick && <div className="mt-0.5 text-[11px] font-semibold text-slate-500">{near ? "Also worth a look" : "Fishable, but well short of the day's best"}</div>}
       {w.wind_kn != null && <div className="mt-1 text-xs text-slate-500">Wind {w.wind_from} {Math.round(w.wind_kn)} kn, gusts {Math.round(w.gust_max_kn ?? 0)}{w.wind_rel ? ` · ${w.wind_rel}` : ""}{w.wave_m != null || w.swell_m != null ? ` · sea ${seaText(w.wave_m, w.swell_m, w.swell_period_s)}` : ""}</div>}
       <p className="mt-1 text-sm text-slate-600">{w.advice}</p>
       {w.confidence && <div className="mt-1 text-xs text-slate-500">{confidenceText(w.confidence, w.confidence_detail)}</div>}
@@ -109,6 +110,8 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
     confidence: vc.window?.confidence ?? d0.confidence ?? f.verdict.confidence,
   };
   const mock = f.data_status === "mock-fallback";
+  const ts = todayStale(f, now);
+  const alsoText = vc.also.map((w) => `${whenText(w.start, w.end, realToday, w.start.slice(0, 10) !== vc.date)} (${w.rating}, ${w.score.toFixed(1)})`).join(", ");
   const rs = RATING_STYLE[v.rating];
   const call = noWin ? `Stay home${pro ? ` for the next ${hz} days` : ` ${todayWord}`}.${laterBetter && later ? ` Next good chance: ${later.headline.replace(/ looks .*/, "")}.` : ""} If you do go, stay sheltered and watch the weather.` : `${v.headline}. ${targetList((targets.length ? targets : f.spot.species).slice(0, 2))}${tgt[0] ? `. ${tgt[0].name}: ${sizeText(tgt[0])}` : ""}.`;
   const near = CLOSURES.filter((c) => Math.hypot(c.lat - f.spot.lat, c.lon - f.spot.lon) < 1.2);
@@ -131,6 +134,7 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
         <div className={`rounded-xl px-3 py-2 text-xs ring-1 ${f.stale ? "bg-amber-50 text-amber-900 ring-amber-200" : "bg-white text-slate-500 ring-slate-100"}`}>
           {f.stale ? "Old forecast (more than 6 hours) · " : ""}Forecast Brain v{f.engine_version} · generated {dayShort(f.generated_at)} {clock(f.generated_at)} NZ time{f.model_run ? ` · model: ${f.model_run.replace(/ \(.*\)$/, "")}` : ""}
           {f.spot.forecast_point && <div>Weather for {latLon(f.spot.forecast_point.lat, f.spot.forecast_point.lon)}{f.spot.forecast_point.cell_selection === "sea" ? " (at sea)" : ""}{f.spot.marine_point && f.spot.coastal ? ` · waves & sea temp for ${latLon(f.spot.marine_point.lat, f.spot.marine_point.lon)}` : ""}{f.spot.coastal && f.tide_source ? ` · tides: ${f.tide_source}${f.spot.tide_port_km != null ? ` (${f.spot.tide_port_km} km away)` : ""}` : ""}</div>}
+          {ts.stale && ts.from && <div>Today&apos;s score counts from {clock(ts.from)}, when this forecast was made. A fresh one is due.</div>}
           {f.warnings?.map((w) => <div key={w}>Note: {w}</div>)}
         </div>
       )}
@@ -141,6 +145,8 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
         <h2 className={`mt-3 text-2xl md:text-3xl font-extrabold ${rs.text}`}>{v.headline}</h2>
         <p className="mt-2 text-lg text-slate-700 leading-snug">{v.advice}</p>
         {!noWin && <p className="mt-2 text-sm text-slate-600">{confidenceText(v.confidence, vDetail)}</p>}
+        {pro && vc.also.length > 0 && <p className="mt-2 text-sm text-slate-700"><b>Also worth a look {vc.date === realToday ? "today" : `on ${dayShort(vc.date)}`}:</b> {alsoText}.</p>}
+        {!pro && vc.also.length > 0 && <p className="mt-2 text-sm text-ocean-900">{vc.also.length === 1 ? "Another good window" : `${vc.also.length} more good windows`} {todayWord} too. <Link href="/pricing" className="underline">See {vc.also.length === 1 ? "it" : "them"} with Pro</Link>.</p>}
         {noWin && leastBad && <div className="mt-3"><LeastBadCard w={leastBad} withDay={pro} /></div>}
         {pro && later && (laterBetter
           ? <p className="mt-3 rounded-xl bg-emerald-50 px-3 py-2 text-sm text-emerald-900 ring-1 ring-emerald-100"><b>Better later:</b> {later.headline} ({later.rating}, {later.score.toFixed(1)}/10). {later.confidence === "low" ? "Low confidence that far out. Check again closer to the day." : later.confidence === "medium" ? "Medium confidence." : "High confidence."}</p>
@@ -168,29 +174,33 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
               <div key={date}>
                 {pro && <div className="mb-1 text-sm font-semibold text-slate-700">{label} <span className="font-normal text-slate-400">· {ws.length ? `${ws.length} window${ws.length > 1 ? "s" : ""}` : "no fishable window"}</span></div>}
                 {!ws.length && vc.source === "hourly" && vc.date === date ? <p className="rounded-2xl bg-white p-4 text-slate-700 ring-1 ring-slate-100">{hourlyNote}</p>
-                  : ws.length ? <div className="grid gap-2 md:grid-cols-3">{ws.map((w) => <WindowCard key={w.start} w={w} pick={isPick(w)} />)}</div>
+                  : ws.length ? <div className="grid gap-2 md:grid-cols-2">{ws.map((w) => <WindowCard key={w.start} w={w} pick={isPick(w)} near={isNearBest(f, w)} />)}</div>
                   : day && (day.no_window_reason || day.least_bad_window) ? <NoWindowCard reason={day.no_window_reason} when={date === realToday ? "today" : `on ${dateLabel(date)}`} leastBad={day.least_bad_window} />
                   : <p className="rounded-2xl bg-white p-4 text-slate-600 ring-1 ring-slate-100">No standout window {date === realToday ? "today" : `on ${dateLabel(date)}`}. Forecasts update every few hours.</p>}
               </div>
             );
           })}
           {pro && f.days.length > di + 5 && <p className="text-xs text-slate-500">More windows further out in the outlook below.</p>}
-          {!pro && todayWins.length > 1 && <p className="text-sm text-ocean-900">{todayWins.length - 1} more window{todayWins.length > 2 ? "s" : ""} {todayWord}. <Link href="/pricing" className="underline">see them with Pro</Link>.</p>}
+          {!pro && todayWins.length > 1 && vc.also.length === 0 && <p className="text-sm text-ocean-900">{todayWins.length - 1} more window{todayWins.length > 2 ? "s" : ""} {todayWord}. <Link href="/pricing" className="underline">see them with Pro</Link>.</p>}
         </div>
       </section>
 
       {/* 4. Outlook */}
       <section>
         <h2 className="mb-2 text-lg font-bold">{pro ? `${f.days.length}-day outlook` : "Outlook"}</h2>
-        <p className="mb-2 text-xs text-slate-500">Day scores cover all of each day’s daylight, so they can sit above or below the best window.</p>
+        <p className="mb-2 text-xs text-slate-500">Today’s score only counts the daylight still to come. Other days count all their daylight, so a day score can sit above or below its best window.</p>
         <div className="flex gap-2 overflow-x-auto pb-1 snap-x">
           {f.days.map((d, i) => {
             const open = pro || i <= di;
             const s = safetyCheck(dayHours(d.date), f.spot.coastal);
+            const ds = dayScore(d, realToday);
+            const dr = ds === d.score || ds === null ? d.rating : ratingFor(ds);
+            const isToday = d.date === realToday;
             return open ? (
               <div key={d.date} className="snap-start min-w-[8.5rem] rounded-2xl bg-white p-3 ring-1 ring-slate-100">
-                <div className="text-sm font-semibold">{d.date === realToday ? "Today" : dateLabel(d.date)}</div>
-                <div className="my-1">{d.score === null ? <span className="text-xs text-slate-400">Light gone</span> : <RatingBadge rating={d.rating} score={d.score} />}</div>
+                <div className="text-sm font-semibold">{isToday ? (d.remaining_from ? `Rest of today` : "Today") : dateLabel(d.date)}</div>
+                <div className="my-1">{ds === null ? <span className="text-xs text-slate-400">Light gone</span> : <RatingBadge rating={dr} score={ds} />}</div>
+                {isToday && d.remaining_from && ds !== null && <div className="text-[10px] text-slate-500">From {clock(d.remaining_from)}{ts.stale ? ", when this forecast was made" : ""}</div>}
                 <div className="text-xs text-slate-600">{d.summary}</div>
                 {d.score !== null && <div className="mt-1 text-xs text-slate-500">{s.level === "ok" ? "" : s.level === "caution" ? "Take care · " : "Unsafe · "}{d.wind_kn_avg} kn{d.wave_m_avg != null ? ` · sea ${d.wave_m_avg} m (swell ${d.swell_m_avg} m)` : d.swell_m_avg !== null ? ` · ${d.swell_m_avg} m` : ""}{d.sst_c_avg !== null ? ` · ${d.sst_c_avg}°C` : ""}</div>}
                 {d.score !== null && d.best_window === null && <div className="text-[10px] font-semibold text-rose-700">No fishable window</div>}

@@ -1,4 +1,4 @@
-# Photo shot list — Salt Supply Co.
+# Photo shot list: Salt Supply Co.
 
 Real photos only: no stock libraries, no AI-generated images. Shot in New Zealand, natural light, people (if any) with a signed release. Until a photo exists the site shows a grey `PHOTO: <subject> (<ratio>)` box (`PhotoSlot`, `web/src/components/ui.tsx`), tagged with the shot id in `data-photo-id`.
 

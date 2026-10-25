@@ -1,4 +1,4 @@
-# Salt Supply Co. — web prototype
+# Salt Supply Co.: web prototype
 
 Site: https://saltsupply.co.nz (the only domain). Clickable, mobile-first prototype of the rebuilt Fish-on site. **Real forecasts from Forecast Brain (`fishon_engine`, run locally); mock sign-in; no payments.** Each spot falls back to clearly labelled mock data only when the engine has no output for it.
 Brand: **Salt Supply Co.** (short name / PWA: "Salt Supply"), set in `src/lib/brand.ts`. Example addresses like `hello@saltsupply.co.nz` are placeholders; no mailboxes exist. Pricing and the free/paid split are **PROPOSED** (market research, not yet approved).

@@ -1,5 +1,5 @@
 /**
- * Forecast Brain API contract (v1) — the boundary between the website and the
+ * Forecast Brain API contract (v1): the boundary between the website and the
  * Python forecast engine ("Forecast Brain"). The site only ever talks to these
  * shapes. Data now comes from the real engine (fishon_engine) via the local
  * scheduled job jobs/run_forecasts.py -> web/data/forecasts/latest/*.json
@@ -77,7 +77,8 @@ export interface FishingWindow {
   confidence?: "high" | "medium" | "low"; // v1.1: engine 2.2 = lead time lowered by model disagreement / data gaps
   confidence_detail?: ConfidenceDetail;    // v1.1 (engine 2.2)
   label?: string;                          // engine 2.2: "least-bad (not recommended)" on least-bad windows
-  // v1.1 (engine 2.1): up to 3 windows per day, in time order
+  near_best?: boolean;                     // feat/windows-and-copy: within 1.5 of the day's best window (always true for the best). Missing on older output
+  // v1.1: every separate window scoring >= 4.5, in time order (older output: only those within 1.5 of the day's best, max 3)
   date?: string;
   wind_kn?: number | null;
   gust_max_kn?: number | null;
@@ -132,7 +133,11 @@ export interface DaySummary {
   verdict_text?: string;
   best_window_text?: string | null;
   best_window?: FishingWindow | null; // v1.1 (engine 2.1)
-  windows?: number;                   // v1.1: number of fishable windows that day
+  windows?: number;                   // v1.1: number of fishable windows that day (every window >= 4.5, up to 4)
+  // feat/windows-and-copy, all optional so older output still loads:
+  score_remaining?: number | null;    // today only: score over the daylight hours not yet past at generated_at (null other days / no daylight left)
+  remaining_from?: string | null;     // today only: first hour counted in score_remaining
+  score_full_day?: number | null;     // score over every daylight hour of the date, gone or not. Not today's outlook
   // engine 2.2: best_window is null on a day with no fishable window
   no_window_reason?: string | null;
   least_bad_window?: FishingWindow | null; // labelled "least-bad (not recommended)"

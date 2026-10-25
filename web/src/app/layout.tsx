@@ -9,10 +9,10 @@ import { SWRegister, OfflineIndicator } from "@/components/Offline";
 export const metadata: Metadata = {
   metadataBase: new URL(BRAND.url),
   applicationName: BRAND.name,
-  title: { default: `${BRAND.name} – NZ fishing forecasts in plain English`, template: `%s · ${BRAND.name}` },
+  title: { default: `${BRAND.name} · NZ fishing forecasts in plain English`, template: `%s · ${BRAND.name}` },
   description: BRAND.description,
   manifest: "/manifest.webmanifest",
-  openGraph: { type: "website", siteName: BRAND.name, url: BRAND.url, title: `${BRAND.name} – NZ fishing forecasts in plain English`, description: BRAND.description, locale: "en_NZ" },
+  openGraph: { type: "website", siteName: BRAND.name, url: BRAND.url, title: `${BRAND.name} · NZ fishing forecasts in plain English`, description: BRAND.description, locale: "en_NZ" },
   twitter: { card: "summary", title: BRAND.name, description: BRAND.description },
   appleWebApp: { title: BRAND.shortName },
 };

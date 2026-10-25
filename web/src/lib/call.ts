@@ -7,12 +7,19 @@
  * - scope "day": the next day with fishable daylight (free tier, "today").
  *
  * Order: the engine's verdict window if it hasn't ended yet -> best remaining engine
- * window (score >= 4.5) in scope -> if the engine's windows for the day have all passed,
- * the best remaining 3-5 h daylight run from the hourly scores (same rule as the engine's
- * scoring.windows) -> otherwise no fishable window. The badge score is the chosen
- * window's score. It is never the whole-day score, which still counts hours that have passed.
+ * window (score >= 4.5) in scope -> otherwise no fishable window. The badge score is the
+ * chosen window's score, never a day score.
+ *
+ * Since feat/windows-and-copy the engine lists EVERY separate window scoring >= 4.5
+ * (up to 4 a day), so once they have all passed there is nothing fishable left. Older
+ * output only listed windows within 1.5 of the day's best (max 3), so for that shape
+ * only we still look for the best remaining 3-5 h daylight run in the hourly scores
+ * (same rule as the engine's scoring.windows).
+ *
+ * `also` = the other windows on the pick's day that are near the day's best
+ * (engine `near_best`, or within 1.5 of the day's best on older output): "also worth a look".
  */
-import type { FishingWindow, Rating, SpotForecast } from "./types";
+import type { DaySummary, FishingWindow, Rating, SpotForecast } from "./types";
 import { clock, dayShort, nzTodayISO } from "./time";
 
 export const FISHABLE = 4.5;
@@ -29,9 +36,32 @@ export interface Call {
   end: string | null;
   date: string;                       // the window's date, or the first date in scope
   window: FishingWindow | null;       // the engine window, when source = engine
+  also: FishingWindow[];              // other live near-best windows on the same day, time order
   when: string;                       // "today 6–9pm", "Wed 5–8am"
   headline: string;                   // "Go Wed 5–8am", "Best chance today 6–9pm", "No fishable window in the next 3 days"
   dates: string[];
+}
+
+/** True when the output lists every window >= 4.5 (feat/windows-and-copy). Older output didn't. */
+export const listsAllWindows = (f: SpotForecast) => f.days.some((d) => d.score_remaining !== undefined) || f.windows.some((w) => w.near_best !== undefined);
+
+/** near_best from the engine, or worked out the same way (within 1.5 of the day's best) on older output. */
+export function isNearBest(f: SpotForecast, w: FishingWindow): boolean {
+  if (typeof w.near_best === "boolean") return w.near_best;
+  const date = w.start.slice(0, 10);
+  const best = Math.max(f.days.find((d) => d.date === date)?.best_window?.score ?? -Infinity, ...f.windows.filter((x) => x.start.slice(0, 10) === date).map((x) => x.score));
+  return w.score >= Math.round((best - 1.5) * 10) / 10;
+}
+
+/** Day score to show: today uses score_remaining (daylight still to come), falling back to score; other days use score. */
+export const dayScore = (d: DaySummary, today = nzTodayISO()) => (d.date === today && d.score_remaining != null ? d.score_remaining : d.score);
+
+/** Today's score was counted from remaining_from. Once the clock is past that hour, the cached number includes hours that have gone. */
+export function todayStale(f: SpotForecast, now = Date.now()): { stale: boolean; from: string | null } {
+  const d = f.days.find((x) => x.date === nzTodayISO());
+  const from = d?.remaining_from ?? null;
+  if (!from) return { stale: false, from: null };
+  return { stale: Math.floor(now / 36e5) * 36e5 > Date.parse(from), from };
 }
 
 export const nextDayIndex = (f: SpotForecast) => Math.max(0, f.days.findIndex((d) => d.score !== null));
@@ -69,23 +99,29 @@ function toLocal(utcIso: string, off: string) { // "+13:00"
   return t + off;
 }
 
+/** "today 6–9pm", "Wed 5–8am". */
+export function whenText(s: string, e: string, today = nzTodayISO(), withDay = true) {
+  const a = clock(s), b = clock(e), sfx = (x: string) => x.slice(-2);
+  const t = `${sfx(a) === sfx(b) ? a.slice(0, -2) : a}–${b}`;
+  return withDay ? `${s.slice(0, 10) === today ? "today" : dayShort(s)} ${t}` : t;
+}
+
 export function bestCall(f: SpotForecast, scope: Scope, now = Date.now()): Call {
   const dates = scopeDates(f, scope), set = new Set(dates), today = nzTodayISO(), hz = f.verdict.horizon_days ?? 3;
-  const whenOf = (s: string, e: string) => {
-    const a = clock(s), b = clock(e), sfx = (x: string) => x.slice(-2);
-    return `${s.slice(0, 10) === today ? "today" : dayShort(s)} ${sfx(a) === sfx(b) ? a.slice(0, -2) : a}–${b}`;
-  };
+  const whenOf = (s: string, e: string) => whenText(s, e, today);
   const live = f.windows.filter((w) => Date.parse(w.end) > now && set.has(w.start.slice(0, 10)) && w.score >= FISHABLE);
   const pick = (scope === "horizon" && live.find((w) => w.start === f.verdict.window?.start))
     || live.slice().sort((a, b) => b.score - a.score || a.start.localeCompare(b.start))[0];
+  const also = pick ? live.filter((w) => w !== pick && w.start.slice(0, 10) === pick.start.slice(0, 10) && isNearBest(f, w)).sort((a, b) => a.start.localeCompare(b.start)) : [];
   const mk = (kind: Call["kind"], source: Call["source"], score: number, rating: Rating, start: string | null, end: string | null, window: FishingWindow | null): Call => {
     const when = start && end ? whenOf(start, end) : "";
     const span = scope === "horizon" ? `in the next ${hz} days` : dates[0] === today ? "today" : `on ${dayShort(dates[0])}`;
     const headline = kind === "none" ? `No fishable window ${span}` : `${rating === "marginal" ? "Best chance" : "Go"} ${when}`;
-    return { kind, source, rating, score, start, end, date: start?.slice(0, 10) ?? dates[0], window, when, headline: headline[0].toUpperCase() + headline.slice(1), dates };
+    return { kind, source, rating, score, start, end, date: start?.slice(0, 10) ?? dates[0], window, also: window ? also : [], when, headline: headline[0].toUpperCase() + headline.slice(1), dates };
   };
   if (pick) return mk("window", "engine", pick.score, pick.rating, pick.start, pick.end, pick);
-  const run = hourlyRun(f, set, now);
+  if (listsAllWindows(f)) return mk("none", null, 0, "poor", null, null, null); // every window >= 4.5 was listed and they've all passed
+  const run = hourlyRun(f, set, now); // older output only
   if (run && run.score >= FISHABLE) return mk("window", "hourly", run.score, ratingFor(run.score), run.start, run.end, null);
   return mk("none", null, run?.score ?? 0, "poor", null, null, null);
 }
