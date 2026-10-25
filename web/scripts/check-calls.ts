@@ -5,10 +5,11 @@
 // tide_port_linz_name), so older output keeps working.
 import { allSummaries, regionCalls } from "../src/lib/summaries";
 import { allForecasts } from "../src/lib/forecasts";
-import { alertCall, bestCall, dayScore, isNearBest, listsAllWindows, ratingFor, todayStale } from "../src/lib/call";
+import { alertCall, alertDates, pickOf, bestCall, dayScore, isNearBest, listsAllWindows, ratingFor, todayStale } from "../src/lib/call";
 import { nzTodayISO } from "../src/lib/time";
 import { plain, plainDeep, portNames, tideSourceText } from "../src/lib/plain";
 import type { FishingWindow, SpotForecast } from "../src/lib/types";
+import { DEFAULT_FISH_TIMES, fitsTimes, normaliseTimes, toggleTime, type FishTime } from "../src/lib/fishtimes";
 import { alertEmail, shortSpot, welcomeEmail, trialEndingEmail, wordsBeforeButton, type EmailTemplate } from "../src/lib/emails";
 
 const DASH = /—| [-–] /;                       // no em dashes, no spaced dashes
@@ -49,6 +50,25 @@ const emailProbs = (where: string, m: EmailTemplate) => {
   if (w.body.some((l) => l.split(/\s+/).length > 16)) fixed.push("welcome email: a line over 16 words");
 }
 
+// Fishing times: fixed cases (2026-10-28 is a Wednesday, 10-31 Saturday, 11-01 Sunday)
+{
+  const W = (d: string, a: string, b: string) => [`2026-${d}T${a}:00+13:00`, `2026-${d}T${b}:00+13:00`] as const;
+  const cases: [readonly [string, string], FishTime[], boolean][] = [
+    [W("10-28", "05:00", "08:00"), ["weekday_morning"], true], [W("10-28", "06:00", "09:00"), ["weekday_morning"], true],
+    [W("10-28", "08:00", "11:00"), ["weekday_morning"], false], [W("10-28", "16:00", "19:00"), ["weekday_evening"], true],
+    [W("10-28", "15:00", "18:00"), ["weekday_evening"], false], [W("10-28", "18:00", "21:00"), ["saturday", "sunday"], false],
+    [W("10-31", "05:00", "08:00"), ["weekday_morning"], false], [W("10-31", "10:00", "13:00"), ["saturday"], true],
+    [W("11-01", "10:00", "13:00"), ["saturday"], false], [W("11-01", "10:00", "13:00"), ["sunday"], true],
+    [W("10-28", "11:00", "14:00"), ["any"], true], [W("10-28", "11:00", "14:00"), DEFAULT_FISH_TIMES, false],
+    [W("10-28", "18:00", "21:00"), DEFAULT_FISH_TIMES, true], [W("10-31", "05:00", "08:00"), DEFAULT_FISH_TIMES, true],
+    [W("10-30", "16:00", "19:00"), DEFAULT_FISH_TIMES, true], [W("10-30", "05:00", "08:00"), DEFAULT_FISH_TIMES, false],
+  ];
+  for (const [[a, b], t, want] of cases) if (fitsTimes(a, b, t) !== want) fixed.push(`fitsTimes ${a.slice(5, 16)}-${b.slice(11, 16)} [${t}] gave ${!want}`);
+  if (JSON.stringify(toggleTime(DEFAULT_FISH_TIMES, "any")) !== '["any"]' || JSON.stringify(toggleTime(["any"], "sunday")) !== '["sunday"]' || JSON.stringify(toggleTime(["sunday"], "sunday")) !== '["sunday"]') fixed.push("toggleTime");
+  if (JSON.stringify(normaliseTimes(undefined)) !== JSON.stringify(DEFAULT_FISH_TIMES) || JSON.stringify(normaliseTimes(["sunday", "any"])) !== '["any"]') fixed.push("normaliseTimes");
+}
+const TIME_SETS: FishTime[][] = [DEFAULT_FISH_TIMES, ["weekday_morning"], ["weekday_evening"], ["saturday"], ["sunday"], ["any"]];
+
 // Port names and brackets: plain() must not touch "Area (Place)"; older "Area - Place" output gets the 2.3 form.
 for (const [s, want] of [["Lottin Point (Wakatiri)", "Lottin Point (Wakatiri)"], ["LINZ secondary port Coromandel Harbour (Whanganui Island) (offsets from Auckland)", "LINZ secondary port Coromandel Harbour (Whanganui Island) (offsets from Auckland)"], ["Mon 8–11am looks great", "Mon 8–11am looks great"], ["Mon 10am–1pm is fishable", "Mon 10am–1pm is fishable"], ["Best: Mon 10am-1pm.", "Best: Mon 10am–1pm."], ["Mon 8-11am, HW -21 min, 2026-10-26", "Mon 8–11am, HW -21 min, 2026-10-26"]] as const)
   if (plain(s) !== want) fixed.push(`plain("${s}") gave "${plain(s)}"`);
@@ -78,7 +98,7 @@ for (const t of times.length ? times : [new Date().toISOString()]) {
     if (/!/.test(c.call)) probs.push(`region ${c.region}: punctuation "${c.call}"`);
     probs.push(...copyProbs(`region ${c.region}`, c.call));
   }
-  let fresh = 0, also = 0, until = 0, emails = 0;
+  let fresh = 0, also = 0, until = 0, emails = 0, filtered = 0;
   const versions = new Map<string, number>();
   const today = nzTodayISO();
   for (const f0 of allForecasts()) {
@@ -115,6 +135,17 @@ for (const t of times.length ? times : [new Date().toISOString()]) {
     if (d?.remaining_from && todayStale(nv, at).stale !== (Math.floor(at / 36e5) * 36e5 > Date.parse(d.remaining_from))) probs.push(`spot ${f0.spot.id}: stale flag (remaining_from)`);
     if (d?.remaining_from && f0.valid_until && todayStale(nv, at).stale !== todayStale(f0, at).stale) probs.push(`spot ${f0.spot.id}: valid_until and remaining_from disagree`);
     if (d?.remaining_from && f0.valid_until && Date.parse(todayStale(nv, at).until!) !== Date.parse(f0.valid_until)) probs.push(`spot ${f0.spot.id}: fallback 'due at' time differs from valid_until`);
+    // time filter: the alert pick sits inside the chosen times, scores >= 4.5, is 1-2 days ahead, and is the
+    // bestCall pick among exactly those windows (no fitting window -> no alert)
+    for (const times of TIME_SETS) {
+      const c = alertCall(f0, times), id = `alert ${f0.spot.id} [${times}]`, dates = new Set(alertDates(today));
+      const fit = f0.windows.filter((w) => Date.parse(w.end) > at && w.score >= 4.5 && dates.has(w.start.slice(0, 10)) && fitsTimes(w.start, w.end, times));
+      const want = pickOf(fit, f0.verdict.window?.start);
+      if ((c.start ?? null) !== (want?.start ?? null)) probs.push(`${id}: picked ${c.start} want ${want?.start}`);
+      if (c.kind === "window" && !fitsTimes(c.start!, c.end!, times)) probs.push(`${id}: window ${c.start} outside the chosen times`);
+      if (times[0] === "any" && c.start !== bestCall(f0, "horizon", at, { dates: alertDates(today) }).start) probs.push(`${id}: 'any time' differs from the unfiltered pick`);
+      filtered += c.kind === "window" ? 1 : 0;
+    }
     // alert email: built from the alert pick (1-2 days ahead, >= 4.5), subject is the answer
     for (const [tag, f] of [["", f0], [" (legacy)", legacy(f0)]] as const) {
       const c = alertCall(f), m = alertEmail(f, c), id = `alert ${f.spot.id}${tag}`;
@@ -133,7 +164,7 @@ for (const t of times.length ? times : [new Date().toISOString()]) {
     }
   }
   const rc = regionCalls();
-  console.log(`${t}: ${probs.length} problems; ${rc.length} regions; ${fresh} forecasts with the new window fields; ${until} with valid_until; ${emails} alert emails; ${also} 'also worth a look' windows; engine versions ${[...versions].map(([v, n]) => `${v}×${n}`).join(", ")}`);
+  console.log(`${t}: ${probs.length} problems; ${rc.length} regions; ${fresh} forecasts with the new window fields; ${until} with valid_until; ${emails} alert emails (default times); ${filtered} alerts across ${TIME_SETS.length} time choices; ${also} 'also worth a look' windows; engine versions ${[...versions].map(([v, n]) => `${v}×${n}`).join(", ")}`);
   if (!times.length || process.env.V) rc.forEach((c) => console.log(`  ${c.region}: ${c.rating} ${c.score} [${c.dayLabel}] ${c.call}`));
   probs.forEach((p) => console.log("  !", p)); bad += probs.length;
 }

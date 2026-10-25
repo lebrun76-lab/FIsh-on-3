@@ -2,17 +2,21 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth";
+import { FishTimesPicker } from "@/components/FishTimesPicker";
+import { DEFAULT_FISH_TIMES, type FishTime } from "@/lib/fishtimes";
 export function SignInForm() {
   const { signIn } = useAuth();
   const router = useRouter();
   const next = useSearchParams().get("next") ?? "/saved";
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
-  const done = (e: string, n?: string) => { signIn(e, n); router.push(next); };
+  const [times, setTimes] = useState<FishTime[]>(DEFAULT_FISH_TIMES);
+  const done = (e: string, n?: string) => { signIn(e, n, times); router.push(next); };
   return (
     <div className="mx-auto max-w-sm pt-10 space-y-4">
       <h1 className="text-2xl font-bold text-center">Sign in or create an account</h1>
       <p className="text-center text-sm text-slate-600">Free. Save your spots and get fishing-window alerts.</p>
+      <div className="rounded-2xl bg-white p-4 ring-1 ring-slate-100"><FishTimesPicker value={times} onChange={setTimes} /></div>
       <button onClick={() => done("alex@example.com", "Alex")} className="w-full rounded-full bg-white py-3 font-semibold ring-1 ring-slate-300">
         <span className="mr-2 font-bold text-[#4285F4]">G</span>Continue with Google (mock)
       </button>

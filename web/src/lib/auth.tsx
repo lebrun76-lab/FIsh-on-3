@@ -2,17 +2,18 @@
 // MOCK AUTH + favourites in localStorage. Production: Supabase Auth (email magic link + Google)
 // with favourites/alerts in Postgres behind row-level security.
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { DEFAULT_FISH_TIMES, normaliseTimes, type FishTime } from "./fishtimes";
 
 export type Plan = "free" | "trial" | "pro";
 export const isPaid = (p: Plan) => p !== "free";
-export interface AlertPrefs { enabled: boolean; minRating: "great" | "good"; sendAt: string; days: string[]; }
-interface State { trialEnds: string | null; user: { email: string; name: string } | null; plan: Plan; favourites: string[]; home: string | null; alerts: AlertPrefs; }
+export interface AlertPrefs { enabled: boolean; minRating: "great" | "good"; sendAt: string; }
+interface State { trialEnds: string | null; user: { email: string; name: string } | null; plan: Plan; favourites: string[]; home: string | null; alerts: AlertPrefs; fishingTimes: FishTime[]; } // fishingTimes = profiles.fishing_times
 interface Ctx extends State {
-  signIn: (email: string, name?: string) => void; signOut: () => void;
+  signIn: (email: string, name?: string, fishingTimes?: FishTime[]) => void; setFishingTimes: (t: FishTime[]) => void; signOut: () => void;
   toggleFav: (id: string) => void; setHome: (id: string) => void;
   setPlan: (p: Plan) => void; trialEnds: string | null; setAlerts: (a: AlertPrefs) => void; ready: boolean;
 }
-const DEFAULT: State = { trialEnds: null, user: null, plan: "free", favourites: [], home: null, alerts: { enabled: true, minRating: "good", sendAt: "18:00", days: ["Thu"] } };
+const DEFAULT: State = { trialEnds: null, user: null, plan: "free", favourites: [], home: null, alerts: { enabled: true, minRating: "good", sendAt: "18:00" }, fishingTimes: DEFAULT_FISH_TIMES };
 const AuthCtx = createContext<Ctx | null>(null);
 const KEY = "saltsupply-mock-state";
 const LEGACY_KEY = "fishcast-mock-state"; // pre-rename prototype state, read once and migrated
@@ -22,13 +23,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [s, setS] = useState<State>(DEFAULT);
   const [ready, setReady] = useState(false);
   useEffect(() => {
-    try { const raw = localStorage.getItem(KEY) ?? localStorage.getItem(LEGACY_KEY); if (raw) setS({ ...DEFAULT, ...JSON.parse(raw) }); } catch {}
+    try { const raw = localStorage.getItem(KEY) ?? localStorage.getItem(LEGACY_KEY); if (raw) { const v = { ...DEFAULT, ...JSON.parse(raw) }; setS({ ...v, fishingTimes: normaliseTimes(v.fishingTimes) }); } } catch {}
     setReady(true);
   }, []);
   const save = (n: State) => { setS(n); localStorage.setItem(KEY, JSON.stringify(n)); };
   const value: Ctx = {
     ...s, ready,
-    signIn: (email, name) => save({ ...s, user: { email, name: name ?? email.split("@")[0] } }),
+    signIn: (email, name, fishingTimes) => save({ ...s, user: { email, name: name ?? email.split("@")[0] }, fishingTimes: fishingTimes ? normaliseTimes(fishingTimes) : s.fishingTimes }),
+    setFishingTimes: (t) => save({ ...s, fishingTimes: normaliseTimes(t) }),
     signOut: () => save(DEFAULT),
     toggleFav: (id) => {
       if (s.favourites.includes(id)) return save({ ...s, favourites: s.favourites.filter((f) => f !== id) });

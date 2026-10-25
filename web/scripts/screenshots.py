@@ -10,7 +10,8 @@ os.makedirs(OUT, exist_ok=True)
 def state(plan, favs=("hauraki_gulf",)):
     return {"trialEnds": "2026-11-08" if plan == "trial" else None, "user": {"name": "Alex", "email": "alex@example.com"}, "plan": plan,
             "favourites": list(favs), "home": favs[0] if favs else None,
-            "alerts": {"enabled": True, "minRating": "good", "days": ["Sat", "Sun"], "sendAt": "18:00"}}
+            "alerts": {"enabled": True, "minRating": "good", "sendAt": "18:00"},
+            "fishingTimes": ["weekday_evening", "saturday", "sunday"]}
 SHOTS = [  # (name, path, auth-state or None)
     ("01-home", "/", None), ("02-spots-list", "/spots", None), ("03-spots-map", "/spots?view=map", None),
     ("04-spot-free-locked", "/spots/hauraki_gulf", state("free")), ("05-spot-pro", "/spots/hauraki_gulf", state("pro")),
