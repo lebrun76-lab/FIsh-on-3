@@ -18,6 +18,20 @@ class FishingCentre:
     species: List[str]
     notes: str
     tags: List[str] = field(default_factory=list)   # e.g. ["coastal", "boat", "shore", "freshwater"]
+    # Optional offshore point for swell data, for centres whose main
+    # coordinates fall on land in the marine model's grid (e.g. inside fiords).
+    marine_lat: Optional[float] = None
+    marine_lon: Optional[float] = None
+
+    @property
+    def is_coastal(self) -> bool:
+        return "freshwater" not in self.tags
+
+    @property
+    def marine_point(self) -> tuple:
+        if self.marine_lat is not None and self.marine_lon is not None:
+            return self.marine_lat, self.marine_lon
+        return self.lat, self.lon
 
 # ============================================================
 # MAIN FISHING CENTRES – North Island
@@ -240,6 +254,8 @@ CENTRES: Dict[str, FishingCentre] = {
         region="Fiordland",
         island="South",
         lat=-44.67, lon=167.93,
+        # Main point is on land in the marine grid; use open water off Milford Sound
+        marine_lat=-44.55, marine_lon=167.75,
         species=["Blue Cod", "Groper", "Tarakihi", "Crayfish", "Bluefin (offshore)"],
         notes="World-class but weather and access dependent.",
         tags=["coastal", "boat"]

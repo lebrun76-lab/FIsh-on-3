@@ -16,8 +16,8 @@ from regions import (
     get_default_selection_for_base,
     FishingCentre,
 )
-from weather import fetch_forecast, fetch_marine, summarise_conditions
-from messenger import score_spot, generate_message
+from weather import clamp_date_range, MAX_FORECAST_DAYS
+from messenger import get_centre_conditions, generate_message, describe_period
 
 # ------------------------------------------------------------
 # Page config
@@ -33,14 +33,15 @@ st.set_page_config(
 # Helpers
 # ------------------------------------------------------------
 @st.cache_data(ttl=1800)
-def get_conditions(lat: float, lon: float, days: int = 5):
-    weather = fetch_forecast(lat, lon, days=days)
-    marine = fetch_marine(lat, lon, days=days)
-    summary = summarise_conditions(weather, marine)
-    return weather, marine, summary
+def get_conditions(centre_id: str, start, end):
+    """Cached per centre + date range."""
+    centre = get_centres_by_ids([centre_id])[0]
+    return get_centre_conditions(centre, start=start, end=end)
 
 
-def score_colour(score: float) -> str:
+def score_colour(score) -> str:
+    if score is None:
+        return "⚪"
     if score >= 8:
         return "🟢"
     if score >= 6.5:
@@ -89,10 +90,13 @@ selected_ids = [c.id for c in selected_centres]
 st.sidebar.markdown("### Date range")
 today = datetime.now(zoneinfo.ZoneInfo("Pacific/Auckland")).date()
 col1, col2 = st.sidebar.columns(2)
-start_date = col1.date_input("From", value=today)
-end_date = col2.date_input("To", value=today + timedelta(days=6))
+max_date = today + timedelta(days=MAX_FORECAST_DAYS - 1)
+start_date = col1.date_input("From", value=today, min_value=today, max_value=max_date)
+end_date = col2.date_input("To", value=today + timedelta(days=6), min_value=today, max_value=max_date)
 
-days_ahead = max(1, min((end_date - today).days + 1, 8))
+start_date, end_date, range_notes = clamp_date_range(start_date, end_date, today=today)
+for note in range_notes:
+    st.sidebar.caption(f"ℹ️ {note}")
 
 # ------------------------------------------------------------
 # Main
@@ -104,43 +108,27 @@ if not selected_centres:
     st.warning("Select at least one fishing centre in the sidebar to get started.")
     st.stop()
 
-st.subheader("Quick outlook")
-with st.spinner("Checking conditions..."):
-    try:
-        msg = generate_message(selected_ids=selected_ids, home_base=home_base, max_spots=4)
-        st.success(msg)
-    except Exception:
-        st.info("Could not generate summary right now – detailed cards below still work.")
-
-st.divider()
-
-st.subheader("Detailed conditions")
-
 results = []
 progress = st.progress(0, text="Fetching live data...")
 
 for i, centre in enumerate(selected_centres):
     progress.progress((i + 1) / len(selected_centres), text=f"Checking {centre.name}...")
-    try:
-        if i > 0:
-            time.sleep(1.1)
-        weather, marine, summary = get_conditions(centre.lat, centre.lon, days=days_ahead)
-        is_coastal = "freshwater" not in centre.tags
-        score = score_spot(summary, is_coastal=is_coastal)
-        results.append({
-            "centre": centre,
-            "summary": summary,
-            "score": score,
-        })
-    except Exception as e:
-        results.append({
-            "centre": centre,
-            "summary": {"error": str(e)},
-            "score": 0.0,
-        })
+    results.append(get_conditions(centre.id, start_date, end_date))
 
 progress.empty()
-results.sort(key=lambda x: x["score"], reverse=True)
+
+st.subheader(f"Quick outlook – {start_date:%a %-d %b} to {end_date:%a %-d %b}")
+try:
+    msg = generate_message(results=results, start=start_date, end=end_date)
+    st.success(msg)
+except Exception:
+    st.info("Could not generate summary right now – detailed cards below still work.")
+
+st.divider()
+
+st.subheader("Detailed conditions")
+
+results.sort(key=lambda x: -1 if x["score"] is None else x["score"], reverse=True)
 
 for r in results:
     centre = r["centre"]
@@ -153,7 +141,7 @@ for r in results:
             st.markdown(f"### {score_colour(score)} {centre.name}")
             st.caption(f"{centre.region} · {centre.island} Island")
         with col_b:
-            st.metric("Score", f"{score}/10")
+            st.metric("Score", f"{score}/10" if score is not None else "–")
 
         if "error" in summary:
             st.error(f"Could not load data: {summary['error']}")
@@ -164,7 +152,10 @@ for r in results:
             gust = summary.get("max_gust_kts")
             m2.metric("Max Gust", f"{gust} kn" if gust is not None else "–")
             swell = summary.get("avg_swell_m")
-            m3.metric("Avg Swell", f"{swell} m" if swell is not None else "–")
+            if not centre.is_coastal:
+                m3.metric("Avg Swell", "n/a", help="Freshwater – swell not applicable")
+            else:
+                m3.metric("Avg Swell", f"{swell} m" if swell is not None else "–")
             rain = summary.get("total_rain_mm", 0)
             m4.metric("Rain (period)", f"{rain} mm")
 
