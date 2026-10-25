@@ -6351,6 +6351,8 @@
    "how": "baits on the bottom off the rocks or over foul ground",
    "notes": [],
    "sources": [],
+   "role": "main",
+   "species_source": null,
    "changes": []
   },
   {
@@ -6359,6 +6361,8 @@
    "how": "ledger rigs on sand/foul edges",
    "notes": [],
    "sources": [],
+   "role": "main",
+   "species_source": null,
    "changes": []
   },
   {
@@ -6367,6 +6371,8 @@
    "how": "lures or soft-baits on surface work-ups",
    "notes": [],
    "sources": [],
+   "role": "main",
+   "species_source": null,
    "changes": []
   },
   {
@@ -6375,6 +6381,8 @@
    "how": null,
    "notes": [],
    "sources": [],
+   "role": "main",
+   "species_source": null,
    "changes": []
   },
   {
@@ -6383,6 +6391,8 @@
    "how": null,
    "notes": [],
    "sources": [],
+   "role": "main",
+   "species_source": null,
    "changes": []
   }
  ],

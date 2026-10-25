@@ -6391,6 +6391,8 @@
     "Parsons et al. 2014, 'Snapper (Chrysophrys auratus): a review of life history and key vulnerabilities in New Zealand', NZ J Marine & Freshwater Research 48(2). https://www.tandfonline.com/doi/full/10.1080/00288330.2014.892013",
     "NIWA: spring spawning migrations at about 16 C. https://niwa.co.nz/news/will-it-be-fintastic-fishing-year"
    ],
+   "role": "main",
+   "species_source": null,
    "changes": [
     {
      "date": "2026-11-01",
@@ -6404,6 +6406,8 @@
    "how": "live-baits or jigs around pins and reefs",
    "notes": [],
    "sources": [],
+   "role": "main",
+   "species_source": null,
    "changes": []
   },
   {
@@ -6412,6 +6416,8 @@
    "how": "lures or soft-baits on surface work-ups",
    "notes": [],
    "sources": [],
+   "role": "main",
+   "species_source": null,
    "changes": []
   },
   {
@@ -6420,6 +6426,8 @@
    "how": "berley and small baits",
    "notes": [],
    "sources": [],
+   "role": "main",
+   "species_source": null,
    "changes": []
   },
   {
@@ -6428,6 +6436,8 @@
    "how": null,
    "notes": [],
    "sources": [],
+   "role": "main",
+   "species_source": null,
    "changes": []
   },
   {
@@ -6436,6 +6446,8 @@
    "how": "baits on sandy bottom",
    "notes": [],
    "sources": [],
+   "role": "main",
+   "species_source": null,
    "changes": []
   }
  ],
