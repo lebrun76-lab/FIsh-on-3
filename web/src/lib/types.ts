@@ -68,6 +68,8 @@ export interface TideEvent {
 }
 
 export interface FishingWindow {
+  id?: string;                  // engine 2.4: "hauraki_gulf:<start>/<end>", stable across runs, new id if the window shifts. Missing on older output
+  target_species?: string[];    // engine 2.4: species this window suits. Missing on older output
   start: string;
   end: string;
   score: number;

@@ -9,7 +9,7 @@ const g = globalThis as unknown as { __outbox?: SentEmail[] };
 export const mockOutbox = (g.__outbox ??= []);
 export const mailMode = () => (process.env.RESEND_API_KEY ? "resend" : "mock");
 
-const text = (t: EmailTemplate) => [...t.body, "", `${t.cta.label}: ${t.cta.href}`, "", t.footer, `${t.unsubscribe.label}: ${t.unsubscribe.href}`].join("\n");
+const text = (t: EmailTemplate) => [...t.body, "", `${t.cta.label}: ${t.cta.href}`, ...(t.more ?? []).map((b) => `${b.label}: ${b.href}`), "", t.footer, `${t.unsubscribe.label}: ${t.unsubscribe.href}`].join("\n");
 
 export async function sendEmail(t: EmailTemplate, to: string, idempotencyKey: string): Promise<SentEmail> {
   if (mailMode() === "mock") {

@@ -3,6 +3,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { allForecasts } from "../src/lib/forecasts";
 import { alertCall } from "../src/lib/call";
+import { demoAlert, followupFor } from "../src/lib/feedback";
 import { alertEmail, pauseReminderEmail, renderEmailHtml, trialEndingEmail, welcomeEmail, wordsBeforeButton, type EmailTemplate } from "../src/lib/emails";
 const out = process.argv[2] ?? "/workspace/fish-on-screenshots/emails-v2";
 mkdirSync(out, { recursive: true });
@@ -15,6 +16,9 @@ const write = (name: string, m: EmailTemplate) => {
   writeFileSync(`${out}/${name}-inbox.html`, html.replace(/(<body[^>]*>)/, `$1${row}`));
   console.log(`${out}/${name}.html  [${m.subject.length} chars] ${m.subject}  | ${wordsBeforeButton(m)} words before the button | preheader: ${m.preheader}`);
 };
+if (process.env.ONLY === "howd-it-go") { // npx tsx scripts/render-emails.ts /workspace/fish-on-screenshots/howd-it-go with ONLY=howd-it-go
+  write("howd-it-go", followupFor(demoAlert(Date.now()), Date.now())); writeFileSync(`${out}/index.json`, JSON.stringify(["howd-it-go-inbox"])); process.exit(0);
+}
 if (process.env.ONLY === "pause-reminder") { // npx tsx scripts/render-emails.ts /workspace/fish-on-screenshots/pause with ONLY=pause-reminder
   write("reminder", pauseReminderEmail("Fri 26 Feb")); writeFileSync(`${out}/index.json`, JSON.stringify(["reminder-inbox"])); process.exit(0);
 }
@@ -24,5 +28,5 @@ for (const f of allForecasts().filter((x) => wanted.includes(x.spot.id))) {
   const m = alertEmail(f, alertCall(f));
   if (m) { write(`alert-${f.spot.id}`, m); index.push(`alert-${f.spot.id}-inbox`); } else console.log(`${f.spot.id}: no alert (no fishable window 1 to 2 days ahead)`);
 }
-write("welcome", welcomeEmail()); write("trial-ending", trialEndingEmail("Sun 8 Nov")); write("pause-reminder", pauseReminderEmail("Fri 26 Feb")); index.push("welcome-inbox", "trial-ending-inbox", "pause-reminder-inbox");
+write("welcome", welcomeEmail()); write("trial-ending", trialEndingEmail("Sun 8 Nov")); write("pause-reminder", pauseReminderEmail("Fri 26 Feb")); write("howd-it-go", followupFor(demoAlert(Date.now()), Date.now())); index.push("welcome-inbox", "trial-ending-inbox", "pause-reminder-inbox", "howd-it-go-inbox");
 writeFileSync(`${out}/index.json`, JSON.stringify(index));

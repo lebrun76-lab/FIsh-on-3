@@ -50,6 +50,7 @@ python3 scripts/screenshots.py /workspace/fish-on-screenshots   # CHROME=/path/t
 | `/pricing` | NZ$7.99/mo or NZ$49.99/yr, 14-day no-card trial (proposed) | — |
 | `/signin` | Mock magic link and Google sign-in | — |
 | `/account` | Plan/trial status, Pause for winter (Pro), alert settings, email previews (alert, welcome, trial ending; `src/lib/emails.ts`, built from the engine's alert pick 1 to 2 days ahead inside the user's "When can you fish?" times (`src/lib/fishtimes.ts`, `profiles.fishing_times`), at most 2 per user per rolling 7 days, best scores first, never the same window twice (`src/lib/alerts.ts`, `alerts_sent`); render with `npx tsx scripts/render-emails.ts && python3 scripts/render-emails.py`) | Alerts are Pro |
+| `/howd-it-go/[token]` | "How'd it go?" answer page from the follow-up email (signed token, no sign-in, noindex). GET only shows a confirm button; saving is `POST /api/howd-it-go` | — |
 | `/about` | Short plain about page | — |
 | `/offline` | Fallback page served by the service worker | — |
 
@@ -71,6 +72,17 @@ No Stripe account exists yet. With `STRIPE_SECRET_KEY` unset, `src/lib/stripe.ts
 - While paused: no alerts (`planUserAlerts` in `src/lib/alerts.ts`, view `alert_recipients`) and the site treats the user as Free (`effectivePlan` in `src/lib/pause.ts`).
 - Reminder email 7 NZ days before a pause ends, once per pause (`src/lib/reminders.ts`, `pause_reminders_sent`, migration `20261026150000_pause_reminders.sql`); under 7 days left when first seen: sent at the next run. None for no-end-date pauses or after an early resume. Sent with `src/lib/mailer.ts` (Resend; mock outbox when `RESEND_API_KEY` is unset). Preview: `ONLY=pause-reminder npx tsx scripts/render-emails.ts <dir> && python3 scripts/render-emails.py <dir>`
 - Checks: `npx tsx scripts/check-pause.ts [ISO time ...]`
+
+## "How'd it go?" follow-up and the Forecast Brain export
+Scope: `docs/post-launch-catch-log.md`. Rules: `src/lib/feedback.ts`. Migration `20261026160000_howd_it_go.sql` (not applied anywhere).
+- One email per sent alert (`alerts_sent`), from 8am NZ the day after the window starts (or when the window ends, if later), until the end of that NZ day; a missed run catches up the same day, then it is stale. Skipped for paused users, unsubscribed users (`profiles.emails_unsubscribed_at`) and alerts already followed up (`alerts_sent.followup_sent_at`, plus Resend idempotency key `howd-it-go/<alert id>`). The job is a library function (`runFollowups`); nothing schedules it yet.
+- Buttons: Caught something / Nothing doing / Didn't go (`caught`, `nothing`, `didnt_go`). Each links to `/howd-it-go/<token>?o=<answer>`. The token is per alert, HMAC-SHA256 with `FEEDBACK_SECRET`, expires 14 days after the email. Without `RESEND_API_KEY`/`SUPABASE_URL` a fixed mock secret is used; with either set, `FEEDBACK_SECRET` is required.
+- Link scanners open links, so GET never records: the page shows a one-tap confirm that POSTs. After "Caught", optional species chips (the window's `target_species` first, then the spot's list) or Skip.
+- One answer per alert (`catch_feedback.alert_id` unique). It can be changed for 7 days after the first answer, while the token is valid. RLS: users read their own rows; writes are service role only. No coordinates.
+- Engine 2.4 windows carry `id` (`spot:start/end`, stable across runs, new id if the window shifts) and `target_species`. Alerts store both as they were (`alerts_sent.window_id`, `.target_species`); older output gets the same `spot:start/end` id and no target species. The site's engine JSON is still 2.2/2.3 (not regenerated from engine PR #9); a fixture covers 2.4.
+- Export for Forecast Brain: `exportForBrain(rows)` / `exportCsv(rows)` in `src/lib/feedback.ts` (server only), or the `catch_feedback_export` view (service role only). Columns: `spot_id, window_id, target_species, window_start, window_end, score, outcome, species`. No user ids or alert ids. `didnt_go` stays as its own outcome so it can be filtered; `hitRate` counts caught / (caught + nothing) and never counts `didnt_go`.
+- Preview: `ONLY=howd-it-go npx tsx scripts/render-emails.ts <dir> && python3 scripts/render-emails.py <dir>`
+- Checks: `npx tsx scripts/check-feedback.ts` (email copy is also linted in `scripts/check-calls.ts`)
 
 ## Voice and visuals
 - Copy is plain and dry: short, factual, no exclamation marks, no hype words, no decorative emoji. Say what the conditions are and what to do.

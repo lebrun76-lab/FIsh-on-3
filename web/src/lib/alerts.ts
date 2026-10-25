@@ -14,7 +14,9 @@ import type { SpotForecast } from "./types";
 
 export const ALERT_CAP = 2, ALERT_CAP_DAYS = 7;
 /** A row of public.alerts_sent. */
-export interface SentAlert { spot_id: string; window_start: string; window_end: string; score: number; sent_at: string; }
+export interface SentAlert { spot_id: string; window_start: string; window_end: string; score: number; sent_at: string; window_id?: string | null; target_species?: string[] | null; }
+/** The engine's window id (2.4+), stored as it was in the alert. Older output: built the same way (spot:start/end). */
+export const windowIdOf = (spotId: string, c: Pick<Call, "start" | "end" | "window">) => c.window?.id ?? `${spotId}:${c.start}/${c.end}`;
 export interface AlertPlan { spot_id: string; call: Call; }
 
 const key = (spot: string, start: string) => `${spot}@${Date.parse(start)}`;
@@ -37,7 +39,7 @@ export function planAlerts(forecasts: SpotForecast[], times: FishTime[], sent: S
 
 /** The rows to insert into alerts_sent once the emails are out. */
 export const sentRows = (plan: AlertPlan[], now = Date.now()): SentAlert[] =>
-  plan.map((p) => ({ spot_id: p.spot_id, window_start: p.call.start!, window_end: p.call.end!, score: p.call.score, sent_at: new Date(now).toISOString() }));
+  plan.map((p) => ({ spot_id: p.spot_id, window_start: p.call.start!, window_end: p.call.end!, score: p.call.score, sent_at: new Date(now).toISOString(), window_id: windowIdOf(p.spot_id, p.call), target_species: p.call.window?.target_species ?? null }));
 
 /** The user fields the job needs. paused_until = profiles.paused_until (Pause for winter). */
 export interface AlertAccount { plan: AnyPlan; paused_until: string | null; alerts_enabled: boolean; fishing_times: FishTime[]; }

@@ -11,7 +11,7 @@ import { plain, plainDeep, portNames, tideSourceText } from "../src/lib/plain";
 import type { FishingWindow, SpotForecast } from "../src/lib/types";
 import { ALERT_CAP, ALERT_CAP_DAYS, byBest, planAlerts, sentInCap, sentRows, type SentAlert } from "../src/lib/alerts";
 import { DEFAULT_FISH_TIMES, fitsTimes, normaliseTimes, toggleTime, type FishTime } from "../src/lib/fishtimes";
-import { alertEmail, shortSpot, welcomeEmail, trialEndingEmail, pauseReminderEmail, wordsBeforeButton, type EmailTemplate } from "../src/lib/emails";
+import { alertEmail, shortSpot, welcomeEmail, trialEndingEmail, pauseReminderEmail, howdItGoEmail, wordsBeforeButton, type EmailTemplate } from "../src/lib/emails";
 
 const DASH = /—| [-–] /;                       // no em dashes, no spaced dashes
 const HYPE = /\b(unlock|elevate|revolutioni[sz]e|AI[- ]powered|game[- ]chang|supercharge|seamless)/i;
@@ -36,7 +36,7 @@ const emailProbs = (where: string, m: EmailTemplate) => {
   const out: string[] = [];
   if (m.preheader.length > 50) out.push(`${where}: preheader over 50 chars "${m.preheader}"`);
   if (!m.unsubscribe.href.includes("unsubscribe")) out.push(`${where}: no unsubscribe link`);
-  for (const s of [m.subject, m.preheader, ...m.body, m.cta.label, m.footer]) {
+  for (const s of [m.subject, m.preheader, ...m.body, m.cta.label, ...(m.more ?? []).map((b) => b.label), m.footer]) {
     out.push(...copyProbs(where, s));
     if (/—/.test(s)) out.push(`${where}: em dash "${s}"`);
     if (EMAIL_HYPE.test(s)) out.push(`${where}: hype "${s}"`);
@@ -47,6 +47,14 @@ const emailProbs = (where: string, m: EmailTemplate) => {
 {
   const w = welcomeEmail();
   fixed.push(...emailProbs("welcome email", w), ...emailProbs("trial email", trialEndingEmail("Sun 8 Nov")), ...emailProbs("pause reminder email", pauseReminderEmail("Fri 26 Feb")));
+  const fu = { caught: "https://x/c", nothing: "https://x/n", didnt_go: "https://x/d" };
+  for (const [name, st, en] of [["Bay of Islands", "2027-10-30T17:00:00+13:00", "2027-10-30T20:00:00+13:00"], ["Hauraki Gulf (Auckland)", "2027-10-30T05:00:00+13:00", "2027-10-30T08:00:00+13:00"], ["Coromandel (east coast)", "2027-10-30T22:00:00+13:00", "2027-10-31T02:00:00+13:00"]]) {
+    const h = howdItGoEmail(name, st, en, fu);
+    fixed.push(...emailProbs(`howd-it-go email ${name}`, h));
+    if (h.subject.length > 60) fixed.push(`howd-it-go email ${name}: subject ${h.subject.length} chars`);
+    if (wordsBeforeButton(h) > 20) fixed.push(`howd-it-go email ${name}: ${wordsBeforeButton(h)} words before the button`);
+    if ([h.cta.label, ...(h.more ?? []).map((b) => b.label)].join("|") !== "Caught something|Nothing doing|Didn't go") fixed.push(`howd-it-go email ${name}: buttons`);
+  }
   if (w.body.length !== 3) fixed.push(`welcome email: ${w.body.length} lines, want 3`);
   if (w.body.some((l) => l.split(/\s+/).length > 16)) fixed.push("welcome email: a line over 16 words");
 }

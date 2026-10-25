@@ -9,10 +9,11 @@ import type { Call } from "./call";
 import type { SpotForecast } from "./types";
 
 export interface EmailTemplate {
-  kind: "alert" | "welcome" | "trial" | "pause_reminder";
+  kind: "alert" | "welcome" | "trial" | "pause_reminder" | "howd_it_go";
   from: string; subject: string; preheader: string;
   body: string[];                                  // everything above the button
   cta: { label: string; href: string };
+  more?: { label: string; href: string }[];        // extra buttons after the main one (How'd it go?)
   footer: string;
   unsubscribe: { label: string; href: string };
 }
@@ -97,6 +98,35 @@ export function pauseReminderEmail(restartsOn: string): EmailTemplate {
   };
 }
 
+const NZ_TZ = "Pacific/Auckland";
+const nzBits = (iso: string) => {
+  const p = Object.fromEntries(new Intl.DateTimeFormat("en-NZ", { timeZone: NZ_TZ, weekday: "short", hour: "numeric", minute: "2-digit", hour12: false }).formatToParts(new Date(iso)).map((x) => [x.type, x.value]));
+  return { wd: p.weekday as string, hh: Number(p.hour) % 24, mm: Number(p.minute) };
+};
+const clock12 = (hh: number, mm: number) => `${hh % 12 === 0 ? 12 : hh % 12}${mm ? ":" + String(mm).padStart(2, "0") : ""}${hh < 12 ? "am" : "pm"}`;
+/** "Sat 6pm to 9pm" in NZ time, from two instants. */
+export function nzWindowLabel(start: string, end: string): string {
+  const a = nzBits(start), b = nzBits(end);
+  return `${a.wd} ${clock12(a.hh, a.mm)} to ${b.wd === a.wd ? "" : b.wd + " "}${clock12(b.hh, b.mm)}`;
+}
+/** Links for the three answers (signed per alert, see feedback.ts). */
+export interface FollowupLinks { caught: string; nothing: string; didnt_go: string; }
+/** Morning after an alert window: "How'd it go?" with three one-tap answers. */
+export function howdItGoEmail(spotName: string, windowStart: string, windowEnd: string, links: FollowupLinks): EmailTemplate {
+  const spot = shortSpot(spotName), when = nzBits(windowStart).hh >= 17 ? "last night" : "yesterday";
+  const long = `How'd it go at ${spot} ${when}?`;
+  return {
+    kind: "howd_it_go",
+    from: `${BRAND.name} <${BRAND.emails.hello}>`,
+    subject: long.length <= 60 ? long : `How'd it go ${when}?`,
+    preheader: "One tap. It helps the forecasts.",
+    body: [`Your alert was for ${nzWindowLabel(windowStart, windowEnd)}. Get anything?`],
+    cta: { label: "Caught something", href: links.caught },
+    more: [{ label: "Nothing doing", href: links.nothing }, { label: "Didn't go", href: links.didnt_go }],
+    footer, unsubscribe,
+  };
+}
+
 /** Words a reader meets before the button (the body lines). */
 export const wordsBeforeButton = (t: EmailTemplate) => t.body.join(" ").split(/\s+/).filter(Boolean).length;
 
@@ -110,7 +140,7 @@ export function renderEmailHtml(t: EmailTemplate): string {
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border-radius:16px">
 <tr><td style="padding:20px 24px 0;font-size:13px;font-weight:700;color:#0c4a6e">${esc(BRAND.name)}</td></tr>
 <tr><td style="padding:12px 24px 0">${t.body.map((p) => `<p style="margin:0 0 10px;font-size:17px;line-height:1.45">${esc(p).replace(/(\d) (kn|m)\b/g, "$1&nbsp;$2")}</p>`).join("")}</td></tr>
-<tr><td style="padding:8px 24px 20px"><a href="${esc(t.cta.href)}" style="display:inline-block;background:#0c4a6e;color:#ffffff;text-decoration:none;font-weight:600;font-size:16px;padding:12px 22px;border-radius:999px">${esc(t.cta.label)}</a></td></tr>
+<tr><td style="padding:8px 24px 20px"><a href="${esc(t.cta.href)}" style="display:inline-block;background:#0c4a6e;color:#ffffff;text-decoration:none;font-weight:600;font-size:16px;padding:12px 22px;border-radius:999px">${esc(t.cta.label)}</a>${(t.more ?? []).map((b) => ` <a href="${esc(b.href)}" style="display:inline-block;margin-top:8px;background:#ffffff;color:#0c4a6e;border:2px solid #0c4a6e;text-decoration:none;font-weight:600;font-size:16px;padding:10px 20px;border-radius:999px">${esc(b.label)}</a>`).join("")}</td></tr>
 <tr><td style="padding:14px 24px 20px;border-top:1px solid #e2e8f0;font-size:12px;line-height:1.5;color:#64748b">${esc(t.footer)} <a href="${esc(t.unsubscribe.href)}" style="color:#64748b">${esc(t.unsubscribe.label)}</a></td></tr>
 </table></td></tr></table></body></html>`;
 }
