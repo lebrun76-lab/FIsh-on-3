@@ -28,8 +28,8 @@ export function regionCalls(): RegionCall[] {
     const name = s.name.split(" (")[0];
     const when = day.date === todayISO ? "today" : dateLabel(day.date);
     const call = w && w.score >= 4.5
-      ? `Go, ${clock(w.start)}–${clock(w.end)}, ${name} — ${targets.join("/").toLowerCase()}${sp[0] ? `, ${sp[0].name.toLowerCase()} ${sizeText(sp[0])}` : ""}.`
-      : score >= 4.5 ? `Maybe — ${name} is fishable but no standout window ${when}.` : `Give it a miss ${when} at ${name}. ${day.summary}.`;
+      ? `${w.rating === "marginal" ? "Best chance" : "Go"}, ${clock(w.start)}–${clock(w.end)}, ${name} — ${targets.join("/").toLowerCase()}${sp[0] ? `, ${sp[0].name.toLowerCase()} ${sizeText(sp[0])}` : ""}.`
+      : score >= 4.5 ? `Maybe — ${name} is fishable but no standout window ${when}.` : `Give it a miss ${when} at ${name}: no fishable window. ${day.summary}.`;
     const prev = best.get(s.region);
     if (!prev || score > prev.score) best.set(s.region, { region: s.region, spotId: s.id, spotName: name, rating: w?.rating ?? day.rating, score, call, tactics: speciesOf(f).find((x) => x.status !== "closed")?.how ?? sp[0]?.tactics ?? "", species: targets, dayLabel: day.date === todayISO ? "Today" : dateLabel(day.date), mock: f.data_status === "mock-fallback" });
   }

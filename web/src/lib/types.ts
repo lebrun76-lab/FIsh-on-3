@@ -74,7 +74,9 @@ export interface FishingWindow {
   headline: string;             // "Saturday 6–10am looks great"
   advice: string;               // plain-English, 1–2 sentences
   reasons: string[];            // short bullet reasons: "Light wind 5–8 kn"
-  confidence?: "high" | "medium" | "low"; // v1.1: lead-time heuristic (<=2 d high, <=6 d medium)
+  confidence?: "high" | "medium" | "low"; // v1.1: engine 2.2 = lead time lowered by model disagreement / data gaps
+  confidence_detail?: ConfidenceDetail;    // v1.1 (engine 2.2)
+  label?: string;                          // engine 2.2: "least-bad (not recommended)" on least-bad windows
   // v1.1 (engine 2.1): up to 3 windows per day, in time order
   date?: string;
   wind_kn?: number | null;
@@ -85,6 +87,20 @@ export interface FishingWindow {
   swell_m?: number | null;
   swell_period_s?: number | null;
   rain_mm?: number | null;
+}
+
+/** Engine 2.2 (docs/CONFIDENCE.md): why a window has the confidence it has. */
+export interface ConfidenceDetail {
+  level: "high" | "medium" | "low";
+  lead_days: number;
+  lead_level: "high" | "medium" | "low";
+  agreement: "good" | "fair" | "poor" | "unknown";
+  score_best_match?: number | null;
+  model_scores?: Record<string, number>;   // "wind:ecmwf_ifs025", "waves:meteofrance_wave", ...
+  score_spread?: number | null;
+  models_missing?: string[];
+  gap_hours?: number;
+  downgrades?: string[];
 }
 
 export interface SpeciesStatus {  // v1.1 (engine species.py, sourced) - once per forecast
@@ -116,18 +132,30 @@ export interface DaySummary {
   verdict_text?: string;
   best_window_text?: string | null;
   best_window?: FishingWindow | null; // v1.1 (engine 2.1)
-  windows?: number;                   // v1.1: number of windows that day
+  windows?: number;                   // v1.1: number of fishable windows that day
+  // engine 2.2: best_window is null on a day with no fishable window
+  no_window_reason?: string | null;
+  least_bad_window?: FishingWindow | null; // labelled "least-bad (not recommended)"
+  lead_confidence?: "high" | "medium" | "low";
+  gust_kn_max_daylight?: number | null;    // gust_kn_max / wind_kn_max are over all hours (2.2)
+  wind_kn_max_daylight?: number | null;
   moon?: { phase: string; age_days: number; illumination_pct: number; near_new_or_full: boolean };
   species?: SpeciesStatus[];     // engine 2.0 only; 2.1 sends SpotForecast.species once
 }
 
 export interface Verdict {
   rating: Rating;
-  score: number;                // best score over the period
+  score: number;                // engine 2.2: best fishable score in the next horizon_days (least-bad score, or 0, if none)
   headline: string;             // "Go Saturday morning"
   advice: string;               // the plain-English paragraph shown first
   confidence: "high" | "medium" | "low";
-  window?: { start: string; end: string } | null; // v1.1: the window the verdict refers to
+  window?: { start: string; end: string } | null; // v1.1: the window the verdict refers to; null = nothing fishable
+  // engine 2.2
+  horizon_days?: number;        // 3
+  horizon_end?: string;         // last date inside the horizon
+  no_window_reason?: string | null;
+  least_bad?: (Partial<FishingWindow> & { start: string; end: string; score: number; rating: Rating; label?: string }) | null;
+  best_later?: { start: string; end: string; date: string; score: number; rating: Rating; headline: string; advice: string; confidence: "high" | "medium" | "low" } | null;
 }
 
 export interface SpotForecast {

@@ -25,6 +25,9 @@ SHOTS = [  # (name, path, auth-state or None)
     ("20-spot-catlins-pro-secondary-port", "/spots/catlins", state("pro")),
     ("22-spot-dunedin-pro-sst-break", "/spots/dunedin", state("pro")),
     ("23-spot-central-otago-lake-pro", "/spots/central_otago_lakes", state("pro")),
+    ("24-spot-bluff-pro-no-window", "/spots/bluff", state("pro")),
+    ("25-spot-bluff-free-no-window", "/spots/bluff", state("free")),
+    ("26-spot-fiordland-pro-no-window", "/spots/fiordland", state("pro")),
 ]
 if os.environ.get("ONLY"):  # e.g. ONLY=21-mock-fallback BASE=http://localhost:3001
     SHOTS = [(os.environ["ONLY"], os.environ.get("ONLY_PATH", "/spots/hauraki_gulf"), state(os.environ.get("ONLY_PLAN", "free")))]

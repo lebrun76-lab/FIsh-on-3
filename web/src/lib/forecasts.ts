@@ -52,13 +52,15 @@ export function getForecast(id: string): SpotForecast | null {
     const f = JSON.parse(raw) as SpotForecast;
     if (f.api_version !== "1" || !Array.isArray(f.days) || !f.days.length) throw new Error("bad payload");
     const ageH = (Date.now() - Date.parse(f.generated_at)) / 3.6e6;
-    const best = (x: SpotForecast) => x.windows.slice().sort((a, b) => b.score - a.score)[0];
     const t = trim({ ...f, data_status: "engine", stale: ageH > STALE_H });
-    const bw = best(t);
-    // Use the engine's verdict; only re-derive it once its window has passed.
+    // Use the engine's verdict (next 3 days). Only re-derive it once its window has passed,
+    // and then only from windows still inside a 3-day horizon from now.
     const vEnd = f.verdict.window?.end ? Date.parse(f.verdict.window.end) : null;
-    const expired = vEnd !== null ? vEnd <= Date.now() : bw && bw.start !== f.windows.slice().sort((a, b) => b.score - a.score)[0]?.start;
-    if (bw && expired) t.verdict = { ...t.verdict, rating: bw.rating, score: bw.score, headline: (bw.rating === "great" || bw.rating === "good" ? "Go " : "Best chance: ") + bw.advice.split(",")[0], advice: bw.advice, confidence: bw.confidence ?? t.verdict.confidence, window: { start: bw.start, end: bw.end } };
+    if (vEnd !== null && vEnd <= Date.now()) {
+      const horizon = Date.now() + (f.verdict.horizon_days ?? 3) * 864e5;
+      const bw = t.windows.filter((w) => Date.parse(w.start) < horizon).sort((a, b) => b.score - a.score)[0];
+      if (bw) t.verdict = { ...t.verdict, rating: bw.rating, score: bw.score, headline: (bw.rating === "great" || bw.rating === "good" ? "Go " : "Best chance: ") + bw.advice.split(",")[0], advice: bw.advice, confidence: bw.confidence ?? t.verdict.confidence, window: { start: bw.start, end: bw.end } };
+    }
     return t;
   } catch (e) {
     return mockFallback(id, `Engine output unreadable: ${(e as Error).message}`);
