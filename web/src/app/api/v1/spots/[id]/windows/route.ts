@@ -10,5 +10,5 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
   const q = new URL(req.url).searchParams;
   const min = Number(q.get("min_score") ?? 6), near = q.get("near_best") === "1";
   const windows = f.windows.filter((w) => w.score >= min && (!near || isNearBest(f, w))).map((w) => ({ ...w, near_best: isNearBest(f, w) }));
-  return NextResponse.json({ api_version: "1", spot_id: id, generated_at: f.generated_at, data_status: f.data_status, windows });
+  return NextResponse.json({ api_version: "1", spot_id: id, generated_at: f.generated_at, valid_until: f.valid_until ?? null, engine_version: f.engine_version ?? null, data_status: f.data_status, windows });
 }

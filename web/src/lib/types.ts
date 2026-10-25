@@ -30,6 +30,7 @@ export interface Spot {
   tide_port?: string | null;    // v1.1: LINZ port used (standard or nearest secondary)
   tide_port_id?: string | null;
   tide_port_km?: number | null; // distance spot -> tide port
+  tide_port_linz_name?: string | null; // 2.3: raw LINZ name ("Lottin Point - Wakatiri"); tide_port is the display form ("Lottin Point (Wakatiri)"). Not shown.
   tide_note?: string;
   forecast_point?: ModelPoint & { cell_selection?: "sea" | "land" | string; note?: string | null }; // v1.1: where the weather is taken
   marine_point?: ModelPoint | null;                                                                // v1.1: where waves/SST are taken
@@ -179,7 +180,8 @@ export interface SpotForecast {
   fallback_reason?: string;
   stale?: boolean;
   run_id?: string;
-  engine_version?: string;
+  engine_version?: string;      // e.g. "2.3.0"
+  valid_until?: string;         // 2.3: end of the hour generated_at falls in; today's score and windows next change then
   hourly_step_h?: number;
   tide_source?: string | null;
   tide_datum?: TideDatum | null;

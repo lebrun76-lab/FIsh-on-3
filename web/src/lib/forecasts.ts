@@ -12,7 +12,7 @@ import { SPOTS, buildForecast, getSpot } from "./mock";
 import type { SpotForecast } from "./types";
 import { nzTodayISO } from "./time";
 import { bestCall } from "./call";
-import { plainDeep } from "./plain";
+import { plainDeep, portNames } from "./plain";
 
 const DIR = process.env.SALTSUPPLY_FORECAST_DIR ?? process.env.FISHCAST_FORECAST_DIR /* deprecated */ ?? path.join(process.cwd(), "data", "forecasts");
 const STALE_H = 6;
@@ -54,7 +54,7 @@ export function getForecast(id: string): SpotForecast | null {
     const f = JSON.parse(raw) as SpotForecast;
     if (f.api_version !== "1" || !Array.isArray(f.days) || !f.days.length) throw new Error("bad payload");
     const ageH = (Date.now() - Date.parse(f.generated_at)) / 3.6e6;
-    const t = plainDeep(trim({ ...f, data_status: "engine", stale: ageH > STALE_H }));
+    const t = plainDeep(portNames(trim({ ...f, data_status: "engine", stale: ageH > STALE_H })));
     return withCurrentVerdict(t);
   } catch (e) {
     return mockFallback(id, `Engine output unreadable: ${(e as Error).message}`);

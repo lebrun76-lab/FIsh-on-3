@@ -56,12 +56,24 @@ export function isNearBest(f: SpotForecast, w: FishingWindow): boolean {
 /** Day score to show: today uses score_remaining (daylight still to come), falling back to score; other days use score. */
 export const dayScore = (d: DaySummary, today = nzTodayISO()) => (d.date === today && d.score_remaining != null ? d.score_remaining : d.score);
 
-/** Today's score was counted from remaining_from. Once the clock is past that hour, the cached number includes hours that have gone. */
-export function todayStale(f: SpotForecast, now = Date.now()): { stale: boolean; from: string | null } {
+/** Is today's part of the output out of date? Engine 2.3+ says so directly with valid_until
+ *  (end of the hour it was made in). Older output: the clock's hour is past remaining_from.
+ *  `from` is the hour today's score counts from; `until` is when it stopped being current. */
+export function todayStale(f: SpotForecast, now = Date.now()): { stale: boolean; from: string | null; until: string | null } {
   const d = f.days.find((x) => x.date === nzTodayISO());
   const from = d?.remaining_from ?? null;
-  if (!from) return { stale: false, from: null };
-  return { stale: Math.floor(now / 36e5) * 36e5 > Date.parse(from), from };
+  if (f.valid_until && !Number.isNaN(Date.parse(f.valid_until))) return { stale: now >= Date.parse(f.valid_until), from, until: f.valid_until };
+  if (!from) return { stale: false, from: null, until: null };
+  return { stale: Math.floor(now / 36e5) * 36e5 > Date.parse(from), from, until: nextHourWall(from) };
+}
+
+/** "2026-10-26T08:00:00+13:00" -> "2026-10-26T09:00:00+13:00", keeping NZ wall time and offset (for clock()). */
+function nextHourWall(iso: string): string {
+  const m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2})(.*)$/.exec(iso);
+  if (!m) return iso;
+  const d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], +m[4] + 1));
+  const p = (n: number) => String(n).padStart(2, "0");
+  return `${d.getUTCFullYear()}-${p(d.getUTCMonth() + 1)}-${p(d.getUTCDate())}T${p(d.getUTCHours())}${m[5]}`;
 }
 
 export const nextDayIndex = (f: SpotForecast) => Math.max(0, f.days.findIndex((d) => d.score !== null));

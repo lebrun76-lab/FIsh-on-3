@@ -7,6 +7,7 @@ Stack: Next.js 16 (App Router) · TypeScript · Tailwind v4 · Recharts 3. Lives
 
 ## Forecast data (scheduled job, local)
 Forecast Brain (engine 2.2.0) is a read-only clone of PR #6 (`feat/engine-round-d`) at `/workspace/fish-engine-site`, installed editable. It is imported, never edited (`/workspace/fish-engine` is another agent's working copy and is not used).
+`data/forecasts/latest/bay_of_islands.json` is Forecast Brain's PR #8 sample (engine 2.3.0, commit c3702d4: `valid_until`, LINZ display names, en dash time ranges). The other spots stay on run `2693d266` (2.2.0) to show older output still works.
 ```bash
 # one-off setup (repo root)
 git clone --branch feat/engine-round-d https://github.com/lebrun76-lab/FIsh-on-3 /workspace/fish-engine-site

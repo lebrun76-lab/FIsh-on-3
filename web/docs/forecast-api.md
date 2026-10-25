@@ -69,7 +69,10 @@ All additive. Older output without these fields still loads: `lib/call.ts` check
 | Every window | `windows[]` = every separate window scoring ≥ 4.5 (3 to 5 h, at least 2 h apart, up to 4 a day); `days[].windows` = count | Pro day-by-day list shows them all. The hourly-scores fallback in `bestCall()` now only runs on older output: once the engine's listed windows have passed there's nothing fishable left. |
 | near_best | `windows[].near_best` (bool, also on `days[].best_window` / `least_bad_window`): within 1.5 of the day's best | `Call.also` = other live near-best windows on the pick's day. Pro: "Also worth a look today: 6–9pm (good, 6.4)." under the call; free: "Another good window today too. See it with Pro." Window cards that aren't the pick say "Also worth a look" or "Fishable, but well short of the day's best". On older output `isNearBest()` works it out from the day's best score. The windows API takes `?near_best=1`. |
 | Today's score | `days[].score_remaining`, `remaining_from`, `score_full_day` | `dayScore()`: today shows `score_remaining` (falls back to `score`), headed "Rest of today, from 8am"; other days show `score`. `score_full_day` isn't shown. |
-| Stale today | `remaining_from` | `todayStale()`: if the current hour is past `remaining_from`, the header strip says "Today's score counts from 8am, when this forecast was made. A fresh one is due." The job has no on-demand refresh, so it's a note only. |
+| Stale today | `valid_until` (2.3), else `remaining_from` | `todayStale()`: on 2.3+ output it's stale once the clock reaches `valid_until` (end of the hour the forecast was made in). Older output: stale once the current hour is past `remaining_from`. Stale: the header strip says "Today's score counts from 8am, when this forecast was made. A fresh one was due at 9am." Not stale: "current until 9am". The job has no on-demand refresh, so it's a note only. |
+| Engine version | `engine_version` ("2.3.0") | Header strip "Forecast Brain v2.3.0" ("version not recorded" if missing); also in the windows API response with `valid_until`. `check-calls` prints the versions it loaded. |
+| Port names (2.3) | `spot.tide_port` / `tide_source` / `tide_note` / `sources[]` read "Lottin Point (Wakatiri)"; raw LINZ name in `spot.tide_port_linz_name` | Shown as given; `tide_port_linz_name` is never shown and `plainDeep` skips it. `tideSourceText()` turns the trailing "(offsets from Auckland)" into ", offsets from Auckland, 5.8 km away" so there are no stacked brackets. Older output with "Area - Place" gets the same "Area (Place)" form from `portNames()` before `plain()` runs. `plain()` leaves brackets alone. |
+| Time ranges (2.3) | Unspaced en dash, "Mon 8–11am" | Kept as is (site's own `whenText()` uses the same dash). `check-calls` flags hyphen hour ranges like "8-11am". |
 | Copy | Engine sentences have no dashes | `lib/plain.ts` stays as a safety net for older output. Site copy checked by `scripts/check-calls.ts` (no em dashes or spaced dashes, no hype words). |
 
 ### SST map (PR #3)
@@ -131,6 +134,7 @@ export interface Spot {
   tide_port?: string | null;    // v1.1: LINZ port used (standard or nearest secondary)
   tide_port_id?: string | null;
   tide_port_km?: number | null; // distance spot -> tide port
+  tide_port_linz_name?: string | null; // 2.3: raw LINZ name; tide_port is the display form
   tide_note?: string;
   forecast_point?: ModelPoint & { cell_selection?: "sea" | "land" | string; note?: string | null }; // v1.1: where the weather is taken
   marine_point?: ModelPoint | null;                                                                // v1.1: where waves/SST are taken
@@ -275,7 +279,8 @@ export interface SpotForecast {
   fallback_reason?: string;
   stale?: boolean;
   run_id?: string;
-  engine_version?: string;
+  engine_version?: string;      // e.g. "2.3.0"
+  valid_until?: string;         // 2.3: end of the hour generated_at falls in
   hourly_step_h?: number;
   tide_source?: string | null;
   tide_datum?: TideDatum | null;

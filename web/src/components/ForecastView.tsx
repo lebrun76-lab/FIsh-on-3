@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { FishingWindow, HourPoint, SpotForecast } from "@/lib/types";
 import type { SstMapData } from "@/lib/sst";
 import { SstMap } from "./SstMap";
+import { tideSourceText } from "@/lib/plain";
 import { DATUM_TEXT, latLon, speciesOf, confidenceText, noWindowText } from "@/lib/view";
 import { useAuth, isPaid } from "@/lib/auth";
 import { PhotoSlot, RatingBadge, RATING_STYLE } from "./ui";
@@ -132,9 +133,9 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
         <div className="rounded-2xl bg-yellow-100 p-3 text-sm text-yellow-950 ring-2 ring-yellow-400"><b>MOCK FALLBACK: not a real forecast.</b> {f.fallback_reason} Numbers below are generated placeholders.</div>
       ) : (
         <div className={`rounded-xl px-3 py-2 text-xs ring-1 ${f.stale ? "bg-amber-50 text-amber-900 ring-amber-200" : "bg-white text-slate-500 ring-slate-100"}`}>
-          {f.stale ? "Old forecast (more than 6 hours) · " : ""}Forecast Brain v{f.engine_version} · generated {dayShort(f.generated_at)} {clock(f.generated_at)} NZ time{f.model_run ? ` · model: ${f.model_run.replace(/ \(.*\)$/, "")}` : ""}
-          {f.spot.forecast_point && <div>Weather for {latLon(f.spot.forecast_point.lat, f.spot.forecast_point.lon)}{f.spot.forecast_point.cell_selection === "sea" ? " (at sea)" : ""}{f.spot.marine_point && f.spot.coastal ? ` · waves & sea temp for ${latLon(f.spot.marine_point.lat, f.spot.marine_point.lon)}` : ""}{f.spot.coastal && f.tide_source ? ` · tides: ${f.tide_source}${f.spot.tide_port_km != null ? ` (${f.spot.tide_port_km} km away)` : ""}` : ""}</div>}
-          {ts.stale && ts.from && <div>Today&apos;s score counts from {clock(ts.from)}, when this forecast was made. A fresh one is due.</div>}
+          {f.stale ? "Old forecast (more than 6 hours) · " : ""}Forecast Brain {f.engine_version ? `v${f.engine_version}` : "(version not recorded)"} · generated {dayShort(f.generated_at)} {clock(f.generated_at)} NZ time{ts.until && !ts.stale ? ` · current until ${clock(ts.until)}` : ""}{f.model_run ? ` · model: ${f.model_run.replace(/ \(.*\)$/, "")}` : ""}
+          {f.spot.forecast_point && <div>Weather for {latLon(f.spot.forecast_point.lat, f.spot.forecast_point.lon)}{f.spot.forecast_point.cell_selection === "sea" ? " (at sea)" : ""}{f.spot.marine_point && f.spot.coastal ? ` · waves & sea temp for ${latLon(f.spot.marine_point.lat, f.spot.marine_point.lon)}` : ""}{f.spot.coastal && f.tide_source ? ` · tides: ${tideSourceText(f.tide_source, f.spot.tide_port_km)}` : ""}</div>}
+          {ts.stale && <div>{ts.from ? <>Today&apos;s score counts from {clock(ts.from)}, when this forecast was made. </> : null}A fresh one was due at {ts.until ? clock(ts.until) : "the top of the hour"}.</div>}
           {f.warnings?.map((w) => <div key={w}>Note: {w}</div>)}
         </div>
       )}
@@ -223,7 +224,7 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
       <section className="space-y-3">
         <h2 className="text-lg font-bold">The detail {pro ? "" : <span className="text-sm font-normal text-slate-500">(today)</span>}</h2>
         {f.spot.coastal && <div className="flex flex-wrap gap-2 text-sm">{f.tides.filter((t) => t.time.slice(0, 10) >= today).slice(0, 4).map((t) => <span key={t.time} className="rounded-full bg-white px-3 py-1 ring-1 ring-slate-100">{t.type === "high" ? "▲ High" : "▼ Low"} {dayShort(t.time)} {clock(t.time)} · {t.height_m} m</span>)}</div>}
-        {f.spot.coastal && f.tide_datum && <p className="text-xs text-slate-500">Tide heights in {DATUM_TEXT[f.tide_datum] ?? f.tide_datum}{f.tide_source ? `, ${f.tide_source}` : ""}. {f.spot.tide_note ? `${f.spot.tide_note.replace(/\.?$/, ".")} ` : ""}Not for navigation.</p>}
+        {f.spot.coastal && f.tide_datum && <p className="text-xs text-slate-500">Tide heights in {DATUM_TEXT[f.tide_datum] ?? f.tide_datum}{f.tide_source ? `, ${tideSourceText(f.tide_source)}` : ""}. {f.spot.tide_note ? `${f.spot.tide_note.replace(/\.?$/, ".")} ` : ""}Not for navigation.</p>}
         {!pro && <p className="text-xs text-slate-500">Charts show {dateLabel(today)}{f.hourly_step_h ? ` in ${f.hourly_step_h}-hour steps` : ""}.</p>}
         <div className="grid gap-3 md:grid-cols-2">
           <WindChart data={hourly} />
