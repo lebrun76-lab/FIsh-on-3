@@ -31,3 +31,15 @@ streamlit run app.py
 You’ll get a public link like `https://yourname-fish-on.streamlit.app` that you can share with your mates.
 
 That’s it – completely free.
+
+## Forecast engine v2 (preview)
+
+`fishon_engine/` is a standalone forecast engine. It gives per-hour, 3-hour and daily scores, best fishing windows in plain English, wind vs coastline, swell period, LINZ tides, SST, seasonal species, moon/sun, and a shared SQLite cache. See [docs/ENGINE.md](docs/ENGINE.md).
+
+```bash
+pip install -r requirements.txt pytest
+pytest -q
+python -m fishon_engine hauraki_gulf kaikoura bluff --days 3
+```
+
+Note: the free Open-Meteo API is for non-commercial use only. A paid site needs an Open-Meteo API plan (set `OPEN_METEO_API_KEY`).
