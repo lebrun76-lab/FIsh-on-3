@@ -113,6 +113,13 @@ def _reasons(summ: Dict, why: List[str], coastal: bool) -> List[str]:
     return out + [w[0].upper() + w[1:] for w in why]
 
 
+def window_id(spot_id: str, start: str, end: str) -> str:
+    """Stable window id: ``<spot_id>:<start ISO>/<end ISO>`` (NZ local time
+    with offset). Built only from the spot and the window's times, so the
+    same window gets the same id on every run whatever its score."""
+    return f"{spot_id}:{start}/{end}"
+
+
 def _window_out(win: List[Dict], spot: Spot, target, conf: str) -> Dict:
     summ = scoring.summarise(win, spot.facing, spot.is_coastal)
     rt = rating(summ["score"])
@@ -121,8 +128,10 @@ def _window_out(win: List[Dict], spot: Spot, target, conf: str) -> Dict:
     headline = {"great": f"{when} looks great", "good": f"{when} looks good",
                 "marginal": f"{when} is fishable", "poor": f"{when} is the least-bad option"}[rt]
     why = sorted({w for h in win for w in h["why"]})
+    start, end = summ["start"].isoformat(), summ["end"].isoformat()
     return {
-        "start": summ["start"].isoformat(), "end": summ["end"].isoformat(), "score": summ["score"],
+        "id": window_id(spot.id, start, end),
+        "start": start, "end": end, "score": summ["score"],
         "rating": rt, "headline": headline,
         "advice": text if rt != "poor" else "No good window. Least-bad: " + text,
         "reasons": _reasons(summ, why, spot.is_coastal), "confidence": conf,
@@ -130,6 +139,8 @@ def _window_out(win: List[Dict], spot: Spot, target, conf: str) -> Dict:
         "wind_kn": summ["wind_kn"], "gust_max_kn": summ["gust_max_kn"], "wind_from": summ["wind_from"],
         "wind_rel": summ["wind_rel"], "wave_m": summ["wave_m"], "swell_m": summ["swell_m"],
         "swell_period_s": summ["swell_period_s"], "rain_mm": summ["rain_mm"],
+        # 2.4.0: the species the advice names ("Try snapper"), or null
+        "target_species": target["name"] if target and rt != "poor" else None,
     }
 
 
@@ -159,7 +170,7 @@ def _when(w: Dict) -> str:
 def _brief(w: Optional[Dict]) -> Optional[Dict]:
     if not w:
         return None
-    return {k: w[k] for k in ("start", "end", "date", "score", "rating", "headline", "advice", "confidence")}
+    return {k: w[k] for k in ("id", "start", "end", "date", "score", "rating", "headline", "advice", "confidence")}
 
 
 def _no_window_reason(least: Optional[Dict], span: str) -> str:
@@ -206,7 +217,7 @@ def _verdict(fishable: List[Dict], least_bad: List[Dict], days_out: List[Dict], 
         labels = [next(d["label"] for d in days_out if d["date"] == o) for o in others[:3]]
         advice += ". Also good: " + ", ".join(labels) + "."
     return {"rating": best["rating"], "score": best["score"], "headline": headline, "advice": advice,
-            "confidence": best["confidence"], "window": {"start": best["start"], "end": best["end"]},
+            "confidence": best["confidence"], "window": {"id": best["id"], "start": best["start"], "end": best["end"]},
             "no_window_reason": None, "least_bad": None, **base}
 
 

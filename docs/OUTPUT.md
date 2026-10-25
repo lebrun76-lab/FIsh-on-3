@@ -13,7 +13,7 @@ Real samples, regenerated offline from recorded responses with `python tools/mak
 
 | # | Item | Engine 2.1 / 2.2 |
 |---|---|---|
-| 1 | packaging | `pyproject.toml`: `pip install -e /path/to/fish-engine`, version from `fishon_engine.__version__` (2.3.0), extras `[sstmap]`, `[test]`, script `fishon-forecast` |
+| 1 | packaging | `pyproject.toml`: `pip install -e /path/to/fish-engine`, version from `fishon_engine.__version__` (2.4.0), extras `[sstmap]`, `[test]`, script `fishon-forecast` |
 | 2 | SST too warm? | Checked against NOAA satellite SST: real and anomalously warm. See SST_CHECK.md; `warnings[]` carries a note |
 | 3 | scores too optimistic | Recalibrated weights. See SCORING.md |
 | 4 | gusts 2–2.6× mean | Sea cells and sea weather points. See WEATHER_POINTS.md; `spot.forecast_point` |
@@ -31,7 +31,7 @@ Real samples, regenerated offline from recorded responses with `python tools/mak
 - **Times**: ISO 8601 with the NZ offset (`+13:00` / `+12:00`). `hourly[]` is built from Open-Meteo unixtime, so DST days have 23 or 25 rows.
 - **Ratings**: v1 four bands. great ≥ 7.5, good ≥ 6, marginal ≥ 4.5, else poor. A `days[].score` of `null` ("No daylight left today", only for today late at night) gets rating `poor`. Day `summary` text starts with a word that matches the rating (Excellent / Good / Marginal / Poor). Site proposal 3 (five bands) is not adopted: the four v1 bands are kept.
 - **Daily aggregates** (2.2): `gust_kn_max` and `wind_kn_max` are over **every hour of the date**, so they are never below any `hourly[]` row (2.1 used daylight hours only, so e.g. Hauraki Sun 1 Nov showed 17.5 kn while the hourly rows reached 20.2). The daylight-only maxima are in additive `gust_kn_max_daylight` / `wind_kn_max_daylight`. Wind avg, swell avg and wave avg are over sunrise–sunset hours. `sst_c_avg` is the mean over all hours (2.1 already did this; this page wrongly said daylight). Rain is the whole-day total.
-- **`verdict`** (2.2): picks from fishable windows (rating marginal or better) in the **next 3 days only** (`verdict.horizon_days`, `verdict.horizon_end`, additive), not the whole period. Within those days a later window with lower confidence must still beat a nearer one by its margin (medium 0.5, low 1.0). Headline: "Go <Weekday> <part of day>" (great/good) or "Best chance: …" (marginal). `advice` adds "Also good: <days>" (within the horizon). The best fishable window after the horizon is in additive `verdict.best_later` (`start,end,date,score,rating,headline,advice,confidence`) or null.
+- **`verdict`** (2.2): picks from fishable windows (rating marginal or better) in the **next 3 days only** (`verdict.horizon_days`, `verdict.horizon_end`, additive), not the whole period. Within those days a later window with lower confidence must still beat a nearer one by its margin (medium 0.5, low 1.0). Headline: "Go <Weekday> <part of day>" (great/good) or "Best chance: …" (marginal). `advice` adds "Also good: <days>" (within the horizon). The best fishable window after the horizon is in additive `verdict.best_later` (`id,start,end,date,score,rating,headline,advice,confidence`) or null.
 - **No fishable window** (2.2): if nothing in the horizon rates marginal or better, `verdict.window` is **null**, `rating` is `poor`, the headline is "No fishable window in the next 3 days", and `verdict.no_window_reason` says why (e.g. "No fishable window in the next 3 days: no daylight run of hours scores 4.5 (marginal) or more. Least-bad is <window> at <score>/10 (<reasons>)"). The least-bad option is only in `verdict.least_bad`, labelled `"least-bad (not recommended)"`; `advice` also names the next fishable window if there is one later. `verdict.score` is the least-bad score (0 if none). The same applies per day: `days[].best_window` is null on a day with no fishable window, `days[].no_window_reason` explains, and `days[].least_bad_window` (additive) holds the labelled least-bad. Top-level `windows[]` lists only fishable windows (2.1 also listed a poor least-bad window per day), and `days[].windows` counts them.
 - **`confidence`** (2.2): lead time, lowered by model disagreement and data gaps; see docs/CONFIDENCE.md. Same `high/medium/low` enum. Detail in additive `windows[].confidence_detail`; `days[].lead_confidence` keeps the lead-only value.
 - **`model_run`**: `"ECMWF IFS 2026-10-25T00:00Z (latest run ingested by Open-Meteo best_match)"`. Open-Meteo `best_match` blends models and does not say which run produced a given hour. The engine therefore reports `last_run_initialisation_time` from Open-Meteo's model metadata (`https://api.open-meteo.com/data/<model>/static/meta.json`; marine: `marine-api.open-meteo.com`) for ECMWF IFS, the main global model for NZ in best_match. `model_runs{}` lists ecmwf_ifs, ncep_gfs013, dwd_icon, meteofrance_wave and ecmwf_wam (5 small GETs cached 30 min, shared by `forecast_many`). If metadata is unreachable: `"unavailable (Open-Meteo model metadata not reachable)"`.
@@ -44,7 +44,7 @@ Real samples, regenerated offline from recorded responses with `python tools/mak
 - `spot`: `facing_deg`, `facing_note`, `tide_port`, `tide_port_id`, `tide_port_km`, `tide_port_linz_name` (2.3), `tide_note`, `forecast_point`, `marine_point` (2.2: `marine_point.note` when the marine cell is far from the spot; docs/MARINE_POINTS.md).
 - `verdict` (2.2): `no_window_reason`, `least_bad`, `best_later`, `horizon_days`, `horizon_end`.
 - `hourly[]`: `wave_m`, `wind_rel`, `light`, `tide_phase`, `rating`.
-- `windows[]`: `confidence`, `confidence_detail` (2.2), `date`, `wind_kn`, `gust_max_kn`, `wind_from`, `wind_rel`, `wave_m`, `swell_m`, `swell_period_s`, `rain_mm`.
+- `windows[]`: `id` and `target_species` (2.4.0, see Window ids), `confidence`, `confidence_detail` (2.2), `date`, `wind_kn`, `gust_max_kn`, `wind_from`, `wind_rel`, `wave_m`, `swell_m`, `swell_period_s`, `rain_mm`.
 - `days[]`: `label`, `confidence`, `verdict_text`, `best_window` (window object), `best_window_text`, `windows` (count), `moon`, `wave_m_avg`, `wind_kn_max`, `blocks_3h[]`; 2.2: `gust_kn_max_daylight`, `wind_kn_max_daylight`, `no_window_reason`, `least_bad_window`, `lead_confidence` (kept for the Streamlit app).
 - `tides[]`: `datum`, `source`.
 
@@ -80,7 +80,7 @@ All additive; `validate_v1` still passes.
 
 **`valid_until` (2.3).** The engine drops past hours at hour granularity, so today's `score`, `score_remaining`, today's windows and the verdict only change when the clock passes the top of the hour. `valid_until` is that moment: `generated_at` floored to the hour, plus 1 h (08:48 gives `"2026-10-26T09:00:00+13:00"`; 00:54 gives `01:00`). The forecast cache TTL is also 1 h, so a fresh run after `valid_until` may also pick up new forecast data; marine and model-comparison caches live 3 h and LINZ tide tables 30 days, so those can be older than `generated_at`. It is a "recompute after" time, not a guarantee the weather data was refreshed at that point.
 
-**Version.** `engine_version` is `"2.3.0"` (pyproject reads it from `fishon_engine.__version__`). The samples are regenerated, so every sample carrying `near_best`, `score_remaining` or `valid_until` reports 2.3.0.
+**Version.** This section shipped in 2.3.0. The current `engine_version` is given under Window ids below.
 
 The headline and verdict are unchanged: the verdict still picks the best fishable window (with the confidence margin), so the extra lower windows can't change it. "Also good" still lists other days.
 
@@ -131,3 +131,26 @@ The day `summary` still starts with the rating word, so it now reads e.g. "Excel
 Of the 21 coastal spots only `coromandel` currently matches a port with a spaced hyphen, so its `tide_port`, `tide_note` and `tide_source` change (e.g. `tide_source` "LINZ secondary port Coromandel Harbour (Whanganui Island) (offsets from Auckland)"). docs/TIDE_PORTS.md keeps the raw LINZ names.
 
 **Brand.** Salt Supply Co (was Fish On): HTTP User-Agent `SaltSupplyCo-engine/2.0 (+https://github.com/lebrun76-lab/FIsh-on-3)`, the pyproject description, README title and the Streamlit app's titles. The package (`fishon_engine`, `fishon-engine`), the CLI script name (`fishon-forecast`) and the cache path (`~/.cache/fishon`) are unchanged.
+
+## Window ids (2.4.0)
+
+Every window object carries a fixed `id`, so a catch report ("How'd it go?") can record which forecast window an alert was about.
+
+**Format.** `<spot.id>:<start>/<end>`, where `start` and `end` are the window's own ISO 8601 strings in NZ local time with offset, exactly as in `start` and `end`. Example from `docs/samples/v1_hauraki_gulf_2026-10-26.json`:
+
+```json
+{"id": "hauraki_gulf:2026-10-26T05:00:00+13:00/2026-10-26T08:00:00+13:00",
+ "start": "2026-10-26T05:00:00+13:00", "end": "2026-10-26T08:00:00+13:00", "score": 8.2, "...": "..."}
+```
+
+**Stability.** The id is built only from the spot id and the window's start and end. It does not include the score, rating, confidence, `generated_at` or `engine_version`, so the same window computed on a later run gets the same id even if its score has changed. If a later run moves the window (for example 5 to 8am becomes 6 to 9am), that is a different window and gets a different id. Ids are unique within one output. Treat the id as an opaque string; do not parse it.
+
+**Where it appears.** `windows[].id`, `days[].best_window.id`, `days[].least_bad_window.id`, `verdict.window.id` (null window stays null), `verdict.best_later.id` and `verdict.least_bad.id`. `verdict.window.id` always matches one of `windows[].id`.
+
+**Validation.** `validate_v1` now requires `windows[].id` as a string, checks it equals `<spot.id>:<start>/<end>`, checks ids are unique, and checks `verdict.window.id` is in `windows[]`.
+
+**`target_species`.** Each window also carries `target_species` (string or null): the species its `advice` names after "Try", for example `"Snapper"`. Null when the advice names none (no species open, or a poor least-bad window). It is also on `days[].best_window` and `days[].least_bad_window`.
+
+**What to store per catch report.** Window `id`, `spot.id`, window `start` and `end`, window `score`, window `target_species`, and top-level `engine_version`. Storing the score and engine version next to the id lets later scoring checks tell a bad forecast from a quiet day, even after the engine is recalibrated.
+
+**Version.** `engine_version` is `"2.4.0"` (minor bump: two new window fields and a stricter validator, no changed values). It is top level in every output and pyproject reads it from `fishon_engine.__version__`. The samples are regenerated and all report 2.4.0.
