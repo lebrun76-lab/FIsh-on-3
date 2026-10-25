@@ -1,0 +1,59 @@
+# Live run 2026-10-25 23:36 NZDT - python -m fishon_engine hauraki_gulf kaikoura bluff --days 3
+=== Hauraki Gulf (Auckland) - shore faces 60 deg; tides: LINZ Auckland
+  Sun 25 Oct: -/10 No daylight left today [high confidence] | SST 17.3 C | waxing gibbous 98%
+    Tides: low 00:50 0.7 m; high 07:15 3.0 m; low 13:14 0.8 m; high 19:32 3.1 m
+    Species: Snapper (in season), Kingfish (no seasonal data), Kahawai (no seasonal data), Trevally (no seasonal data)
+  Mon 26 Oct: 8.5/10 Excellent - go fishing [high confidence] | SST 17.1 C | full moon 100%
+    Best: Mon 5-8am, gentle cross-offshore W 7 kn, 0.1 m sea @ 3 s, rising tide, high 8:02am, dawn - try snapper: soft-baits or berleyed baits along reef edges and work-ups  (9.1/10)
+    Tides: low 01:37 0.6 m; high 08:02 3.2 m; low 13:59 0.6 m; high 20:19 3.2 m
+    Species: Snapper (in season), Kingfish (no seasonal data), Kahawai (no seasonal data), Trevally (no seasonal data)
+  Tue 27 Oct: 5.8/10 Fair - pick your window [high confidence] | SST 16.8 C | full moon 99%
+    Best: Tue 6-9pm, moderate offshore SW 14 kn, 0.7 m sea @ 5 s, rising tide, high 9:06pm, dusk - try snapper: soft-baits or berleyed baits along reef edges and work-ups  (7.1/10)
+    Tides: low 02:24 0.4 m; high 08:48 3.3 m; low 14:45 0.5 m; high 21:06 3.3 m
+    Species: Snapper (in season), Kingfish (no seasonal data), Kahawai (no seasonal data), Trevally (no seasonal data)
+  LINZ vs Open-Meteo tide check: {'matched': 10, 'mean_offset_min': -41.9, 'max_abs_offset_min': 51.4, 'linz_range_m': 2.9, 'model_range_m': 2.51}
+  cache: {'forecast': {'cache': 'hit', 'age_s': 198}, 'marine': {'cache': 'hit', 'age_s': 197}}
+=== Kaikōura (Canterbury) - shore faces 120 deg; tides: LINZ Kaikōura
+  Sun 25 Oct: -/10 No daylight left today [high confidence] | SST 13.8 C | waxing gibbous 98%
+    Tides: high 04:17 1.6 m; low 10:31 0.3 m; high 16:43 1.6 m; low 22:53 0.3 m
+    Species: Blue Cod (no seasonal data), Tarakihi (no seasonal data), Groper (no seasonal data), Kahawai (no seasonal data)
+  Mon 26 Oct: 8.3/10 Excellent - go fishing [high confidence] | SST 14.0 C | full moon 100%
+    Best: Mon 5-8am, light NW 2 kn, 0.7 m sea @ 10 s, falling tide, dawn - try blue cod: baits on the bottom off the rocks or over foul ground  (8.6/10)
+    Tides: high 05:06 1.6 m; low 11:21 0.2 m; high 17:32 1.6 m; low 23:42 0.2 m
+    Species: Blue Cod (no seasonal data), Tarakihi (no seasonal data), Groper (no seasonal data), Kahawai (no seasonal data)
+  Tue 27 Oct: 6.7/10 Good [high confidence] | SST 14.0 C | full moon 99%
+    Best: Tue 6-9pm, light E 2 kn, 1.2 m sea @ 7 s, falling tide, dusk - try blue cod: baits on the bottom off the rocks or over foul ground  (7.3/10)
+    Tides: high 05:57 1.7 m; low 12:13 0.2 m; high 18:23 1.6 m
+    Species: Blue Cod (no seasonal data), Tarakihi (no seasonal data), Groper (no seasonal data), Kahawai (no seasonal data)
+  LINZ vs Open-Meteo tide check: {'matched': 10, 'mean_offset_min': -28.5, 'max_abs_offset_min': 35.3, 'linz_range_m': 1.5, 'model_range_m': 1.67}
+  cache: {'forecast': {'cache': 'hit', 'age_s': 239}, 'marine': {'cache': 'hit', 'age_s': 238}}
+=== Bluff (Southland) - shore faces 180 deg; tides: LINZ Bluff
+  Sun 25 Oct: -/10 No daylight left today [high confidence] | SST 12.7 C | waxing gibbous 98%
+    Tides: high 01:26 2.8 m; low 07:44 0.7 m; high 13:51 2.7 m; low 20:03 0.7 m
+    Species: Blue Cod (no seasonal data), Tarakihi (no seasonal data), Groper (no seasonal data), Hapuku (no seasonal data)
+  Mon 26 Oct: 2.1/10 Poor - stay home / sheltered water only [high confidence] | SST 12.9 C | full moon 100%
+    Best: No good window. Least-bad: Mon 9am-12pm, moderate offshore N 16 kn, 1.8 m sea @ 8 s, rising tide  (3.0/10)
+    Tides: high 02:10 2.8 m; low 08:29 0.7 m; high 14:34 2.8 m; low 20:47 0.6 m
+    Species: Blue Cod (no seasonal data), Tarakihi (no seasonal data), Groper (no seasonal data), Hapuku (no seasonal data)
+  Tue 27 Oct: 0.8/10 Poor - stay home / sheltered water only [high confidence] | SST 12.9 C | full moon 99%
+    Best: No good window. Least-bad: Tue 10am-1pm, fresh cross-shore W 18 kn, 1.5 m sea @ 8 s, rising tide  (1.1/10)
+    Tides: high 02:56 2.9 m; low 09:15 0.6 m; high 15:19 2.8 m; low 21:34 0.6 m
+    Species: Blue Cod (no seasonal data), Tarakihi (no seasonal data), Groper (no seasonal data), Hapuku (no seasonal data)
+  LINZ vs Open-Meteo tide check: {'matched': 10, 'mean_offset_min': -68.5, 'max_abs_offset_min': 73.2, 'linz_range_m': 2.3, 'model_range_m': 2.38}
+  cache: {'forecast': {'cache': 'hit', 'age_s': 97}, 'marine': {'cache': 'hit', 'age_s': 97}}
+
+# 3-hour blocks, Kaikoura (--blocks)
+  Mon 26 Oct: 8.3/10 Excellent - go fishing [high confidence] | SST 14.0 C | full moon 100%
+    Best: Mon 5-8am, light NW 2 kn, 0.7 m sea @ 10 s, falling tide, dawn - try blue cod: baits on the bottom off the rocks or over foul ground  (8.6/10)
+    Tides: high 05:06 1.6 m; low 11:21 0.2 m; high 17:32 1.6 m; low 23:42 0.2 m
+    Species: Blue Cod (no seasonal data), Tarakihi (no seasonal data), Groper (no seasonal data), Kahawai (no seasonal data)
+        12am-3am  7.0 wind NW 2.0 kn (offshore) sea 0.7 m @5.0s rain 0
+         3am-6am  8.0 wind NW 3.0 kn (offshore) sea 0.7 m @8.0s rain 0
+         6am-9am  8.1 wind NW 1.0 kn (offshore) sea 0.7 m @10.0s rain 0
+        9am-12pm  7.8 wind E 2.0 kn (onshore) sea 0.7 m @11.0s rain 0
+        12pm-3pm  7.3 wind NE 4.1 kn (cross-shore) sea 0.7 m @10.0s rain 0
+         3pm-6pm  7.4 wind NE 4.0 kn (cross-shore) sea 0.7 m @10.0s rain 0
+         6pm-9pm  8.4 wind E 1.6 kn (onshore) sea 0.8 m @8.0s rain 0
+        9pm-12am  6.4 wind SE 1.9 kn (cross-onshore) sea 0.9 m @6.0s rain 0
+  LINZ vs Open-Meteo tide check: {'matched': 6, 'mean_offset_min': -29.5, 'max_abs_offset_min': 32.2, 'linz_range_m': 1.4, 'model_range_m': 1.48}
+  cache: {'forecast': {'cache': 'miss', 'age_s': 0}, 'marine': {'cache': 'miss', 'age_s': 0}}

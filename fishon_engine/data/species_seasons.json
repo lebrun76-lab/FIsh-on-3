@@ -1,0 +1,62 @@
+{
+  "_about": "Seasonality and rule notes used by fishon_engine.species. Every non-null claim carries a source. 'how' strings are general angling tips, not sourced facts. Months are 1-12. Species/spot combos not listed are treated as 'no seasonal data' (shown, never invented). Checked 2026-10-25 NZDT.",
+  "entries": [
+    {
+      "names": ["Snapper"],
+      "spot_ids": "*",
+      "good_months": [10, 11, 12, 1, 2, 3],
+      "peak_months": [11, 12],
+      "min_sst_c": 14.8,
+      "how": "soft-baits or berleyed baits along reef edges and work-ups",
+      "note": "Inshore spawning aggregations Oct-Mar, peak Nov-Dec; spawning starts at roughly 14.8-16 C sea temperature.",
+      "sources": [
+        "Parsons et al. 2014, 'Snapper (Chrysophrys auratus): a review of life history and key vulnerabilities in New Zealand', NZ J Marine & Freshwater Research 48(2). https://www.tandfonline.com/doi/full/10.1080/00288330.2014.892013",
+        "NIWA: spring spawning migrations at about 16 C. https://niwa.co.nz/news/will-it-be-fintastic-fishing-year"
+      ]
+    },
+    {
+      "names": ["Blue Cod"],
+      "spot_ids": ["marlborough_sounds"],
+      "closed": [{"from": "09-01", "to": "01-10",
+                  "rule": "Marlborough Sounds blue cod season closed 1 Sep - 10 Jan inclusive (extended Aug 2025)."}],
+      "how": "baits on the bottom over rocky foul",
+      "sources": ["MPI Challenger fishing rules. https://www.mpi.govt.nz/fishing-aquaculture/recreational-fishing/fishing-rules/challenger-fishing-rules"]
+    },
+    {
+      "names": ["Blue Cod"],
+      "spot_ids": "*",
+      "how": "baits on the bottom off the rocks or over foul ground",
+      "sources": []
+    },
+    {
+      "names": ["Bluefin Tuna", "Bluefin (offshore)", "Tuna (seasonal)"],
+      "spot_ids": ["greymouth", "haast_jackson", "fiordland"],
+      "good_months": [1, 2, 3, 4, 5, 6, 7, 8],
+      "peak_months": [7, 8],
+      "how": "offshore trips only, in a suitable boat",
+      "note": "Recreational southern bluefin tuna fishery off the west coast of the South Island runs January-August (2024-25 season Dec-Aug; Fiordland usually starts in January; Greymouth catches highest Jul-Aug).",
+      "sources": ["Fisheries NZ, FAR 2025/52 'Recreational harvest of southern bluefin tuna in New Zealand 2024-25'. https://fs.fish.govt.nz/Doc/26187/FAR-2025-52-Recreational-harvest-southern-bluefin-tuna-New-Zealand-2024-25.pdf.ashx"]
+    },
+    {
+      "names": ["Brown Trout", "Rainbow Trout", "Salmon (seasonal)"],
+      "spot_ids": ["central_otago_lakes"],
+      "good_months": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      "how": "spin or fly from the shore at first and last light",
+      "note": "Lakes Wanaka, Hawea, Wakatipu and Dunstan are open all year (bag 2 trout + 4 salmon on the main lakes). Many rivers close 30 Apr - check the Otago Fish & Game regulations. A licence is required.",
+      "sources": ["Fish & Game NZ, Otago winter fishing. https://www.fishandgame.org.nz/freshwater-fishing-in-new-zealand/where-to-fish/winter-fishing/otago/"]
+    },
+    {
+      "names": ["Brown Trout", "Rainbow Trout", "Salmon"],
+      "spot_ids": ["southern_lakes"],
+      "how": "spin or fly from the shore at first and last light",
+      "note": "Southland Fish & Game licence required; season dates not yet verified for this engine.",
+      "sources": []
+    },
+    {"names": ["Kahawai"], "spot_ids": "*", "how": "lures or soft-baits on surface work-ups", "sources": []},
+    {"names": ["Kingfish"], "spot_ids": "*", "how": "live-baits or jigs around pins and reefs", "sources": []},
+    {"names": ["Tarakihi"], "spot_ids": "*", "how": "ledger rigs on sand/foul edges", "sources": []},
+    {"names": ["Gurnard"], "spot_ids": "*", "how": "baits on sandy bottom", "sources": []},
+    {"names": ["Trevally"], "spot_ids": "*", "how": "berley and small baits", "sources": []},
+    {"names": ["Crayfish"], "spot_ids": "*", "how": "diving or pots; check size/sex rules", "sources": []}
+  ]
+}
