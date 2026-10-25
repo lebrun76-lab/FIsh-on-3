@@ -2,12 +2,12 @@
 import Link from "next/link";
 import type { RegionCall } from "@/lib/summaries";
 import { useAuth, isPaid } from "@/lib/auth";
-import { RatingBadge } from "./ui";
+import { RatingBadge, MockTag } from "./ui";
 import { Locked } from "./Locked";
 export function CallCard({ c, rank, tactics }: { c: RegionCall; rank?: number; tactics?: boolean }) {
   return (
     <Link href={`/spots/${c.spotId}`} className="block rounded-2xl bg-white p-4 ring-1 ring-slate-100">
-      <div className="flex items-center justify-between gap-2"><div className="font-semibold">{rank ? `${rank}. ` : ""}{c.region}</div><RatingBadge rating={c.rating} score={c.score} /></div>
+      <div className="flex items-center justify-between gap-2"><div className="font-semibold">{rank ? `${rank}. ` : ""}{c.region} <span className="text-xs font-normal text-slate-500">· {c.dayLabel}</span>{c.mock && <MockTag />}</div><RatingBadge rating={c.rating} score={c.score} /></div>
       <p className="mt-1 text-slate-800">{c.call}</p>
       {tactics && c.tactics && <p className="mt-1 text-sm text-slate-600">🎯 {c.tactics}</p>}
     </Link>

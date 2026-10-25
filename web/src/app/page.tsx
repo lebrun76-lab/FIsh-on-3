@@ -19,7 +19,7 @@ export default function Home() {
         </div>
       </section>
       <section>
-        <div className="mb-3 flex items-end justify-between"><h2 className="text-xl font-bold">Today’s calls</h2><Link href="/where-to-go" className="text-sm text-ocean-700 font-semibold">All regions →</Link></div>
+        <div className="mb-3 flex items-end justify-between"><h2 className="text-xl font-bold">Next fishing day’s calls</h2><Link href="/where-to-go" className="text-sm text-ocean-700 font-semibold">All regions →</Link></div>
         <div className="grid gap-3 md:grid-cols-3">{calls.map((c) => <CallCard key={c.region} c={c} />)}</div>
       </section>
       <section className="grid gap-3 md:grid-cols-4 text-sm">

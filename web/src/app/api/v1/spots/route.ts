@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { SPOTS } from "@/lib/mock";
-// GET /api/v1/spots?q=&island=  (MOCK)
+// GET /api/v1/spots?q=&island=  (static catalog, ids match fishon_engine SPOTS)
 export function GET(req: Request) {
   const u = new URL(req.url);
   const q = (u.searchParams.get("q") ?? "").toLowerCase();

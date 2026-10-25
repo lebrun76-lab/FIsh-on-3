@@ -146,11 +146,11 @@ export function buildForecast(spot: Spot, days = 10): SpotForecast {
   flush();
   windows.sort((a, b) => b.score - a.score);
 
-  const bestDay = [...daysOut].sort((a, b) => b.score - a.score)[0];
+  const bestDay = [...daysOut].sort((a, b) => (b.score ?? 0) - (a.score ?? 0))[0];
   const top = windows[0];
   const verdict: Verdict = top
     ? { rating: top.rating, score: top.score, headline: top.rating === "great" ? `Go ${dayLong(top.start)} ${Number(top.start.slice(11, 13)) < 12 ? "morning" : "afternoon"}` : `Best chance: ${dayLong(top.start)}`, advice: `${top.headline}: ${top.reasons.slice(0, 2).join(", ").toLowerCase()}. ${top.advice}`, confidence: top.start.slice(0, 10) <= daysOut[2].date ? "high" : "medium" }
-    : { rating: bestDay.rating, score: bestDay.score, headline: "Not a great week", advice: `Conditions look ${bestDay.rating} at best. ${dayLong(bestDay.date)} is the least-bad day — ${bestDay.summary.toLowerCase()}. Maybe one to sit out or try somewhere more sheltered.`, confidence: "medium" };
+    : { rating: bestDay.rating, score: bestDay.score ?? 0, headline: "Not a great week", advice: `Conditions look ${bestDay.rating} at best. ${dayLong(bestDay.date)} is the least-bad day — ${bestDay.summary.toLowerCase()}. Maybe one to sit out or try somewhere more sheltered.`, confidence: "medium" };
 
   return {
     api_version: "1", spot, generated_at: `${nzTodayISO()}T05:00:00${OFFSET}`, model_run: "MOCK", sources: ["MOCK DATA — prototype only", "Production: Open-Meteo forecast + marine (CC BY 4.0)"],

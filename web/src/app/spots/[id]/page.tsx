@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
-import { buildForecast, getSpot } from "@/lib/mock";
+import { getForecast } from "@/lib/forecasts";
 import { ForecastView } from "@/components/ForecastView";
+export const revalidate = 1800;
 export default async function SpotPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const spot = getSpot(id);
-  if (!spot) notFound();
-  // Production: fetch(`${FORECAST_API_URL}/v1/spots/${id}/forecast?days=7`, { next: { revalidate: 1800 } })
-  return <ForecastView f={buildForecast(spot, 10)} />;
+  const f = getForecast(id); // engine output from jobs/run_forecasts.py; labelled mock fallback if missing
+  if (!f) notFound();
+  return <ForecastView f={f} />;
 }
