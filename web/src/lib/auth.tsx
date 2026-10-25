@@ -6,14 +6,14 @@ import { DEFAULT_FISH_TIMES, normaliseTimes, type FishTime } from "./fishtimes";
 
 export type Plan = "free" | "trial" | "pro";
 export const isPaid = (p: Plan) => p !== "free";
-export interface AlertPrefs { enabled: boolean; minRating: "great" | "good"; sendAt: string; }
+export interface AlertPrefs { enabled: boolean; sendAt: string; } // no threshold: alerts use the engine 4.5 bar (src/lib/alerts.ts)
 interface State { trialEnds: string | null; user: { email: string; name: string } | null; plan: Plan; favourites: string[]; home: string | null; alerts: AlertPrefs; fishingTimes: FishTime[]; } // fishingTimes = profiles.fishing_times
 interface Ctx extends State {
   signIn: (email: string, name?: string, fishingTimes?: FishTime[]) => void; setFishingTimes: (t: FishTime[]) => void; signOut: () => void;
   toggleFav: (id: string) => void; setHome: (id: string) => void;
   setPlan: (p: Plan) => void; trialEnds: string | null; setAlerts: (a: AlertPrefs) => void; ready: boolean;
 }
-const DEFAULT: State = { trialEnds: null, user: null, plan: "free", favourites: [], home: null, alerts: { enabled: true, minRating: "good", sendAt: "18:00" }, fishingTimes: DEFAULT_FISH_TIMES };
+const DEFAULT: State = { trialEnds: null, user: null, plan: "free", favourites: [], home: null, alerts: { enabled: true, sendAt: "18:00" }, fishingTimes: DEFAULT_FISH_TIMES };
 const AuthCtx = createContext<Ctx | null>(null);
 const KEY = "saltsupply-mock-state";
 const LEGACY_KEY = "fishcast-mock-state"; // pre-rename prototype state, read once and migrated
@@ -23,7 +23,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [s, setS] = useState<State>(DEFAULT);
   const [ready, setReady] = useState(false);
   useEffect(() => {
-    try { const raw = localStorage.getItem(KEY) ?? localStorage.getItem(LEGACY_KEY); if (raw) { const v = { ...DEFAULT, ...JSON.parse(raw) }; setS({ ...v, fishingTimes: normaliseTimes(v.fishingTimes) }); } } catch {}
+    try { const raw = localStorage.getItem(KEY) ?? localStorage.getItem(LEGACY_KEY); if (raw) { const v = { ...DEFAULT, ...JSON.parse(raw) }; const { minRating: _old, ...alerts } = { ...DEFAULT.alerts, ...v.alerts }; setS({ ...v, alerts, fishingTimes: normaliseTimes(v.fishingTimes) }); } } catch {}
     setReady(true);
   }, []);
   const save = (n: State) => { setS(n); localStorage.setItem(KEY, JSON.stringify(n)); };

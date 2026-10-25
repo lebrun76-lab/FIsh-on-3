@@ -44,14 +44,13 @@ export function AccountView({ spots, alerts: alertMails, welcome, trial }: { spo
           <div className="mb-1 text-sm font-semibold">Alert type</div>
           <div className="grid gap-2 sm:grid-cols-2 text-sm">
             <div className={`rounded-xl p-3 ring-1 ${pro ? "ring-ocean-500 bg-ocean-100/50" : "ring-slate-200 opacity-60"}`}>Weekly outlook {pro ? "" : "(Pro)"}<br /><span className="text-slate-500">Thursday evening: the best weekend window</span></div>
-            <div className={`rounded-xl p-3 ring-1 ${pro ? "ring-ocean-500 bg-ocean-100/50" : "ring-slate-200 opacity-60"}`}>“It’s on” alert {pro ? "" : "(Pro)"}<br /><span className="text-slate-500">When a good window shows up in the next 10 days</span></div>
+            <div className={`rounded-xl p-3 ring-1 ${pro ? "ring-ocean-500 bg-ocean-100/50" : "ring-slate-200 opacity-60"}`}>“It’s on” alert {pro ? "" : "(Pro)"}<br /><span className="text-slate-500">When a good window shows up 1 to 2 days ahead</span></div>
           </div>
         </div>
         <fieldset disabled={!pro} className="space-y-3 disabled:opacity-50">
-          <div><div className="mb-1 text-sm font-semibold">Only tell me when it’s {pro ? "" : "(Pro)"}</div>
-            <div className="flex gap-2">{(["good", "great"] as const).map((r) => <button key={r} type="button" onClick={() => upd({ minRating: r })} className={`rounded-full px-3 py-1.5 text-sm capitalize ${alerts.minRating === r ? "bg-ocean-900 text-white" : "ring-1 ring-slate-200"}`}>{r} or better</button>)}</div></div>
           <label className="block text-sm font-semibold">Send at <input type="time" value={alerts.sendAt} onChange={(e) => upd({ sendAt: e.target.value })} className="ml-2 rounded-lg border border-slate-200 px-2 py-1 font-normal" /> <span className="font-normal text-slate-500">NZ time</span></label>
         </fieldset>
+        <p className="text-sm text-slate-600">We send at most two alerts a week, the best ones.</p>
         <details className="rounded-xl bg-slate-50 p-3 text-sm"><summary className="cursor-pointer font-semibold">Preview the emails</summary>
           <div className="mt-2 space-y-3">
             {!previewAlert && <p className="text-slate-500">No alert would go out for {spots.find((s) => s.id === previewSpot)?.name} right now: no fishable window 1 to 2 days ahead in your fishing times.</p>}

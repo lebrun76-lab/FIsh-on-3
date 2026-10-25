@@ -49,7 +49,7 @@ python3 scripts/screenshots.py /workspace/fish-on-screenshots   # CHROME=/path/t
 | `/catch-log` | Catch log stub | Pro |
 | `/pricing` | NZ$7.99/mo or NZ$49.99/yr, 14-day no-card trial (proposed) | — |
 | `/signin` | Mock magic link and Google sign-in | — |
-| `/account` | Plan/trial status, alert settings, email previews (alert, welcome, trial ending; `src/lib/emails.ts`, built from the engine's alert pick 1 to 2 days ahead inside the user's "When can you fish?" times (`src/lib/fishtimes.ts`, `profiles.fishing_times`); render with `npx tsx scripts/render-emails.ts && python3 scripts/render-emails.py`) | Alerts are Pro |
+| `/account` | Plan/trial status, alert settings, email previews (alert, welcome, trial ending; `src/lib/emails.ts`, built from the engine's alert pick 1 to 2 days ahead inside the user's "When can you fish?" times (`src/lib/fishtimes.ts`, `profiles.fishing_times`), at most 2 per user per rolling 7 days, best scores first, never the same window twice (`src/lib/alerts.ts`, `alerts_sent`); render with `npx tsx scripts/render-emails.ts && python3 scripts/render-emails.py`) | Alerts are Pro |
 | `/about` | Short plain about page | — |
 | `/offline` | Fallback page served by the service worker | — |
 
@@ -60,7 +60,7 @@ PWA: `public/manifest.webmanifest` and `public/sw.js` (a network-first stub with
 See `docs/forecast-api.md` (it includes the engine→v1 mapping and the proposed changes). Types: `src/lib/types.ts`. Loader: `src/lib/forecasts.ts`. Fallback mock: `src/lib/mock.ts`.
 - `GET /api/v1/spots?q=&island=`
 - `GET /api/v1/spots/{id}/forecast?days=1..10`
-- `GET /api/v1/spots/{id}/windows?min_score=6`
+- `GET /api/v1/spots/{id}/windows?min_score=4.5` (default 4.5)
 - `GET /api/v1/summaries`
 
 ## Voice and visuals

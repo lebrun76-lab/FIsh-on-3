@@ -19,7 +19,7 @@ The TypeScript source of truth is `src/lib/types.ts`. Forecast Brain should publ
 |---|---|---|
 | GET | `/v1/spots?q=&island=North|South` | `{ spots: Spot[] }` |
 | GET | `/v1/spots/{id}/forecast?days=1..10` | `SpotForecast` |
-| GET | `/v1/spots/{id}/windows?min_score=6.5` | `{ spot_id, windows: FishingWindow[] }` |
+| GET | `/v1/spots/{id}/windows?min_score=4.5` (default 4.5) | `{ spot_id, windows: FishingWindow[] }` |
 | GET | `/v1/summaries` | `{ summaries: SpotSummary[] }` (best score/rating per spot, for lists and maps) |
 | GET (proposed) | `/v1/regions/calls?date=` | `RegionCall[]`, one plain-English call per region (computed site-side in the prototype) |
 | GET (proposed) | `/v1/spots/{id}/safety?date=` | `{ level: ok|caution|no, text }`, the combined wind+swell check (site-side in the prototype) |

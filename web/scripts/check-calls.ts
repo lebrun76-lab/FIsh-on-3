@@ -9,6 +9,7 @@ import { alertCall, alertDates, pickOf, bestCall, dayScore, isNearBest, listsAll
 import { nzTodayISO } from "../src/lib/time";
 import { plain, plainDeep, portNames, tideSourceText } from "../src/lib/plain";
 import type { FishingWindow, SpotForecast } from "../src/lib/types";
+import { ALERT_CAP, ALERT_CAP_DAYS, byBest, planAlerts, sentInCap, sentRows, type SentAlert } from "../src/lib/alerts";
 import { DEFAULT_FISH_TIMES, fitsTimes, normaliseTimes, toggleTime, type FishTime } from "../src/lib/fishtimes";
 import { alertEmail, shortSpot, welcomeEmail, trialEndingEmail, wordsBeforeButton, type EmailTemplate } from "../src/lib/emails";
 
@@ -67,6 +68,13 @@ const emailProbs = (where: string, m: EmailTemplate) => {
   if (JSON.stringify(toggleTime(DEFAULT_FISH_TIMES, "any")) !== '["any"]' || JSON.stringify(toggleTime(["any"], "sunday")) !== '["sunday"]' || JSON.stringify(toggleTime(["sunday"], "sunday")) !== '["sunday"]') fixed.push("toggleTime");
   if (JSON.stringify(normaliseTimes(undefined)) !== JSON.stringify(DEFAULT_FISH_TIMES) || JSON.stringify(normaliseTimes(["sunday", "any"])) !== '["any"]') fixed.push("normaliseTimes");
 }
+// Alert cap: fixed ordering and window cases
+{
+  const o = [{ score: 7, start: "2026-10-29T05:00:00+13:00" }, { score: 8, start: "2026-10-30T05:00:00+13:00" }, { score: 7, start: "2026-10-28T18:00:00+13:00" }].sort(byBest).map((x) => `${x.score}@${x.start.slice(8, 10)}`).join(",");
+  if (o !== "8@30,7@28,7@29") fixed.push(`byBest order ${o}`);
+  const now = Date.parse("2026-10-26T09:00:00+13:00"), row = (daysAgo: number): SentAlert => ({ spot_id: "x", window_start: "2026-10-20T05:00:00+13:00", window_end: "2026-10-20T08:00:00+13:00", score: 6, sent_at: new Date(now - daysAgo * 864e5).toISOString() });
+  if (sentInCap([row(1), row(6.9), row(ALERT_CAP_DAYS), row(9)], now).length !== 2) fixed.push("sentInCap: rolling 7 days");
+}
 const TIME_SETS: FishTime[][] = [DEFAULT_FISH_TIMES, ["weekday_morning"], ["weekday_evening"], ["saturday"], ["sunday"], ["any"]];
 
 // Port names and brackets: plain() must not touch "Area (Place)"; older "Area - Place" output gets the 2.3 form.
@@ -98,7 +106,7 @@ for (const t of times.length ? times : [new Date().toISOString()]) {
     if (/!/.test(c.call)) probs.push(`region ${c.region}: punctuation "${c.call}"`);
     probs.push(...copyProbs(`region ${c.region}`, c.call));
   }
-  let fresh = 0, also = 0, until = 0, emails = 0, filtered = 0;
+  let fresh = 0, also = 0, until = 0, emails = 0, filtered = 0, capped = 0, capCands = 0;
   const versions = new Map<string, number>();
   const today = nzTodayISO();
   for (const f0 of allForecasts()) {
@@ -163,8 +171,32 @@ for (const t of times.length ? times : [new Date().toISOString()]) {
       probs.push(...emailProbs(id, m), ...rangeProbs(id, `${m.subject} ${m.body.join(" ")}`));
     }
   }
+  // alert cap across every spot (one user who saved them all)
+  for (const times of TIME_SETS) {
+    const all = allForecasts(), id = `cap [${times}]`;
+    const cands = all.map((f) => ({ spot_id: f.spot.id, call: alertCall(f, times, at) })).filter((p) => p.call.kind === "window");
+    const plan = planAlerts(all, times, [], at);
+    if (plan.length !== Math.min(ALERT_CAP, cands.length)) probs.push(`${id}: ${plan.length} planned from ${cands.length}`);
+    const ranked = cands.slice().sort((a, b) => byBest(a.call, b.call)).slice(0, ALERT_CAP).map((p) => `${p.spot_id}@${p.call.start}`);
+    if (JSON.stringify(plan.map((p) => `${p.spot_id}@${p.call.start}`)) !== JSON.stringify(ranked)) probs.push(`${id}: not the best ${ALERT_CAP}`);
+    for (let i = 1; i < plan.length; i++) if (byBest(plan[i - 1].call, plan[i].call) > 0) probs.push(`${id}: not best first`);
+    if (plan.some((p) => p.call.score < 4.5)) probs.push(`${id}: below 4.5`);
+    capped += plan.length; capCands = Math.max(capCands, cands.length);
+    if (!plan.length) continue;
+    // cap full -> nothing; one slot used -> one more, the best remaining
+    const sent = sentRows(plan, at - 36e5);
+    if (planAlerts(all, times, sent, at).length) probs.push(`${id}: sent past the cap`);
+    const one = planAlerts(all, times, sent.slice(0, 1), at);
+    if (cands.length > 1 && one.length !== 1) probs.push(`${id}: ${one.length} with one slot left`);
+    if (one.some((p) => p.spot_id === plan[0].spot_id && p.call.start === plan[0].call.start)) probs.push(`${id}: same window twice (one slot)`);
+    // sent over 7 days ago: room again, but never the same windows
+    const old = sentRows(plan, at - (ALERT_CAP_DAYS * 864e5 + 6e4));
+    const again = planAlerts(all, times, old, at);
+    if (again.some((p) => old.some((o) => o.spot_id === p.spot_id && Date.parse(o.window_start) === Date.parse(p.call.start!)))) probs.push(`${id}: same window twice (after 7 days)`);
+    if (again.length !== Math.min(ALERT_CAP, all.filter((f) => alertCall(f, times, at, (w) => !old.some((o) => o.spot_id === f.spot.id && Date.parse(o.window_start) === Date.parse(w.start))).kind === "window").length)) probs.push(`${id}: wrong count after dedupe`);
+  }
   const rc = regionCalls();
-  console.log(`${t}: ${probs.length} problems; ${rc.length} regions; ${fresh} forecasts with the new window fields; ${until} with valid_until; ${emails} alert emails (default times); ${filtered} alerts across ${TIME_SETS.length} time choices; ${also} 'also worth a look' windows; engine versions ${[...versions].map(([v, n]) => `${v}×${n}`).join(", ")}`);
+  console.log(`${t}: ${probs.length} problems; ${rc.length} regions; ${fresh} forecasts with the new window fields; ${until} with valid_until; ${emails} alert emails (default times); ${filtered} alerts across ${TIME_SETS.length} time choices; cap: ${capped} planned (max ${capCands} candidates per choice, cap ${ALERT_CAP}); ${also} 'also worth a look' windows; engine versions ${[...versions].map(([v, n]) => `${v}×${n}`).join(", ")}`);
   if (!times.length || process.env.V) rc.forEach((c) => console.log(`  ${c.region}: ${c.rating} ${c.score} [${c.dayLabel}] ${c.call}`));
   probs.forEach((p) => console.log("  !", p)); bad += probs.length;
 }
