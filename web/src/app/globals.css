@@ -1,0 +1,11 @@
+@import "tailwindcss";
+@theme {
+  --color-ocean-950: #06223a;
+  --color-ocean-900: #0b3556;
+  --color-ocean-700: #13608f;
+  --color-ocean-500: #1f8ac0;
+  --color-ocean-100: #e3f2fa;
+  --color-sand-50: #fbf8f2;
+}
+html, body { background: var(--color-sand-50); color: #0f172a; }
+body { -webkit-tap-highlight-color: transparent; }

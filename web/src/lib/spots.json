@@ -1,0 +1,507 @@
+[
+ {
+  "id": "bay_of_islands",
+  "name": "Bay of Islands",
+  "region": "Northland",
+  "island": "North",
+  "lat": -35.25,
+  "lon": 174.12,
+  "species": [
+   "Snapper",
+   "Kingfish",
+   "Kahawai",
+   "Trevally",
+   "John Dory",
+   "Hapuku"
+  ],
+  "notes": "Iconic northern fishing. Snapper and kings the main draw.",
+  "tags": [
+   "coastal",
+   "boat",
+   "shore"
+  ],
+  "coastal": true
+ },
+ {
+  "id": "bay_of_plenty",
+  "name": "Bay of Plenty (Tauranga / Whakat\u0101ne)",
+  "region": "Bay of Plenty",
+  "island": "North",
+  "lat": -37.7,
+  "lon": 176.5,
+  "species": [
+   "Snapper",
+   "Kingfish",
+   "Kahawai",
+   "Trevally",
+   "Gurnard",
+   "Hapuku"
+  ],
+  "notes": "Consistent producer. Good mix of inshore and deeper water.",
+  "tags": [
+   "coastal",
+   "boat",
+   "shore"
+  ],
+  "coastal": true
+ },
+ {
+  "id": "coromandel",
+  "name": "Coromandel",
+  "region": "Waikato / Coromandel",
+  "island": "North",
+  "lat": -36.75,
+  "lon": 175.5,
+  "species": [
+   "Snapper",
+   "Kingfish",
+   "Kahawai",
+   "Trevally",
+   "Gurnard"
+  ],
+  "notes": "Eastern seaboard classic. Excellent boat and kayak fishing.",
+  "tags": [
+   "coastal",
+   "boat",
+   "shore"
+  ],
+  "coastal": true
+ },
+ {
+  "id": "east_cape",
+  "name": "East Cape",
+  "region": "Gisborne / East Cape",
+  "island": "North",
+  "lat": -37.7,
+  "lon": 178.5,
+  "species": [
+   "Snapper",
+   "Kingfish",
+   "Kahawai",
+   "Hapuku",
+   "Bass"
+  ],
+  "notes": "Wild and productive. Worth the mission for serious fish.",
+  "tags": [
+   "coastal",
+   "boat"
+  ],
+  "coastal": true
+ },
+ {
+  "id": "far_north",
+  "name": "Far North (Houhora / Houhora Heads)",
+  "region": "Northland",
+  "island": "North",
+  "lat": -34.8,
+  "lon": 173.1,
+  "species": [
+   "Snapper",
+   "Kingfish",
+   "Trevally",
+   "Kahawai",
+   "Tuna (seasonal)"
+  ],
+  "notes": "Remote and productive. Great for those willing to travel.",
+  "tags": [
+   "coastal",
+   "boat"
+  ],
+  "coastal": true
+ },
+ {
+  "id": "hauraki_gulf",
+  "name": "Hauraki Gulf",
+  "region": "Auckland",
+  "island": "North",
+  "lat": -36.7,
+  "lon": 175.0,
+  "species": [
+   "Snapper",
+   "Kingfish",
+   "Kahawai",
+   "Trevally",
+   "John Dory",
+   "Gurnard"
+  ],
+  "notes": "Auckland\u2019s playground. Huge variety of spots from shore and boat.",
+  "tags": [
+   "coastal",
+   "boat",
+   "shore"
+  ],
+  "coastal": true
+ },
+ {
+  "id": "hawkes_bay",
+  "name": "Hawke\u2019s Bay",
+  "region": "Hawke\u2019s Bay",
+  "island": "North",
+  "lat": -39.5,
+  "lon": 176.9,
+  "species": [
+   "Snapper",
+   "Kahawai",
+   "Gurnard",
+   "Tarakihi",
+   "Kingfish"
+  ],
+  "notes": "Good all-round fishing with solid snapper and kahawai.",
+  "tags": [
+   "coastal",
+   "boat",
+   "shore"
+  ],
+  "coastal": true
+ },
+ {
+  "id": "taranaki",
+  "name": "Taranaki (New Plymouth)",
+  "region": "Taranaki",
+  "island": "North",
+  "lat": -39.06,
+  "lon": 174.07,
+  "species": [
+   "Snapper",
+   "Kahawai",
+   "Gurnard",
+   "Trevally",
+   "Kingfish"
+  ],
+  "notes": "West coast North Island. Can be weather dependent.",
+  "tags": [
+   "coastal",
+   "boat",
+   "shore"
+  ],
+  "coastal": true
+ },
+ {
+  "id": "wellington",
+  "name": "Wellington / Cook Strait",
+  "region": "Wellington",
+  "island": "North",
+  "lat": -41.29,
+  "lon": 174.78,
+  "species": [
+   "Blue Cod",
+   "Tarakihi",
+   "Kahawai",
+   "Barracouta",
+   "Groper",
+   "Kingfish"
+  ],
+  "notes": "Strong currents and good fishing when the weather plays ball.",
+  "tags": [
+   "coastal",
+   "boat",
+   "shore"
+  ],
+  "coastal": true
+ },
+ {
+  "id": "banks_peninsula",
+  "name": "Banks Peninsula / Akaroa",
+  "region": "Canterbury",
+  "island": "South",
+  "lat": -43.8,
+  "lon": 172.95,
+  "species": [
+   "Blue Cod",
+   "Tarakihi",
+   "Kahawai",
+   "Gurnard",
+   "Flatfish"
+  ],
+  "notes": "Sheltered harbours and good shore options around Christchurch.",
+  "tags": [
+   "coastal",
+   "boat",
+   "shore"
+  ],
+  "coastal": true
+ },
+ {
+  "id": "bluff",
+  "name": "Bluff",
+  "region": "Southland",
+  "island": "South",
+  "lat": -46.6,
+  "lon": 168.33,
+  "species": [
+   "Blue Cod",
+   "Tarakihi",
+   "Groper",
+   "Hapuku",
+   "Crayfish"
+  ],
+  "notes": "Legendary blue cod fishery. One of the best in the country.",
+  "tags": [
+   "coastal",
+   "boat",
+   "shore"
+  ],
+  "coastal": true
+ },
+ {
+  "id": "catlins",
+  "name": "Catlins",
+  "region": "Otago / Southland",
+  "island": "South",
+  "lat": -46.55,
+  "lon": 169.45,
+  "species": [
+   "Blue Cod",
+   "Tarakihi",
+   "Kahawai",
+   "Groper"
+  ],
+  "notes": "Quieter coastline. Rewarding when the swell drops.",
+  "tags": [
+   "coastal",
+   "boat",
+   "shore"
+  ],
+  "coastal": true
+ },
+ {
+  "id": "central_otago_lakes",
+  "name": "Central Otago Lakes (W\u0101naka / H\u0101wea / Wakatipu)",
+  "region": "Central Otago",
+  "island": "South",
+  "lat": -44.7,
+  "lon": 169.15,
+  "species": [
+   "Brown Trout",
+   "Rainbow Trout",
+   "Salmon (seasonal)"
+  ],
+  "notes": "Home water for inland South Islanders. Excellent trout fishing.",
+  "tags": [
+   "freshwater",
+   "shore",
+   "boat"
+  ],
+  "coastal": false
+ },
+ {
+  "id": "dunedin",
+  "name": "Dunedin / Otago Peninsula",
+  "region": "Otago",
+  "island": "South",
+  "lat": -45.87,
+  "lon": 170.5,
+  "species": [
+   "Blue Cod",
+   "Tarakihi",
+   "Kahawai",
+   "Groper",
+   "Barracouta"
+  ],
+  "notes": "Good mix of harbour and open coast fishing.",
+  "tags": [
+   "coastal",
+   "boat",
+   "shore"
+  ],
+  "coastal": true
+ },
+ {
+  "id": "fiordland",
+  "name": "Fiordland (Milford / Doubtful / Dusky)",
+  "region": "Fiordland",
+  "island": "South",
+  "lat": -44.67,
+  "lon": 167.93,
+  "species": [
+   "Blue Cod",
+   "Groper",
+   "Tarakihi",
+   "Crayfish",
+   "Bluefin (offshore)"
+  ],
+  "notes": "World-class but weather and access dependent.",
+  "tags": [
+   "coastal",
+   "boat"
+  ],
+  "coastal": true
+ },
+ {
+  "id": "greymouth",
+  "name": "Greymouth / Hokitika",
+  "region": "West Coast",
+  "island": "South",
+  "lat": -42.45,
+  "lon": 171.21,
+  "species": [
+   "Blue Cod",
+   "Tarakihi",
+   "Kahawai",
+   "Groper",
+   "Tuna (seasonal)"
+  ],
+  "notes": "Main West Coast hub with good facilities.",
+  "tags": [
+   "coastal",
+   "boat",
+   "shore"
+  ],
+  "coastal": true
+ },
+ {
+  "id": "haast_jackson",
+  "name": "Haast / Jackson Bay",
+  "region": "West Coast",
+  "island": "South",
+  "lat": -43.9,
+  "lon": 168.9,
+  "species": [
+   "Blue Cod",
+   "Tarakihi",
+   "Bluefin Tuna",
+   "Kingfish",
+   "Groper",
+   "Bluenose"
+  ],
+  "notes": "Remote West Coast gem. Blue cod close, tuna and kings further out.",
+  "tags": [
+   "coastal",
+   "boat"
+  ],
+  "coastal": true
+ },
+ {
+  "id": "kaikoura",
+  "name": "Kaik\u014dura",
+  "region": "Canterbury",
+  "island": "South",
+  "lat": -42.4,
+  "lon": 173.68,
+  "species": [
+   "Blue Cod",
+   "Tarakihi",
+   "Groper",
+   "Kahawai",
+   "Crayfish",
+   "Tuna"
+  ],
+  "notes": "Deep water close to shore. Famous for crayfish and big fish.",
+  "tags": [
+   "coastal",
+   "boat",
+   "shore"
+  ],
+  "coastal": true
+ },
+ {
+  "id": "marlborough_sounds",
+  "name": "Marlborough Sounds",
+  "region": "Marlborough",
+  "island": "South",
+  "lat": -41.2,
+  "lon": 174.0,
+  "species": [
+   "Blue Cod",
+   "Snapper",
+   "Kahawai",
+   "Tarakihi",
+   "Groper",
+   "Crayfish"
+  ],
+  "notes": "Huge area of protected waterways. Blue cod stronghold.",
+  "tags": [
+   "coastal",
+   "boat",
+   "shore"
+  ],
+  "coastal": true
+ },
+ {
+  "id": "moeraki",
+  "name": "Moeraki",
+  "region": "Otago",
+  "island": "South",
+  "lat": -45.36,
+  "lon": 170.86,
+  "species": [
+   "Blue Cod",
+   "Tarakihi",
+   "Groper",
+   "Kahawai",
+   "Barracouta"
+  ],
+  "notes": "Excellent blue cod and tarakihi. Popular from inland bases.",
+  "tags": [
+   "coastal",
+   "boat",
+   "shore"
+  ],
+  "coastal": true
+ },
+ {
+  "id": "nelson_bays",
+  "name": "Nelson Bays / Golden Bay",
+  "region": "Nelson / Tasman",
+  "island": "South",
+  "lat": -41.0,
+  "lon": 173.2,
+  "species": [
+   "Snapper",
+   "Blue Cod",
+   "Tarakihi",
+   "Kahawai",
+   "Gurnard",
+   "Flatfish"
+  ],
+  "notes": "Sheltered waters, great for small boats and family fishing.",
+  "tags": [
+   "coastal",
+   "boat",
+   "shore"
+  ],
+  "coastal": true
+ },
+ {
+  "id": "southern_lakes",
+  "name": "Southern Lakes (Te Anau / Manapouri)",
+  "region": "Southland",
+  "island": "South",
+  "lat": -45.4,
+  "lon": 167.7,
+  "species": [
+   "Brown Trout",
+   "Rainbow Trout",
+   "Salmon"
+  ],
+  "notes": "Scenic and productive trout waters.",
+  "tags": [
+   "freshwater",
+   "shore",
+   "boat"
+  ],
+  "coastal": false
+ },
+ {
+  "id": "stewart_island",
+  "name": "Stewart Island / Rakiura",
+  "region": "Southland",
+  "island": "South",
+  "lat": -46.9,
+  "lon": 168.13,
+  "species": [
+   "Blue Cod",
+   "Tarakihi",
+   "Groper",
+   "Crayfish",
+   "Hapuku"
+  ],
+  "notes": "Remote and special. Outstanding fishing when you get there.",
+  "tags": [
+   "coastal",
+   "boat",
+   "shore"
+  ],
+  "coastal": true
+ }
+]
