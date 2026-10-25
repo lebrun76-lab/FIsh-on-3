@@ -81,6 +81,47 @@ def fetch_marine(lat: float, lon: float, start: date, end: date,
                 hourly=",".join(MARINE_HOURLY)), MARINE_TTL, cache)
 
 
+# Model comparison for confidence (docs/CONFIDENCE.md). One extra request per
+# spot on each host, each <=10 model-variables so it counts as one call:
+# 3 wind models x 3 variables = 9; 3 wave models x 1 variable = 3. Open-Meteo
+# returns one column per model, e.g. ``wind_speed_10m_gfs_seamless``.
+# Model names checked live 2026-10-26 (icon_seamless ends ~7.5 days out; the
+# 0.16 deg GFS wave grid has no data in NZ, so the 0.25 deg one is used).
+COMPARE_WIND_MODELS = ["ecmwf_ifs025", "gfs_seamless", "icon_seamless"]
+COMPARE_WIND_HOURLY = ["wind_speed_10m", "wind_gusts_10m", "wind_direction_10m"]
+COMPARE_WAVE_MODELS = ["meteofrance_wave", "ecmwf_wam", "ncep_gfswave025"]
+COMPARE_WAVE_HOURLY = ["wave_height"]
+COMPARE_TTL = 3 * 3600
+
+
+def fetch_wind_models(lat: float, lon: float, start: date, end: date, cache: Optional[Cache] = None,
+                      cell_selection: str = "land") -> Dict[str, Any]:
+    extra = {"hourly": ",".join(COMPARE_WIND_HOURLY), "models": ",".join(COMPARE_WIND_MODELS),
+             "wind_speed_unit": "kn"}
+    if cell_selection != "land":
+        extra["cell_selection"] = cell_selection
+    return _get(_host("forecast"), _params(lat, lon, start, end, **extra), COMPARE_TTL, cache)
+
+
+def fetch_wave_models(lat: float, lon: float, start: date, end: date,
+                      cache: Optional[Cache] = None) -> Dict[str, Any]:
+    return _get(_host("marine"), _params(lat, lon, start, end, hourly=",".join(COMPARE_WAVE_HOURLY),
+                                         models=",".join(COMPARE_WAVE_MODELS)), COMPARE_TTL, cache)
+
+
+def model_columns(data: Optional[Dict[str, Any]], variables: List[str],
+                  models: List[str]) -> Dict[str, Dict[Any, Dict[str, Any]]]:
+    """{model: {nz_time: {variable: value}}} from a multi-model response."""
+    out: Dict[str, Dict[Any, Dict[str, Any]]] = {}
+    if not data:
+        return out
+    for row in hourly_rows(data):
+        for m in models:
+            vals = {v: row.get(f"{v}_{m}") for v in variables}
+            out.setdefault(m, {})[row["time"]] = vals
+    return out
+
+
 # Model-run metadata. Open-Meteo publishes, per model, the initialisation time
 # of the latest run it has ingested at /data/<model>/static/meta.json.
 # best_match outside Europe/N. America/Japan uses the global models only

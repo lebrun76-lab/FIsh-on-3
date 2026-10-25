@@ -5,6 +5,10 @@ import pytest
 
 from fishon_engine import sstmap as m
 from fishon_engine.cache import Cache
+from datetime import datetime
+from fishon_engine.tz import NZ
+
+NOW = datetime(2026, 10, 25, 23, 40, tzinfo=NZ)
 
 SMALL = {"north": -44.0, "south": -46.0, "west": 170.0, "east": 172.0}
 
@@ -22,7 +26,15 @@ def test_land_mask_uses_coastline():
 
 
 def test_default_grid_size_is_stable():
-    assert len(m.sea_points()) == 663
+    assert len(m.sea_points()) == 663                      # v2.1 "full" layout
+    coarse, fine = m.map_points()
+    assert (len(coarse), len(fine)) == (288, 181)          # v2.2 "coastal" layout: 469 calls
+    land = m.load_land()
+    verts = m.coast_vertices(land)
+    assert all(not m.is_land(a, b, land) for a, b in fine[::10])
+    assert all(m.coast_km(a, b, verts) <= m.FINE_MAX_KM for a, b in fine[::10])
+    assert not any(a * 2 == round(a * 2) and b * 2 == round(b * 2) for a, b in fine)
+    assert m.map_points(layout="full") == (m.sea_points(), [])
 
 
 def _fake_poster(calls, value_fn):
@@ -31,7 +43,8 @@ def _fake_poster(calls, value_fn):
         lats = [float(x) for x in params["latitude"].split(",")]
         lons = [float(x) for x in params["longitude"].split(",")]
         return json.dumps([{"latitude": a, "longitude": b,
-                            "current": {"time": "2026-10-25T23:30", "sea_surface_temperature": value_fn(a, b)}}
+                            "hourly": {"time": ["2026-10-25T22:00", "2026-10-25T23:00", "2026-10-26T00:00"],
+                                       "sea_surface_temperature": [value_fn(a, b) - 1, value_fn(a, b), 99]}}
                            for a, b in zip(lats, lons)])
     return poster
 
@@ -40,13 +53,16 @@ def test_fetch_grid_one_request_and_cached():
     calls = []
     cache = Cache(":memory:")
     poster = _fake_poster(calls, lambda la, lo: 20 + la / 4)
-    g1 = m.fetch_grid(cache=cache, bbox=SMALL, poster=poster)
-    g2 = m.fetch_grid(cache=cache, bbox=SMALL, poster=poster)
+    g1 = m.fetch_grid(cache=cache, bbox=SMALL, poster=poster, now=NOW)
+    g2 = m.fetch_grid(cache=cache, bbox=SMALL, poster=poster, now=NOW)
     assert len(calls) == 1 and g1["requests"] == 1
-    assert calls[0]["current"] == "sea_surface_temperature"
+    assert calls[0]["hourly"] == "sea_surface_temperature" and calls[0]["forecast_days"] == "2"
     assert g2["cache"][0]["cache"] == "hit"
-    assert m.SST_TTL == 6 * 3600
-    assert g1["valid_time_nz"] == "2026-10-25T23:30"
+    assert m.SST_TTL == 12 * 3600
+    assert g1["valid_time_nz"] == "2026-10-25T23:00"     # last hour <= now
+    n = len(calls[0]["latitude"].split(","))
+    assert g1["api_calls_counted"] == n == g1["points"]["coarse"] + g1["points"]["fine"]
+    assert g1["points"]["fine"] > 0 and g1["fine"]
     vals = [v for _, _, v in m.cells(g1)]
     assert vals and all(v == pytest.approx(20 + la / 4) for la, _, v in m.cells(g1))
 
@@ -108,3 +124,21 @@ def test_geojson_and_png(tmp_path):
 
 def test_nice_time_label():
     assert m.nice_time("2026-10-25T23:30") == "Sun 25 Oct 2026 11:30pm NZDT"
+
+
+def test_fine_layer_drops_duplicate_model_cells_and_renders(tmp_path):
+    def poster(url, params):
+        lats = [float(x) for x in params["latitude"].split(",")]
+        lons = [float(x) for x in params["longitude"].split(",")]
+        out = []
+        for a, b in zip(lats, lons):
+            fine = not (a * 2 == round(a * 2) and b * 2 == round(b * 2))
+            la, lo = ((-45.875, 170.875) if fine else (a, b))     # every fine point -> one model cell
+            out.append({"latitude": la, "longitude": lo,
+                        "hourly": {"time": ["2026-10-25T23:00"], "sea_surface_temperature": [12.0]}})
+        return json.dumps(out)
+    g = m.fetch_grid(cache=Cache(":memory:"), bbox=SMALL, poster=poster, now=NOW)
+    assert g["points"]["fine"] > 1 and g["points"]["fine_kept"] == len(g["fine"]) == 1
+    gj = m.to_geojson(g)
+    assert sum(f["properties"].get("layer") == "coastal" for f in gj["features"]) == 1
+    assert m.render_png(g, str(tmp_path / "x.png"))

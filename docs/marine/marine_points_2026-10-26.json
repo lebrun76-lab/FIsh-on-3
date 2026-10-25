@@ -1,0 +1,1266 @@
+{
+ "generated": "2026-10-25T11:45:46+00:00",
+ "method": "Method (all checks against Natural Earth 1:10m land, ``sstmap.load_land``):",
+ "rows": [
+  {
+   "id": "bay_of_islands",
+   "name": "Bay of Islands",
+   "display": [
+    -35.25,
+    174.12
+   ],
+   "reference": [
+    -35.244,
+    174.128
+   ],
+   "candidates": 7,
+   "valid_candidates": 2,
+   "before": {
+    "request": [
+     -35.25,
+     174.12
+    ],
+    "request_on_land": false,
+    "cell": [
+     -35.125,
+     174.2084
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 1.0,
+    "km_from_display": 16.1,
+    "values": {
+     "wave_height": 0.32,
+     "swell_wave_height": 0.26,
+     "sea_surface_temperature": 17.2
+    },
+    "single_cell": true,
+    "cell_ok": true,
+    "ok": true
+   },
+   "pick": [
+    -35.125,
+    174.208
+   ],
+   "after": {
+    "request": [
+     -35.125,
+     174.208
+    ],
+    "request_on_land": false,
+    "cell": [
+     -35.125,
+     174.2084
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 1.0,
+    "km_from_display": 16.1,
+    "values": {
+     "wave_height": 0.32,
+     "swell_wave_height": 0.26,
+     "sea_surface_temperature": 17.3
+    },
+    "single_cell": true
+   }
+  },
+  {
+   "id": "bay_of_plenty",
+   "name": "Bay of Plenty (Tauranga / Whakat\u0101ne)",
+   "display": [
+    -37.7,
+    176.5
+   ],
+   "reference": [
+    -37.7,
+    176.5
+   ],
+   "candidates": 17,
+   "valid_candidates": 10,
+   "before": {
+    "request": [
+     -37.7,
+     176.5
+    ],
+    "request_on_land": false,
+    "cell": [
+     -37.625,
+     176.4584
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 1.0,
+    "km_from_display": 9.1,
+    "values": {
+     "wave_height": 0.4,
+     "swell_wave_height": 0.2,
+     "sea_surface_temperature": 17.6
+    },
+    "single_cell": true,
+    "cell_ok": true,
+    "ok": true
+   },
+   "pick": [
+    -37.625,
+    176.458
+   ],
+   "after": {
+    "request": [
+     -37.625,
+     176.458
+    ],
+    "request_on_land": false,
+    "cell": [
+     -37.625,
+     176.4584
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 1.0,
+    "km_from_display": 9.1,
+    "values": {
+     "wave_height": 0.4,
+     "swell_wave_height": 0.2,
+     "sea_surface_temperature": 16.8
+    },
+    "single_cell": true
+   }
+  },
+  {
+   "id": "coromandel",
+   "name": "Coromandel",
+   "display": [
+    -36.75,
+    175.5
+   ],
+   "reference": [
+    -36.759,
+    175.481
+   ],
+   "candidates": 12,
+   "valid_candidates": 6,
+   "before": {
+    "request": [
+     -36.75,
+     175.5
+    ],
+    "request_on_land": false,
+    "cell": [
+     -36.7083,
+     175.375
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 1.0,
+    "km_from_display": 12.1,
+    "values": {
+     "wave_height": 0.22,
+     "swell_wave_height": 0.1,
+     "sea_surface_temperature": 17.1
+    },
+    "single_cell": true,
+    "cell_ok": true,
+    "ok": true
+   },
+   "pick": [
+    -36.708,
+    175.375
+   ],
+   "after": {
+    "request": [
+     -36.708,
+     175.375
+    ],
+    "request_on_land": false,
+    "cell": [
+     -36.7083,
+     175.375
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 1.0,
+    "km_from_display": 12.1,
+    "values": {
+     "wave_height": 0.22,
+     "swell_wave_height": 0.1,
+     "sea_surface_temperature": 17.1
+    },
+    "single_cell": true
+   }
+  },
+  {
+   "id": "east_cape",
+   "name": "East Cape",
+   "display": [
+    -37.7,
+    178.5
+   ],
+   "reference": [
+    -37.671,
+    178.544
+   ],
+   "candidates": 14,
+   "valid_candidates": 11,
+   "before": {
+    "request": [
+     -37.7,
+     178.5
+    ],
+    "request_on_land": true,
+    "cell": [
+     -37.7083,
+     178.625
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 1.0,
+    "km_from_display": 11.0,
+    "values": {
+     "wave_height": 1.18,
+     "swell_wave_height": 0.9,
+     "sea_surface_temperature": 15.9
+    },
+    "single_cell": true,
+    "cell_ok": true,
+    "ok": false
+   },
+   "pick": [
+    -37.708,
+    178.625
+   ],
+   "after": {
+    "request": [
+     -37.708,
+     178.625
+    ],
+    "request_on_land": false,
+    "cell": [
+     -37.7083,
+     178.625
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 1.0,
+    "km_from_display": 11.0,
+    "values": {
+     "wave_height": 1.18,
+     "swell_wave_height": 0.9,
+     "sea_surface_temperature": 15.3
+    },
+    "single_cell": true
+   }
+  },
+  {
+   "id": "far_north",
+   "name": "Far North (Houhora / Houhora Heads)",
+   "display": [
+    -34.8,
+    173.1
+   ],
+   "reference": [
+    -34.76,
+    173.17
+   ],
+   "candidates": 13,
+   "valid_candidates": 8,
+   "before": {
+    "request": [
+     -34.8,
+     173.1
+    ],
+    "request_on_land": true,
+    "cell": [
+     -34.7917,
+     173.125
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 0.3,
+    "km_from_display": 2.5,
+    "values": {
+     "wave_height": 1.16,
+     "swell_wave_height": 0.88,
+     "sea_surface_temperature": 17.1
+    },
+    "single_cell": false,
+    "cell_ok": false,
+    "ok": false
+   },
+   "pick": [
+    -34.708,
+    173.208
+   ],
+   "after": {
+    "request": [
+     -34.708,
+     173.208
+    ],
+    "request_on_land": false,
+    "cell": [
+     -34.7083,
+     173.2084
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 1.0,
+    "km_from_display": 14.2,
+    "values": {
+     "wave_height": 0.54,
+     "swell_wave_height": 0.42,
+     "sea_surface_temperature": 16.9
+    },
+    "single_cell": true
+   }
+  },
+  {
+   "id": "hauraki_gulf",
+   "name": "Hauraki Gulf",
+   "display": [
+    -36.7,
+    175.0
+   ],
+   "reference": [
+    -36.7,
+    175.0
+   ],
+   "candidates": 20,
+   "valid_candidates": 14,
+   "before": {
+    "request": [
+     -36.7,
+     175.0
+    ],
+    "request_on_land": false,
+    "cell": [
+     -36.7083,
+     174.9584
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 1.0,
+    "km_from_display": 3.8,
+    "values": {
+     "wave_height": 0.14,
+     "swell_wave_height": 0.08,
+     "sea_surface_temperature": 17.5
+    },
+    "single_cell": false,
+    "cell_ok": false,
+    "ok": false
+   },
+   "pick": [
+    -36.708,
+    175.042
+   ],
+   "after": {
+    "request": [
+     -36.708,
+     175.042
+    ],
+    "request_on_land": false,
+    "cell": [
+     -36.7083,
+     175.0417
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 1.0,
+    "km_from_display": 3.8,
+    "values": {
+     "wave_height": 0.22,
+     "swell_wave_height": 0.08,
+     "sea_surface_temperature": 17.5
+    },
+    "single_cell": true
+   }
+  },
+  {
+   "id": "hawkes_bay",
+   "name": "Hawke\u2019s Bay",
+   "display": [
+    -39.5,
+    176.9
+   ],
+   "reference": [
+    -39.506,
+    176.946
+   ],
+   "candidates": 11,
+   "valid_candidates": 8,
+   "before": {
+    "request": [
+     -39.5,
+     176.9
+    ],
+    "request_on_land": true,
+    "cell": [
+     -39.4583,
+     176.9584
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 0.89,
+    "km_from_display": 6.8,
+    "values": {
+     "wave_height": 0.3,
+     "swell_wave_height": 0.14,
+     "sea_surface_temperature": 15.9
+    },
+    "single_cell": true,
+    "cell_ok": true,
+    "ok": false
+   },
+   "pick": [
+    -39.458,
+    176.958
+   ],
+   "after": {
+    "request": [
+     -39.458,
+     176.958
+    ],
+    "request_on_land": false,
+    "cell": [
+     -39.4583,
+     176.9584
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 0.89,
+    "km_from_display": 6.8,
+    "values": {
+     "wave_height": 0.3,
+     "swell_wave_height": 0.14,
+     "sea_surface_temperature": 15.9
+    },
+    "single_cell": true
+   }
+  },
+  {
+   "id": "taranaki",
+   "name": "Taranaki (New Plymouth)",
+   "display": [
+    -39.06,
+    174.07
+   ],
+   "reference": [
+    -39.0,
+    174.0
+   ],
+   "candidates": 15,
+   "valid_candidates": 13,
+   "before": {
+    "request": [
+     -39.06,
+     174.07
+    ],
+    "request_on_land": true,
+    "cell": [
+     -39.0417,
+     174.0417
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 0.69,
+    "km_from_display": 3.2,
+    "values": {
+     "wave_height": 1.34,
+     "swell_wave_height": 1.04,
+     "sea_surface_temperature": 15.5
+    },
+    "single_cell": true,
+    "cell_ok": true,
+    "ok": false
+   },
+   "pick": [
+    -39.042,
+    174.042
+   ],
+   "after": {
+    "request": [
+     -39.042,
+     174.042
+    ],
+    "request_on_land": false,
+    "cell": [
+     -39.0417,
+     174.0417
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 0.69,
+    "km_from_display": 3.2,
+    "values": {
+     "wave_height": 1.34,
+     "swell_wave_height": 1.04,
+     "sea_surface_temperature": 15.5
+    },
+    "single_cell": true
+   }
+  },
+  {
+   "id": "wellington",
+   "name": "Wellington / Cook Strait",
+   "display": [
+    -41.29,
+    174.78
+   ],
+   "reference": [
+    -41.312,
+    174.832
+   ],
+   "candidates": 9,
+   "valid_candidates": 8,
+   "before": {
+    "request": [
+     -41.29,
+     174.78
+    ],
+    "request_on_land": true,
+    "cell": [
+     -41.2917,
+     174.7917
+    ],
+    "cell_centre_on_land": true,
+    "cell_sea_fraction": 0.36,
+    "km_from_display": 1.0,
+    "values": {
+     "wave_height": 1.34,
+     "swell_wave_height": 0.82,
+     "sea_surface_temperature": 15.1
+    },
+    "single_cell": true,
+    "cell_ok": false,
+    "ok": false
+   },
+   "pick": [
+    -41.375,
+    174.792
+   ],
+   "after": {
+    "request": [
+     -41.375,
+     174.792
+    ],
+    "request_on_land": false,
+    "cell": [
+     -41.375,
+     174.7917
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 0.99,
+    "km_from_display": 9.5,
+    "values": {
+     "wave_height": 1.56,
+     "swell_wave_height": 0.96,
+     "sea_surface_temperature": 14.9
+    },
+    "single_cell": true
+   }
+  },
+  {
+   "id": "banks_peninsula",
+   "name": "Banks Peninsula / Akaroa",
+   "display": [
+    -43.8,
+    172.95
+   ],
+   "reference": [
+    -43.808,
+    172.956
+   ],
+   "candidates": 17,
+   "valid_candidates": 12,
+   "before": {
+    "request": [
+     -43.8,
+     172.95
+    ],
+    "request_on_land": false,
+    "cell": [
+     -43.875,
+     172.9584
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 0.68,
+    "km_from_display": 8.4,
+    "values": {
+     "wave_height": 0.94,
+     "swell_wave_height": 0.86,
+     "sea_surface_temperature": 14.0
+    },
+    "single_cell": true,
+    "cell_ok": true,
+    "ok": true
+   },
+   "pick": [
+    -43.875,
+    172.958
+   ],
+   "after": {
+    "request": [
+     -43.875,
+     172.958
+    ],
+    "request_on_land": false,
+    "cell": [
+     -43.875,
+     172.9584
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 0.68,
+    "km_from_display": 8.4,
+    "values": {
+     "wave_height": 0.94,
+     "swell_wave_height": 0.86,
+     "sea_surface_temperature": 14.0
+    },
+    "single_cell": true
+   }
+  },
+  {
+   "id": "bluff",
+   "name": "Bluff",
+   "display": [
+    -46.6,
+    168.33
+   ],
+   "reference": [
+    -46.616,
+    168.317
+   ],
+   "candidates": 20,
+   "valid_candidates": 17,
+   "before": {
+    "request": [
+     -46.6,
+     168.33
+    ],
+    "request_on_land": false,
+    "cell": [
+     -46.625,
+     168.2917
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 1.0,
+    "km_from_display": 4.0,
+    "values": {
+     "wave_height": 1.6,
+     "swell_wave_height": 0.98,
+     "sea_surface_temperature": 12.7
+    },
+    "single_cell": true,
+    "cell_ok": true,
+    "ok": true
+   },
+   "pick": [
+    -46.625,
+    168.292
+   ],
+   "after": {
+    "request": [
+     -46.625,
+     168.292
+    ],
+    "request_on_land": false,
+    "cell": [
+     -46.625,
+     168.2917
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 1.0,
+    "km_from_display": 4.0,
+    "values": {
+     "wave_height": 1.6,
+     "swell_wave_height": 0.98,
+     "sea_surface_temperature": 12.7
+    },
+    "single_cell": true
+   }
+  },
+  {
+   "id": "catlins",
+   "name": "Catlins",
+   "display": [
+    -46.55,
+    169.45
+   ],
+   "reference": [
+    -46.601,
+    169.524
+   ],
+   "candidates": 13,
+   "valid_candidates": 13,
+   "before": {
+    "request": [
+     -46.55,
+     169.45
+    ],
+    "request_on_land": true,
+    "cell": [
+     -46.625,
+     169.4584
+    ],
+    "cell_centre_on_land": true,
+    "cell_sea_fraction": 0.57,
+    "km_from_display": 8.4,
+    "values": {
+     "wave_height": 1.5,
+     "swell_wave_height": 1.26,
+     "sea_surface_temperature": 12.4
+    },
+    "single_cell": true,
+    "cell_ok": false,
+    "ok": false
+   },
+   "pick": [
+    -46.625,
+    169.542
+   ],
+   "after": {
+    "request": [
+     -46.625,
+     169.542
+    ],
+    "request_on_land": false,
+    "cell": [
+     -46.625,
+     169.5417
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 0.99,
+    "km_from_display": 10.9,
+    "values": {
+     "wave_height": 1.56,
+     "swell_wave_height": 1.32,
+     "sea_surface_temperature": 12.4
+    },
+    "single_cell": true
+   }
+  },
+  {
+   "id": "dunedin",
+   "name": "Dunedin / Otago Peninsula",
+   "display": [
+    -45.87,
+    170.5
+   ],
+   "reference": [
+    -45.917,
+    170.539
+   ],
+   "candidates": 11,
+   "valid_candidates": 11,
+   "before": {
+    "request": [
+     -45.87,
+     170.5
+    ],
+    "request_on_land": true,
+    "cell": [
+     -45.875,
+     170.4584
+    ],
+    "cell_centre_on_land": true,
+    "cell_sea_fraction": 0.0,
+    "km_from_display": 3.3,
+    "values": {
+     "wave_height": 0.48,
+     "swell_wave_height": 0.4,
+     "sea_surface_temperature": 12.9
+    },
+    "single_cell": true,
+    "cell_ok": false,
+    "ok": false
+   },
+   "pick": [
+    -45.958,
+    170.542
+   ],
+   "after": {
+    "request": [
+     -45.958,
+     170.542
+    ],
+    "request_on_land": false,
+    "cell": [
+     -45.9583,
+     170.5417
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 0.99,
+    "km_from_display": 10.3,
+    "values": {
+     "wave_height": 0.88,
+     "swell_wave_height": 0.8,
+     "sea_surface_temperature": 12.6
+    },
+    "single_cell": true
+   }
+  },
+  {
+   "id": "fiordland",
+   "name": "Fiordland (Milford / Doubtful / Dusky)",
+   "display": [
+    -44.67,
+    167.93
+   ],
+   "reference": [
+    -44.55,
+    167.75
+   ],
+   "candidates": 16,
+   "valid_candidates": 12,
+   "before": {
+    "request": [
+     -44.55,
+     167.75
+    ],
+    "request_on_land": false,
+    "cell": [
+     -44.5417,
+     167.7084
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 1.0,
+    "km_from_display": 22.6,
+    "values": {
+     "wave_height": 2.76,
+     "swell_wave_height": 2.66,
+     "sea_surface_temperature": 14.1
+    },
+    "single_cell": true,
+    "cell_ok": true,
+    "ok": true
+   },
+   "pick": [
+    -44.542,
+    167.708
+   ],
+   "after": {
+    "request": [
+     -44.542,
+     167.708
+    ],
+    "request_on_land": false,
+    "cell": [
+     -44.5417,
+     167.7084
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 1.0,
+    "km_from_display": 22.6,
+    "values": {
+     "wave_height": 2.76,
+     "swell_wave_height": 2.66,
+     "sea_surface_temperature": 14.1
+    },
+    "single_cell": true
+   }
+  },
+  {
+   "id": "greymouth",
+   "name": "Greymouth / Hokitika",
+   "display": [
+    -42.45,
+    171.21
+   ],
+   "reference": [
+    -42.45,
+    171.198
+   ],
+   "candidates": 14,
+   "valid_candidates": 13,
+   "before": {
+    "request": [
+     -42.45,
+     171.21
+    ],
+    "request_on_land": false,
+    "cell": [
+     -42.4583,
+     171.2084
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 0.54,
+    "km_from_display": 0.9,
+    "values": {
+     "wave_height": 1.58,
+     "swell_wave_height": 1.58,
+     "sea_surface_temperature": 14.6
+    },
+    "single_cell": true,
+    "cell_ok": true,
+    "ok": true
+   },
+   "pick": [
+    -42.458,
+    171.208
+   ],
+   "after": {
+    "request": [
+     -42.458,
+     171.208
+    ],
+    "request_on_land": false,
+    "cell": [
+     -42.4583,
+     171.2084
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 0.54,
+    "km_from_display": 0.9,
+    "values": {
+     "wave_height": 1.58,
+     "swell_wave_height": 1.58,
+     "sea_surface_temperature": 14.6
+    },
+    "single_cell": true
+   }
+  },
+  {
+   "id": "haast_jackson",
+   "name": "Haast / Jackson Bay",
+   "display": [
+    -43.9,
+    168.9
+   ],
+   "reference": [
+    -43.9,
+    168.9
+   ],
+   "candidates": 15,
+   "valid_candidates": 5,
+   "before": {
+    "request": [
+     -43.9,
+     168.9
+    ],
+    "request_on_land": false,
+    "cell": [
+     -43.7917,
+     168.875
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 1.0,
+    "km_from_display": 12.2,
+    "values": {
+     "wave_height": 2.0,
+     "swell_wave_height": 1.98,
+     "sea_surface_temperature": 14.8
+    },
+    "single_cell": true,
+    "cell_ok": true,
+    "ok": true
+   },
+   "pick": [
+    -43.792,
+    168.875
+   ],
+   "after": {
+    "request": [
+     -43.792,
+     168.875
+    ],
+    "request_on_land": false,
+    "cell": [
+     -43.7917,
+     168.875
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 1.0,
+    "km_from_display": 12.2,
+    "values": {
+     "wave_height": 2.0,
+     "swell_wave_height": 1.98,
+     "sea_surface_temperature": 14.3
+    },
+    "single_cell": true
+   }
+  },
+  {
+   "id": "kaikoura",
+   "name": "Kaik\u014dura",
+   "display": [
+    -42.4,
+    173.68
+   ],
+   "reference": [
+    -42.4,
+    173.717
+   ],
+   "candidates": 14,
+   "valid_candidates": 12,
+   "before": {
+    "request": [
+     -42.4,
+     173.68
+    ],
+    "request_on_land": true,
+    "cell": [
+     -42.375,
+     173.7084
+    ],
+    "cell_centre_on_land": true,
+    "cell_sea_fraction": 0.37,
+    "km_from_display": 3.6,
+    "values": {
+     "wave_height": 0.68,
+     "swell_wave_height": 0.6,
+     "sea_surface_temperature": 13.9
+    },
+    "single_cell": true,
+    "cell_ok": false,
+    "ok": false
+   },
+   "pick": [
+    -42.458,
+    173.708
+   ],
+   "after": {
+    "request": [
+     -42.458,
+     173.708
+    ],
+    "request_on_land": false,
+    "cell": [
+     -42.4583,
+     173.7084
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 0.93,
+    "km_from_display": 6.9,
+    "values": {
+     "wave_height": 0.78,
+     "swell_wave_height": 0.62,
+     "sea_surface_temperature": 13.8
+    },
+    "single_cell": true
+   }
+  },
+  {
+   "id": "marlborough_sounds",
+   "name": "Marlborough Sounds",
+   "display": [
+    -41.2,
+    174.0
+   ],
+   "reference": [
+    -41.2,
+    174.0
+   ],
+   "candidates": 31,
+   "valid_candidates": 21,
+   "before": {
+    "request": [
+     -41.2,
+     174.0
+    ],
+    "request_on_land": false,
+    "cell": [
+     -41.125,
+     173.9584
+    ],
+    "cell_centre_on_land": true,
+    "cell_sea_fraction": 0.28,
+    "km_from_display": 9.0,
+    "values": {
+     "wave_height": 0.26,
+     "swell_wave_height": 0.16,
+     "sea_surface_temperature": 14.5
+    },
+    "single_cell": false,
+    "cell_ok": false,
+    "ok": false
+   },
+   "pick": [
+    -41.375,
+    174.208
+   ],
+   "after": {
+    "request": [
+     -41.375,
+     174.208
+    ],
+    "request_on_land": false,
+    "cell": [
+     -41.375,
+     174.2084
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 1.0,
+    "km_from_display": 26.1,
+    "values": {
+     "wave_height": 0.52,
+     "swell_wave_height": 0.32,
+     "sea_surface_temperature": 13.7
+    },
+    "single_cell": true
+   }
+  },
+  {
+   "id": "moeraki",
+   "name": "Moeraki",
+   "display": [
+    -45.36,
+    170.86
+   ],
+   "reference": [
+    -45.36,
+    170.886
+   ],
+   "candidates": 14,
+   "valid_candidates": 12,
+   "before": {
+    "request": [
+     -45.36,
+     170.86
+    ],
+    "request_on_land": true,
+    "cell": [
+     -45.375,
+     170.9584
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 1.0,
+    "km_from_display": 7.9,
+    "values": {
+     "wave_height": 0.52,
+     "swell_wave_height": 0.32,
+     "sea_surface_temperature": 12.9
+    },
+    "single_cell": true,
+    "cell_ok": true,
+    "ok": false
+   },
+   "pick": [
+    -45.375,
+    170.958
+   ],
+   "after": {
+    "request": [
+     -45.375,
+     170.958
+    ],
+    "request_on_land": false,
+    "cell": [
+     -45.375,
+     170.9584
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 1.0,
+    "km_from_display": 7.9,
+    "values": {
+     "wave_height": 0.52,
+     "swell_wave_height": 0.32,
+     "sea_surface_temperature": 13.0
+    },
+    "single_cell": true
+   }
+  },
+  {
+   "id": "nelson_bays",
+   "name": "Nelson Bays / Golden Bay",
+   "display": [
+    -41.0,
+    173.2
+   ],
+   "reference": [
+    -41.0,
+    173.2
+   ],
+   "candidates": 17,
+   "valid_candidates": 10,
+   "before": {
+    "request": [
+     -41.0,
+     173.2
+    ],
+    "request_on_land": false,
+    "cell": [
+     -40.9583,
+     173.2084
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 1.0,
+    "km_from_display": 4.7,
+    "values": {
+     "wave_height": 0.36,
+     "swell_wave_height": 0.32,
+     "sea_surface_temperature": 16.5
+    },
+    "single_cell": true,
+    "cell_ok": true,
+    "ok": true
+   },
+   "pick": [
+    -40.958,
+    173.208
+   ],
+   "after": {
+    "request": [
+     -40.958,
+     173.208
+    ],
+    "request_on_land": false,
+    "cell": [
+     -40.9583,
+     173.2084
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 1.0,
+    "km_from_display": 4.7,
+    "values": {
+     "wave_height": 0.36,
+     "swell_wave_height": 0.32,
+     "sea_surface_temperature": 16.5
+    },
+    "single_cell": true
+   }
+  },
+  {
+   "id": "stewart_island",
+   "name": "Stewart Island / Rakiura",
+   "display": [
+    -46.9,
+    168.13
+   ],
+   "reference": [
+    -46.914,
+    168.147
+   ],
+   "candidates": 10,
+   "valid_candidates": 3,
+   "before": {
+    "request": [
+     -46.9,
+     168.13
+    ],
+    "request_on_land": true,
+    "cell": [
+     -46.7917,
+     168.2084
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 1.0,
+    "km_from_display": 13.4,
+    "values": {
+     "wave_height": 0.84,
+     "swell_wave_height": 0.26,
+     "sea_surface_temperature": 12.6
+    },
+    "single_cell": false,
+    "cell_ok": false,
+    "ok": false
+   },
+   "pick": [
+    -46.792,
+    168.292
+   ],
+   "after": {
+    "request": [
+     -46.792,
+     168.292
+    ],
+    "request_on_land": false,
+    "cell": [
+     -46.7917,
+     168.2917
+    ],
+    "cell_centre_on_land": false,
+    "cell_sea_fraction": 1.0,
+    "km_from_display": 17.2,
+    "values": {
+     "wave_height": 0.96,
+     "swell_wave_height": 0.32,
+     "sea_surface_temperature": 12.5
+    },
+    "single_cell": true
+   }
+  }
+ ]
+}

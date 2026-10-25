@@ -52,7 +52,8 @@ def test_day_aggregates_from_daylight_hours(out):
     sr, ss = datetime.fromisoformat(d["sunrise"]), datetime.fromisoformat(d["sunset"])
     day = [h for h in fc["hourly"] if h["time"].startswith(d["date"])]
     light = [h for h in day if sr <= datetime.fromisoformat(h["time"]) <= ss]
-    assert d["gust_kn_max"] == max(h["gust_kn"] for h in light)
+    assert d["gust_kn_max_daylight"] == max(h["gust_kn"] for h in light)
+    assert d["gust_kn_max"] == max(h["gust_kn"] for h in day)
     assert d["wind_kn_avg"] == pytest.approx(sum(h["wind_kn"] for h in light) / len(light), abs=0.06)
     assert d["rain_mm"] == pytest.approx(sum(h["rain_mm"] for h in day), abs=0.06)
 
@@ -112,3 +113,35 @@ def test_lake(out):
     fc = out["central_otago_lakes"]
     assert fc["tides"] == [] and fc["tide_datum"] is None and fc["spot"]["coastal"] is False
     assert all(h["swell_m"] is None and h["sst_c"] is None for h in fc["hourly"])
+
+
+@pytest.mark.parametrize("sid", make_sample.SPOTS)
+def test_daily_max_never_below_hourly(out, sid):
+    fc = out[sid]
+    for d in fc["days"]:
+        day = [h for h in fc["hourly"] if h["time"].startswith(d["date"])]
+        assert d["gust_kn_max"] == max(h["gust_kn"] for h in day)
+        assert d["wind_kn_max"] == max(h["wind_kn"] for h in day)
+
+
+def test_real_confidence_uses_model_agreement(out):
+    fc = out["hauraki_gulf"]
+    sun = next(d for d in fc["days"] if d["date"] == "2026-11-01")["best_window"]
+    cd = sun["confidence_detail"]
+    # recorded 2026-10-26: ECMWF IFS keeps Sunday light, GFS has it windy
+    assert cd["lead_level"] == "medium" and cd["level"] == "low" and cd["score_spread"] >= 3
+    assert set(cd["model_scores"]) == {"wind:ecmwf_ifs025", "wind:gfs_seamless", "wind:icon_seamless",
+                                       "waves:meteofrance_wave", "waves:ecmwf_wam", "waves:ncep_gfswave025"}
+    lakes = out["central_otago_lakes"]["days"][2]["best_window"]["confidence_detail"]
+    assert lakes["agreement"] == "good" and lakes["level"] == "high"
+
+
+def test_real_verdict_horizon_and_no_window_days(out):
+    fc = out["hauraki_gulf"]
+    v = fc["verdict"]
+    assert v["horizon_end"] == "2026-10-28" and v["window"]["start"].startswith("2026-10-26")
+    assert v["best_later"]["date"] == "2026-11-01"
+    tue = fc["days"][1]
+    assert tue["best_window"] is None and tue["windows"] == 0 and tue["least_bad_window"]["rating"] == "poor"
+    assert tue["best_window_text"].startswith("No fishable window on Tue 27 Oct")
+    assert all(w["rating"] != "poor" for w in fc["windows"])

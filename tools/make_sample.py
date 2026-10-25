@@ -1,7 +1,7 @@
 """Regenerate docs/samples/*.json from the recorded real responses in
-tests/fixtures/real_2026-10-26 (Open-Meteo forecast + marine fetched
-2026-10-26 00:11 NZDT for 26 Oct - 1 Nov, LINZ 2026 CSV excerpts, Open-Meteo
-model metadata). Fully offline and deterministic: the clock is frozen at the
+tests/fixtures/real_2026-10-26d (Open-Meteo forecast, marine and wind/wave
+model-comparison responses fetched 2026-10-26 00:54 NZDT for 26 Oct - 1 Nov by
+tools/record_fixtures.py, LINZ 2026 CSV excerpts, Open-Meteo model metadata). Fully offline and deterministic: the clock is frozen at the
 recording time. tests/test_v1_real.py checks the committed samples match.
 
   python tools/make_sample.py
@@ -20,9 +20,10 @@ sys.path.insert(0, ROOT)
 from fishon_engine import engine, openmeteo, tides  # noqa: E402
 from fishon_engine.tz import NZ  # noqa: E402
 
-FIX = os.path.join(ROOT, "tests", "fixtures", "real_2026-10-26")
+FIX = os.path.join(ROOT, "tests", "fixtures", "real_2026-10-26d")
 OUT = os.path.join(ROOT, "docs", "samples")
-NOW = datetime(2026, 10, 26, 0, 11, tzinfo=NZ)
+with open(os.path.join(FIX, "RECORDED.json")) as _f:
+    NOW = datetime.fromisoformat(json.load(_f)["recorded_at"]).astimezone(NZ)
 START, DAYS = date(2026, 10, 26), 7
 SPOTS = ["hauraki_gulf", "dunedin", "central_otago_lakes"]
 LINZ = {"Mātiatia Bay": "linz_Mātiatia_Bay_2026_oct-nov.csv", "Green Island": "linz_Green_Island_2026_oct-nov.csv"}
@@ -52,20 +53,31 @@ def recorded():
         d["_cache"] = {"cache": "fixture"}
         return d
 
+    def fw(lat, lon, s, e, cache=None, cell_selection="land"):
+        k = by_point[("f", round(lat, 3), round(lon, 3))].replace("_forecast", "_wind_models")
+        return dict(_load(k), _cache={"cache": "fixture"})
+
+    def fv(lat, lon, s, e, cache=None):
+        k = by_point[("m", round(lat, 3), round(lon, 3))].replace("_marine", "_wave_models")
+        return dict(_load(k), _cache={"cache": "fixture"})
+
     def fl(port, s, e, cache=None):
         with open(os.path.join(FIX, LINZ[port]), encoding="utf-8") as f:
             return tides.parse_linz_csv(f.read())
 
     saved = (openmeteo.fetch_forecast, openmeteo.fetch_marine, tides.fetch_linz,
-             engine.now_nz, engine.today_nz, openmeteo.fetch_model_runs)
+             engine.now_nz, engine.today_nz, openmeteo.fetch_model_runs,
+             openmeteo.fetch_wind_models, openmeteo.fetch_wave_models)
     openmeteo.fetch_forecast, openmeteo.fetch_marine, tides.fetch_linz = ff, fm, fl
+    openmeteo.fetch_wind_models, openmeteo.fetch_wave_models = fw, fv
     openmeteo.fetch_model_runs = lambda cache=None: _load("model_runs.json")
     engine.now_nz, engine.today_nz = (lambda: NOW), (lambda: NOW.date())
     try:
         yield
     finally:
         (openmeteo.fetch_forecast, openmeteo.fetch_marine, tides.fetch_linz,
-         engine.now_nz, engine.today_nz, openmeteo.fetch_model_runs) = saved
+         engine.now_nz, engine.today_nz, openmeteo.fetch_model_runs,
+         openmeteo.fetch_wind_models, openmeteo.fetch_wave_models) = saved
 
 
 def build(sid):
@@ -92,7 +104,7 @@ def main():
     path = os.path.join(OUT, "cli_2026-10-26.txt")
     with open(path, "w", encoding="utf-8") as f:
         f.write("# python -m fishon_engine hauraki_gulf dunedin central_otago_lakes --days 3\n"
-                "# offline replay of the data recorded 2026-10-26 00:11 NZDT (tools/make_sample.py)\n")
+                f"# offline replay of the data recorded {NOW:%Y-%m-%d %H:%M} NZDT (tools/make_sample.py)\n")
         f.write(buf.getvalue())
     print(path)
 

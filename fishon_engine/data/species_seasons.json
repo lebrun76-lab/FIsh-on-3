@@ -1,5 +1,11 @@
 {
-  "_about": "Seasonality and rule notes used by fishon_engine.species. Every non-null claim carries a source. 'how' strings are general angling tips, not sourced facts. Months are 1-12. Species/spot combos not listed are treated as 'no seasonal data' (shown, never invented). Checked 2026-10-25 NZDT.",
+  "_about": "Seasonality and rule notes used by fishon_engine.species. Every non-null claim carries a source. 'how' strings are general angling tips, not sourced facts. Months are 1-12. Species/spot combos not listed are treated as 'no seasonal data' (shown, never invented). Checked 2026-10-25 NZDT; kingfish (Cook Strait/East Cape/Hawke Bay) and Southern Lakes added 2026-10-26 NZDT; tuna species (SBT, PBF main; albacore secondary) per local knowledge from Alex Le Brun, 26 Oct 2026, seasons only where a Fisheries NZ source gives months.",
+  "species_lists": [
+    {"spot_ids": ["far_north", "greymouth", "kaikoura"],
+     "roles": {"Southern Bluefin Tuna": "main", "Pacific Bluefin Tuna": "main", "Albacore": "secondary"},
+     "source": "local knowledge: Alex Le Brun, 26 Oct 2026",
+     "note": "Replaces the generic 'Tuna' / 'Tuna (seasonal)' labels. Which species are fished here comes from local knowledge; seasons below are only shown where a Fisheries NZ source gives months."}
+  ],
   "entries": [
     {
       "names": ["Snapper"],
@@ -29,7 +35,7 @@
       "sources": []
     },
     {
-      "names": ["Bluefin Tuna", "Bluefin (offshore)", "Tuna (seasonal)"],
+      "names": ["Southern Bluefin Tuna", "Bluefin Tuna", "Bluefin (offshore)"],
       "spot_ids": ["greymouth", "haast_jackson", "fiordland"],
       "good_months": [1, 2, 3, 4, 5, 6, 7, 8],
       "peak_months": [7, 8],
@@ -49,9 +55,16 @@
       "names": ["Brown Trout", "Rainbow Trout", "Salmon"],
       "spot_ids": ["southern_lakes"],
       "how": "spin or fly from the shore at first and last light",
-      "note": "Southland Fish & Game licence required; season dates not yet verified for this engine.",
-      "sources": []
+      "good_months": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      "note": "Lakes Te Anau and Manapouri (incl. Waiau Arm) are open all year, bag 2 trout (salmon 1 of them per the regulations' notes); their tributaries are open 1 Nov - 31 May only. A Fish & Game licence is required.",
+      "sources": ["Fish & Game NZ, Southland Sports Fishing Regulations 2026-27 (Anglers Notice for Fish and Game Regions 2026, in force 1 Oct 2026), Southland lakes table: Lake Te Anau 'All year', Lake Manapouri including Waiau Arm 'All year', tributaries 1 Nov - 31 May. https://www.fishandgame.org.nz/assets/Fishing/Fishing-Licences-Regulations/Fishing-Regulations/2026/2027/Fish-and-Game-Sportsfishing-Regs-Brochure-2026-27-Southland.pdf"]
     },
+    {"names": ["Kingfish"], "spot_ids": ["wellington", "east_cape", "hawkes_bay"], "good_months": [12, 1, 2], "how": "live-baits or jigs around pins and reefs", "note": "Fisheries NZ: in Cook Strait kingfish are encountered mainly in summer, and from East Cape to Hawke Bay most kingfish fishing occurs in summer. Months here = NZ summer (Dec-Feb); the source gives seasons, not months.", "sources": ["Holdsworth, McKenzie, Walsh, van der Straten & O Maolagain 2013, 'Catch-at-age of yellowtail kingfish (Seriola lalandi) caught by recreational fishers in KIN 1', NZ Fisheries Assessment Report 2013/3, p. 4 (citing Holdsworth et al. 2007). https://webstatic.niwa.co.nz/library/FAR-2013-3.pdf"]},
+    {"names": ["Southern Bluefin Tuna"], "spot_ids": ["kaikoura"], "how": "offshore trips only, in a suitable boat", "note": "FAR 2025/52 records SBT catches off Kaikoura (2024 and 2025 phone survey and social media) but gives no months for this area, so no season is shown.", "sources": ["Fisheries NZ, FAR 2025/52 'Recreational harvest of southern bluefin tuna in New Zealand 2024-25'. https://fs.fish.govt.nz/Doc/26187/FAR-2025-52-Recreational-harvest-southern-bluefin-tuna-New-Zealand-2024-25.pdf.ashx"]},
+    {"names": ["Southern Bluefin Tuna"], "spot_ids": "*", "how": "offshore trips only, in a suitable boat", "sources": []},
+    {"names": ["Pacific Bluefin Tuna"], "spot_ids": ["greymouth"], "good_months": [8, 9], "how": "offshore trips only, in a suitable boat", "note": "Target recreational fishery off the South Island west coast (charter boats from Greymouth and Hokitika) during the hoki spawning-ground fishery, August-September. The 2025 plenary says the fishery feeds on hoki spawning aggregations but gives no months, and catch rates and effort have declined since 2015.", "sources": ["Ministry of Fisheries, Fisheries Assessment Plenary 2008, Pacific bluefin tuna (TOR), 1.2 Recreational fisheries. https://fs.fish.govt.nz/Doc/21637/06-TOR_08.pdf.ashx", "Fisheries NZ, Fisheries Assessment Plenary November 2025, Pacific bluefin tuna (TOR), 1.2. https://fs.fish.govt.nz/Doc/26227/Fisheries%20Assessment%20Plenary%20November%202025%20-%20PACIFIC%20BLUEFIN%20TUNA%20(TOR).pdf.ashx", "Fisheries NZ, FAR 2025/52 'Recreational harvest of southern bluefin tuna in New Zealand 2024-25'. https://fs.fish.govt.nz/Doc/26187/FAR-2025-52-Recreational-harvest-southern-bluefin-tuna-New-Zealand-2024-25.pdf.ashx"]},
+    {"names": ["Pacific Bluefin Tuna"], "spot_ids": "*", "how": "offshore trips only, in a suitable boat", "sources": []},
+    {"names": ["Albacore"], "spot_ids": ["greymouth", "kaikoura", "far_north"], "good_months": [11, 12, 1, 2, 3, 4, 5], "peak_months": [2, 3], "how": "trolled lures offshore in summer", "note": "National recreational season November-May, peak February-March, from NZ Big Game Fishing Council club records (may reflect effort rather than availability). Targeted on the whole west coast of both islands and the northern east coast of the South Island; small albacore are common bait/bycatch off the northern North Island.", "sources": ["Ministry of Fisheries 2009, 'Appendix D: Supporting information (albacore)' DRAFT v1.2, paras 37-39. https://fs.fish.govt.nz/Doc/21863/%20Appendix%20D%20supporting%20information%20albacore.pdf.ashx", "Fisheries NZ, Fisheries Assessment Plenary November 2025, Albacore (ALB): troll fishery in summer, mainly off the west coasts; recreational species over summer. https://fs.fish.govt.nz/Doc/26213/Fisheries%20Assessment%20Plenary%20November%202025%20-%20ALBACORE%20(ALB).pdf.ashx"]},
     {"names": ["Kahawai"], "spot_ids": "*", "how": "lures or soft-baits on surface work-ups", "sources": []},
     {"names": ["Kingfish"], "spot_ids": "*", "how": "live-baits or jigs around pins and reefs", "sources": []},
     {"names": ["Tarakihi"], "spot_ids": "*", "how": "ledger rigs on sand/foul edges", "sources": []},

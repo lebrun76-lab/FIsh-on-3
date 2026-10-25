@@ -11,7 +11,7 @@ import math
 from datetime import date, datetime, timedelta
 from typing import Dict, List, Optional
 
-from . import astro, openmeteo, scoring, species, tideports, tides
+from . import astro, confidence, openmeteo, scoring, species, tideports, tides
 from .cache import Cache
 from .spots import Spot, get_spot
 from .tz import NZ, day_label, fmt_range, now_nz, today_nz
@@ -26,8 +26,13 @@ ATTRIBUTION = [
 ]
 MAX_WINDOWS_PER_DAY = 3
 CONFIDENCE_MARGIN = {"high": 0.0, "medium": 0.5, "low": 1.0}
-SST_NOTE = ("Sea temperature is the Open-Meteo marine model; vs NOAA Coral Reef Watch 5 km satellite SST "
-            "on 23 Oct 2026 it was within about +/-0.9 C at all 21 coastal spots (docs/SST_CHECK.md).")
+# The headline verdict looks at the first HORIZON_DAYS days of the period
+# (start .. start+2), not the best of up to 16 days; a better window later on
+# is reported separately in verdict.best_later.
+HORIZON_DAYS = 3
+SST_NOTE = ("Sea temperature is the Open-Meteo marine model (all-hours mean; it includes daytime warming). "
+            "Against NOAA Coral Reef Watch 5 km night-only satellite SST on 22-23 Oct 2026 it was within "
+            "about +/-1.2 C at all 21 coastal spots, with no net bias at night (docs/SST_CHECK.md).")
 
 
 def _engine_version() -> str:
@@ -36,9 +41,9 @@ def _engine_version() -> str:
 
 
 def _confidence(d: date, today: date) -> str:
-    # heuristic: skill drops with lead time; marine model shown to ~9 days in v1
-    lead = (d - today).days
-    return "high" if lead <= 2 else "medium" if lead <= 6 else "low"
+    # lead-time starting level; windows then adjust for model agreement and
+    # data gaps (confidence.py, docs/CONFIDENCE.md)
+    return confidence.lead_level((d - today).days)
 
 
 def rating(score: Optional[float]) -> str:
@@ -78,7 +83,8 @@ def _spot_out(spot: Spot, wx: Dict, marine: Optional[Dict], cell_sel: str) -> Di
         "tide_note": spot.tide_note,
         "forecast_point": {"lat": spot.forecast_lat, "lon": spot.forecast_lon, "cell_selection": cell_sel,
                            "model_cell": cell(wx), "note": spot.wx_note or None},
-        "marine_point": ({"lat": spot.marine_lat, "lon": spot.marine_lon, "model_cell": cell(marine)}
+        "marine_point": ({"lat": spot.marine_lat, "lon": spot.marine_lon, "model_cell": cell(marine),
+                          "note": spot.marine_note or None}
                          if spot.is_coastal else None),
     }
 
@@ -121,33 +127,72 @@ def _window_out(win: List[Dict], spot: Spot, target, conf: str) -> Dict:
     }
 
 
-def _verdict(windows: List[Dict], days_out: List[Dict]) -> Dict:
-    if not windows:
-        return {"rating": "poor", "score": 0, "headline": "No fishable window found",
-                "advice": "No usable daylight window in this period.", "confidence": "low",
-                "window": None}
+def _pick(windows: List[Dict]) -> Dict:
     # Highest score wins, but a later, less certain window must beat a nearer
     # one by more than the confidence margin (medium 0.5, low 1.0 points) -
     # a design choice so "Go Sunday" (day 7) doesn't trump an almost-as-good
     # Monday the models agree on.
-    best = max(windows, key=lambda w: (w["score"] - CONFIDENCE_MARGIN.get(w.get("confidence"), 0.0),
+    return max(windows, key=lambda w: (w["score"] - CONFIDENCE_MARGIN.get(w.get("confidence"), 0.0),
                                        -datetime.fromisoformat(w["start"]).timestamp()))
-    st = datetime.fromisoformat(best["start"])
-    when = f"{st.strftime('%A')} {_part_of_day(st)}"
-    if best["rating"] in ("great", "good"):
-        headline = f"Go {when}"
-    elif best["rating"] == "marginal":
-        headline = f"Best chance: {when}"
-    else:
-        headline = "Not worth it this week - stay home or fish sheltered water"
-    advice = best["advice"].replace("No good window. Least-bad: ", "Least-bad: ")
-    others = sorted({w["date"] for w in windows if w is not best and w["rating"] in ("great", "good")
+
+
+def _when(w: Dict) -> str:
+    st = datetime.fromisoformat(w["start"])
+    return f"{st.strftime('%A')} {_part_of_day(st)}"
+
+
+def _brief(w: Optional[Dict]) -> Optional[Dict]:
+    if not w:
+        return None
+    return {k: w[k] for k in ("start", "end", "date", "score", "rating", "headline", "advice", "confidence")}
+
+
+def _no_window_reason(least: Optional[Dict], span: str) -> str:
+    """``span`` e.g. 'in the next 3 days' or 'on Tue 27 Oct'."""
+    if not least:
+        return f"No daylight window left {span}."
+    why = "; ".join(least["reasons"][:3])
+    return (f"No fishable window {span}: no daylight run of hours scores 4.5 (marginal) or more. "
+            f"Least-bad is {fmt_range(datetime.fromisoformat(least['start']), datetime.fromisoformat(least['end']))} "
+            f"at {least['score']:.1f}/10 ({why}).")
+
+
+def _verdict(fishable: List[Dict], least_bad: List[Dict], days_out: List[Dict], start: date) -> Dict:
+    """Headline from the fishable (rating != poor) windows in the first
+    HORIZON_DAYS days. With none, ``window`` is null and ``no_window_reason``
+    says why; the least-bad option is only in the labelled ``least_bad``."""
+    h_end = start + timedelta(days=HORIZON_DAYS - 1)
+    in_h = [w for w in fishable if date.fromisoformat(w["date"]) <= h_end]
+    later = [w for w in fishable if date.fromisoformat(w["date"]) > h_end]
+    n_days = min(HORIZON_DAYS, len(days_out)) or 1
+    base = {"horizon_days": n_days, "horizon_end": min(h_end, start + timedelta(days=max(len(days_out), 1) - 1)).isoformat(),
+            "best_later": _brief(_pick(later)) if later else None}
+    if not in_h:
+        cand = [w for w in least_bad if date.fromisoformat(w["date"]) <= h_end]
+        least = max(cand, key=lambda w: w["score"]) if cand else None
+        reason = _no_window_reason(least, f"in the next {n_days} days" if n_days > 1 else "today")
+        advice = reason
+        if later:
+            b = base["best_later"]
+            advice += f" Next fishable: {_when(b)} ({b['rating']}, {b['score']:.1f})."
+        return {"rating": "poor", "score": least["score"] if least else 0,
+                "headline": f"No fishable window in the next {n_days} days" if n_days > 1
+                else "No fishable window today",
+                "advice": advice, "confidence": least["confidence"] if least else "low",
+                "window": None, "no_window_reason": reason,
+                "least_bad": dict(_brief(least), label="least-bad (not recommended)") if least else None, **base}
+    best = _pick(in_h)
+    when = _when(best)
+    headline = f"Go {when}" if best["rating"] in ("great", "good") else f"Best chance: {when}"
+    advice = best["advice"]
+    others = sorted({w["date"] for w in in_h if w is not best and w["rating"] in ("great", "good")
                      and w["date"] != best["date"]})
     if others:
         labels = [next(d["label"] for d in days_out if d["date"] == o) for o in others[:3]]
         advice += ". Also good: " + ", ".join(labels) + "."
     return {"rating": best["rating"], "score": best["score"], "headline": headline, "advice": advice,
-            "confidence": best["confidence"], "window": {"start": best["start"], "end": best["end"]}}
+            "confidence": best["confidence"], "window": {"start": best["start"], "end": best["end"]},
+            "no_window_reason": None, "least_bad": None, **base}
 
 
 def _species_once(spot: Spot, dates: List[date], sst: Optional[float]) -> List[Dict]:
@@ -197,6 +242,25 @@ def forecast_spot(spot_id: str, start: Optional[date] = None, days: int = 7,
         r.update({k: v for k, v in marine_rows.get(r["time"], {}).items() if k != "time"})
     scoring.add_pressure_trend(rows)
 
+    # --- model comparison for confidence (docs/CONFIDENCE.md) --------------
+    wind_models: Dict[str, Dict] = {}
+    wave_models: Dict[str, Dict] = {}
+    cmp_cache: Dict[str, Optional[Dict]] = {}
+    try:
+        wm = openmeteo.fetch_wind_models(spot.forecast_lat, spot.forecast_lon, start, end, cache,
+                                         cell_selection=cell_sel)
+        cmp_cache["wind_models"] = wm.get("_cache")
+        wind_models = openmeteo.model_columns(wm, list(confidence.WIND_VARS), openmeteo.COMPARE_WIND_MODELS)
+    except Exception as exc:
+        warnings.append(f"Wind model comparison unavailable ({exc}); confidence uses lead time and data gaps only.")
+    if spot.is_coastal:
+        try:
+            vm = openmeteo.fetch_wave_models(spot.marine_lat, spot.marine_lon, start, end, cache)
+            cmp_cache["wave_models"] = vm.get("_cache")
+            wave_models = openmeteo.model_columns(vm, openmeteo.COMPARE_WAVE_HOURLY, openmeteo.COMPARE_WAVE_MODELS)
+        except Exception as exc:
+            warnings.append(f"Wave model comparison unavailable ({exc}); confidence uses lead time and data gaps only.")
+
     # --- tides -------------------------------------------------------------
     tide_events: List[tides.TideEvent] = []
     tide_source = None
@@ -222,7 +286,7 @@ def forecast_spot(spot_id: str, start: Optional[date] = None, days: int = 7,
     tide_events_ok = [e for e in tide_events if not math.isnan(e.height)]
 
     # --- per day -----------------------------------------------------------
-    out_days, windows, hourly = [], [], []
+    out_days, windows, least_bad_all, hourly = [], [], [], []
     period_dates = []
     for i in range(days):
         d = start + timedelta(days=i)
@@ -236,6 +300,11 @@ def forecast_spot(spot_id: str, start: Optional[date] = None, days: int = 7,
                                     tide_events=tide_events, near_new_or_full=moon["near_new_or_full"])
                  for r in day_rows]
         conf = _confidence(d, today)
+        rows_by_time = {r["time"]: r for r in day_rows}
+
+        def rescore(r, _d=d, _m=moon):
+            return scoring.score_hour(r, coastal=spot.is_coastal, facing=spot.facing, sun=sun.get(_d),
+                                      tide_events=tide_events, near_new_or_full=_m["near_new_or_full"])
         for h in hours:
             tm = tides.height_at(tide_events_ok, h["time"]) if tide_events_ok else None
             hourly.append({
@@ -255,9 +324,22 @@ def forecast_spot(spot_id: str, start: Optional[date] = None, days: int = 7,
         target = species.pick_target(species.species_for(spot, d, sst))
         wins = scoring.windows(hours, sun.get(d), not_before=now if d == now.date() else None,
                                max_n=MAX_WINDOWS_PER_DAY)
-        day_windows = [_window_out(w, spot, target, conf) for w in wins]
-        windows.extend(day_windows)
-        best = max(day_windows, key=lambda w: w["score"]) if day_windows else None
+        day_windows = []
+        for w in wins:
+            cd = confidence.window_confidence(w, rows_by_time, (d - today).days, rescore, spot.is_coastal,
+                                              wind_models, wave_models)
+            wo = _window_out(w, spot, target, cd["level"])
+            wo["confidence_detail"] = cd
+            day_windows.append(wo)
+        fishable = [w for w in day_windows if w["rating"] != "poor"]
+        windows.extend(fishable)
+        top = max(day_windows, key=lambda w: w["score"]) if day_windows else None   # for the day score
+        best = max(fishable, key=lambda w: w["score"]) if fishable else None
+        least = None
+        if not fishable and top:
+            least = dict(top, label="least-bad (not recommended)")
+            least_bad_all.append(top)
+        no_win = None if best else _no_window_reason(top, f"on {day_label(d)}")
 
         s = sun.get(d) or {}
         sr, ss = s.get("sunrise"), s.get("sunset")
@@ -265,8 +347,8 @@ def forecast_spot(spot_id: str, start: Optional[date] = None, days: int = 7,
         if d == now.date():
             daylight = [h for h in daylight if h["time"] + timedelta(hours=1) > now]
         dl_mean = _mean([h["score"] for h in daylight])
-        if best and dl_mean is not None:
-            day_score = 0.6 * best["score"] + 0.4 * dl_mean
+        if top and dl_mean is not None:
+            day_score = 0.6 * top["score"] + 0.4 * dl_mean
         elif dl_mean is not None:
             day_score = dl_mean
         else:  # today, nothing fishable left
@@ -285,7 +367,8 @@ def forecast_spot(spot_id: str, start: Optional[date] = None, days: int = 7,
             "rating": rating(day_score),
             "summary": scoring.day_summary(hours, agg, best, verdict_text, spot.is_coastal),
             "wind_kn_avg": _r(_mean([h["wind_kn"] for h in agg])),
-            "gust_kn_max": _r(max([h["gust_kn"] for h in agg if h["gust_kn"] is not None], default=None)),
+            # max over every hour of the date, so it is never below the hourly rows
+            "gust_kn_max": _r(max([h["gust_kn"] for h in hours if h["gust_kn"] is not None], default=None)),
             "swell_m_avg": _r(_mean([h["swell_m"] for h in agg]), 2) if spot.is_coastal else None,
             "rain_mm": _r(sum(h["rain_mm"] or 0 for h in hours)),
             "sst_c_avg": _r(sst) if spot.is_coastal else None,
@@ -293,10 +376,14 @@ def forecast_spot(spot_id: str, start: Optional[date] = None, days: int = 7,
             "sunset": ss.isoformat() if ss else None,
             # additive
             "wave_m_avg": _r(_mean([h["wave_m"] for h in agg]), 2) if spot.is_coastal else None,
-            "wind_kn_max": _r(max([h["wind_kn"] for h in agg if h["wind_kn"] is not None], default=None)),
-            "label": day_label(d), "confidence": conf, "verdict_text": verdict_text,
-            "best_window": best, "best_window_text": best["advice"] if best else None,
-            "windows": len(day_windows), "moon": moon, "blocks_3h": blocks,
+            "wind_kn_max": _r(max([h["wind_kn"] for h in hours if h["wind_kn"] is not None], default=None)),
+            "gust_kn_max_daylight": _r(max([h["gust_kn"] for h in agg if h["gust_kn"] is not None], default=None)),
+            "wind_kn_max_daylight": _r(max([h["wind_kn"] for h in agg if h["wind_kn"] is not None], default=None)),
+            "label": day_label(d), "confidence": (best or top or {}).get("confidence", conf),
+            "lead_confidence": conf, "verdict_text": verdict_text,
+            "best_window": best, "best_window_text": best["advice"] if best else no_win,
+            "windows": len(fishable), "no_window_reason": no_win, "least_bad_window": least,
+            "moon": moon, "blocks_3h": blocks,
         })
 
     tides_out = [{"time": e.time.isoformat(), "type": e.kind, "height_m": _r(e.height, 2),
@@ -333,7 +420,7 @@ def forecast_spot(spot_id: str, start: Optional[date] = None, days: int = 7,
         "generated_at": now.isoformat(),
         "model_run": model_run,
         "sources": sources,
-        "verdict": _verdict(windows, out_days),
+        "verdict": _verdict(windows, least_bad_all, out_days, start),
         "days": out_days,
         "windows": windows,
         "tides": tides_out,
@@ -350,7 +437,7 @@ def forecast_spot(spot_id: str, start: Optional[date] = None, days: int = 7,
         "species": _species_once(spot, period_dates, scoring._mean([h["sst_c"] for h in hourly])),
         "warnings": warnings,
         "attribution": ATTRIBUTION,
-        "cache": {"forecast": wx.get("_cache"), "marine": (marine or {}).get("_cache")},
+        "cache": {"forecast": wx.get("_cache"), "marine": (marine or {}).get("_cache"), **cmp_cache},
     }
     if compare_tides and tide_source and tide_source.startswith("LINZ") and model_events:
         lo = min(e.time for e in model_events)
