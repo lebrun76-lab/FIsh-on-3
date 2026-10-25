@@ -53,6 +53,7 @@
   "advice": "Wed 5–8am, light N 5 kn, dawn. Try brown trout: spin or fly from the shore at first and last light. Also good: Tue 27 Oct.",
   "confidence": "high",
   "window": {
+   "id": "central_otago_lakes:2026-10-28T05:00:00+13:00/2026-10-28T08:00:00+13:00",
    "start": "2026-10-28T05:00:00+13:00",
    "end": "2026-10-28T08:00:00+13:00"
   },
@@ -61,6 +62,7 @@
   "horizon_days": 3,
   "horizon_end": "2026-10-28",
   "best_later": {
+   "id": "central_otago_lakes:2026-10-31T05:00:00+13:00/2026-10-31T08:00:00+13:00",
    "start": "2026-10-31T05:00:00+13:00",
    "end": "2026-10-31T08:00:00+13:00",
    "date": "2026-10-31",
@@ -93,6 +95,7 @@
    "lead_confidence": "high",
    "verdict_text": "Poor, stay home or stick to sheltered water",
    "best_window": {
+    "id": "central_otago_lakes:2026-10-26T06:00:00+13:00/2026-10-26T09:00:00+13:00",
     "start": "2026-10-26T06:00:00+13:00",
     "end": "2026-10-26T09:00:00+13:00",
     "score": 5.2,
@@ -117,6 +120,7 @@
     "swell_m": null,
     "swell_period_s": null,
     "rain_mm": 2.7,
+    "target_species": "Brown Trout",
     "confidence_detail": {
      "level": "high",
      "lead_days": 0,
@@ -308,6 +312,7 @@
    "lead_confidence": "high",
    "verdict_text": "Marginal, pick your window",
    "best_window": {
+    "id": "central_otago_lakes:2026-10-27T06:00:00+13:00/2026-10-27T09:00:00+13:00",
     "start": "2026-10-27T06:00:00+13:00",
     "end": "2026-10-27T09:00:00+13:00",
     "score": 6.0,
@@ -330,6 +335,7 @@
     "swell_m": null,
     "swell_period_s": null,
     "rain_mm": 0,
+    "target_species": "Brown Trout",
     "confidence_detail": {
      "level": "high",
      "lead_days": 1,
@@ -521,6 +527,7 @@
    "lead_confidence": "high",
    "verdict_text": "Good",
    "best_window": {
+    "id": "central_otago_lakes:2026-10-28T05:00:00+13:00/2026-10-28T08:00:00+13:00",
     "start": "2026-10-28T05:00:00+13:00",
     "end": "2026-10-28T08:00:00+13:00",
     "score": 6.6,
@@ -544,6 +551,7 @@
     "swell_m": null,
     "swell_period_s": null,
     "rain_mm": 0,
+    "target_species": "Brown Trout",
     "confidence_detail": {
      "level": "high",
      "lead_days": 2,
@@ -735,6 +743,7 @@
    "lead_confidence": "medium",
    "verdict_text": "Marginal, pick your window",
    "best_window": {
+    "id": "central_otago_lakes:2026-10-29T06:00:00+13:00/2026-10-29T09:00:00+13:00",
     "start": "2026-10-29T06:00:00+13:00",
     "end": "2026-10-29T09:00:00+13:00",
     "score": 5.6,
@@ -757,6 +766,7 @@
     "swell_m": null,
     "swell_period_s": null,
     "rain_mm": 0.4,
+    "target_species": "Brown Trout",
     "confidence_detail": {
      "level": "medium",
      "lead_days": 3,
@@ -948,6 +958,7 @@
    "lead_confidence": "medium",
    "verdict_text": "Marginal, pick your window",
    "best_window": {
+    "id": "central_otago_lakes:2026-10-30T05:00:00+13:00/2026-10-30T08:00:00+13:00",
     "start": "2026-10-30T05:00:00+13:00",
     "end": "2026-10-30T08:00:00+13:00",
     "score": 5.8,
@@ -970,6 +981,7 @@
     "swell_m": null,
     "swell_period_s": null,
     "rain_mm": 0.3,
+    "target_species": "Brown Trout",
     "confidence_detail": {
      "level": "medium",
      "lead_days": 4,
@@ -1161,6 +1173,7 @@
    "lead_confidence": "medium",
    "verdict_text": "Marginal, pick your window",
    "best_window": {
+    "id": "central_otago_lakes:2026-10-31T05:00:00+13:00/2026-10-31T08:00:00+13:00",
     "start": "2026-10-31T05:00:00+13:00",
     "end": "2026-10-31T08:00:00+13:00",
     "score": 6.0,
@@ -1183,6 +1196,7 @@
     "swell_m": null,
     "swell_period_s": null,
     "rain_mm": 0,
+    "target_species": "Brown Trout",
     "confidence_detail": {
      "level": "medium",
      "lead_days": 5,
@@ -1374,6 +1388,7 @@
    "lead_confidence": "medium",
    "verdict_text": "Marginal, pick your window",
    "best_window": {
+    "id": "central_otago_lakes:2026-11-01T05:00:00+13:00/2026-11-01T08:00:00+13:00",
     "start": "2026-11-01T05:00:00+13:00",
     "end": "2026-11-01T08:00:00+13:00",
     "score": 6.0,
@@ -1396,6 +1411,7 @@
     "swell_m": null,
     "swell_period_s": null,
     "rain_mm": 0,
+    "target_species": "Brown Trout",
     "confidence_detail": {
      "level": "medium",
      "lead_days": 6,
@@ -1569,6 +1585,7 @@
  ],
  "windows": [
   {
+   "id": "central_otago_lakes:2026-10-26T06:00:00+13:00/2026-10-26T09:00:00+13:00",
    "start": "2026-10-26T06:00:00+13:00",
    "end": "2026-10-26T09:00:00+13:00",
    "score": 5.2,
@@ -1593,6 +1610,7 @@
    "swell_m": null,
    "swell_period_s": null,
    "rain_mm": 2.7,
+   "target_species": "Brown Trout",
    "confidence_detail": {
     "level": "high",
     "lead_days": 0,
@@ -1612,6 +1630,7 @@
    "near_best": true
   },
   {
+   "id": "central_otago_lakes:2026-10-27T06:00:00+13:00/2026-10-27T09:00:00+13:00",
    "start": "2026-10-27T06:00:00+13:00",
    "end": "2026-10-27T09:00:00+13:00",
    "score": 6.0,
@@ -1634,6 +1653,7 @@
    "swell_m": null,
    "swell_period_s": null,
    "rain_mm": 0,
+   "target_species": "Brown Trout",
    "confidence_detail": {
     "level": "high",
     "lead_days": 1,
@@ -1653,6 +1673,7 @@
    "near_best": true
   },
   {
+   "id": "central_otago_lakes:2026-10-27T11:00:00+13:00/2026-10-27T14:00:00+13:00",
    "start": "2026-10-27T11:00:00+13:00",
    "end": "2026-10-27T14:00:00+13:00",
    "score": 5.0,
@@ -1674,6 +1695,7 @@
    "swell_m": null,
    "swell_period_s": null,
    "rain_mm": 0,
+   "target_species": "Brown Trout",
    "confidence_detail": {
     "level": "medium",
     "lead_days": 1,
@@ -1695,6 +1717,7 @@
    "near_best": true
   },
   {
+   "id": "central_otago_lakes:2026-10-27T18:00:00+13:00/2026-10-27T21:00:00+13:00",
    "start": "2026-10-27T18:00:00+13:00",
    "end": "2026-10-27T21:00:00+13:00",
    "score": 5.1,
@@ -1718,6 +1741,7 @@
    "swell_m": null,
    "swell_period_s": null,
    "rain_mm": 0,
+   "target_species": "Brown Trout",
    "confidence_detail": {
     "level": "high",
     "lead_days": 1,
@@ -1737,6 +1761,7 @@
    "near_best": true
   },
   {
+   "id": "central_otago_lakes:2026-10-28T05:00:00+13:00/2026-10-28T08:00:00+13:00",
    "start": "2026-10-28T05:00:00+13:00",
    "end": "2026-10-28T08:00:00+13:00",
    "score": 6.6,
@@ -1760,6 +1785,7 @@
    "swell_m": null,
    "swell_period_s": null,
    "rain_mm": 0,
+   "target_species": "Brown Trout",
    "confidence_detail": {
     "level": "high",
     "lead_days": 2,
@@ -1779,6 +1805,7 @@
    "near_best": true
   },
   {
+   "id": "central_otago_lakes:2026-10-28T18:00:00+13:00/2026-10-28T21:00:00+13:00",
    "start": "2026-10-28T18:00:00+13:00",
    "end": "2026-10-28T21:00:00+13:00",
    "score": 5.8,
@@ -1802,6 +1829,7 @@
    "swell_m": null,
    "swell_period_s": null,
    "rain_mm": 0.7,
+   "target_species": "Brown Trout",
    "confidence_detail": {
     "level": "high",
     "lead_days": 2,
@@ -1821,6 +1849,7 @@
    "near_best": true
   },
   {
+   "id": "central_otago_lakes:2026-10-29T06:00:00+13:00/2026-10-29T09:00:00+13:00",
    "start": "2026-10-29T06:00:00+13:00",
    "end": "2026-10-29T09:00:00+13:00",
    "score": 5.6,
@@ -1843,6 +1872,7 @@
    "swell_m": null,
    "swell_period_s": null,
    "rain_mm": 0.4,
+   "target_species": "Brown Trout",
    "confidence_detail": {
     "level": "medium",
     "lead_days": 3,
@@ -1862,6 +1892,7 @@
    "near_best": true
   },
   {
+   "id": "central_otago_lakes:2026-10-30T05:00:00+13:00/2026-10-30T08:00:00+13:00",
    "start": "2026-10-30T05:00:00+13:00",
    "end": "2026-10-30T08:00:00+13:00",
    "score": 5.8,
@@ -1884,6 +1915,7 @@
    "swell_m": null,
    "swell_period_s": null,
    "rain_mm": 0.3,
+   "target_species": "Brown Trout",
    "confidence_detail": {
     "level": "medium",
     "lead_days": 4,
@@ -1903,6 +1935,7 @@
    "near_best": true
   },
   {
+   "id": "central_otago_lakes:2026-10-30T18:00:00+13:00/2026-10-30T21:00:00+13:00",
    "start": "2026-10-30T18:00:00+13:00",
    "end": "2026-10-30T21:00:00+13:00",
    "score": 4.8,
@@ -1926,6 +1959,7 @@
    "swell_m": null,
    "swell_period_s": null,
    "rain_mm": 0,
+   "target_species": "Brown Trout",
    "confidence_detail": {
     "level": "low",
     "lead_days": 4,
@@ -1947,6 +1981,7 @@
    "near_best": true
   },
   {
+   "id": "central_otago_lakes:2026-10-31T05:00:00+13:00/2026-10-31T08:00:00+13:00",
    "start": "2026-10-31T05:00:00+13:00",
    "end": "2026-10-31T08:00:00+13:00",
    "score": 6.0,
@@ -1969,6 +2004,7 @@
    "swell_m": null,
    "swell_period_s": null,
    "rain_mm": 0,
+   "target_species": "Brown Trout",
    "confidence_detail": {
     "level": "medium",
     "lead_days": 5,
@@ -1988,6 +2024,7 @@
    "near_best": true
   },
   {
+   "id": "central_otago_lakes:2026-10-31T10:00:00+13:00/2026-10-31T15:00:00+13:00",
    "start": "2026-10-31T10:00:00+13:00",
    "end": "2026-10-31T15:00:00+13:00",
    "score": 5.1,
@@ -2009,6 +2046,7 @@
    "swell_m": null,
    "swell_period_s": null,
    "rain_mm": 0.3,
+   "target_species": "Brown Trout",
    "confidence_detail": {
     "level": "medium",
     "lead_days": 5,
@@ -2028,6 +2066,7 @@
    "near_best": true
   },
   {
+   "id": "central_otago_lakes:2026-10-31T18:00:00+13:00/2026-10-31T21:00:00+13:00",
    "start": "2026-10-31T18:00:00+13:00",
    "end": "2026-10-31T21:00:00+13:00",
    "score": 5.8,
@@ -2050,6 +2089,7 @@
    "swell_m": null,
    "swell_period_s": null,
    "rain_mm": 0,
+   "target_species": "Brown Trout",
    "confidence_detail": {
     "level": "medium",
     "lead_days": 5,
@@ -2069,6 +2109,7 @@
    "near_best": true
   },
   {
+   "id": "central_otago_lakes:2026-11-01T05:00:00+13:00/2026-11-01T08:00:00+13:00",
    "start": "2026-11-01T05:00:00+13:00",
    "end": "2026-11-01T08:00:00+13:00",
    "score": 6.0,
@@ -2091,6 +2132,7 @@
    "swell_m": null,
    "swell_period_s": null,
    "rain_mm": 0,
+   "target_species": "Brown Trout",
    "confidence_detail": {
     "level": "medium",
     "lead_days": 6,
@@ -2110,6 +2152,7 @@
    "near_best": true
   },
   {
+   "id": "central_otago_lakes:2026-11-01T10:00:00+13:00/2026-11-01T13:00:00+13:00",
    "start": "2026-11-01T10:00:00+13:00",
    "end": "2026-11-01T13:00:00+13:00",
    "score": 5.8,
@@ -2132,6 +2175,7 @@
    "swell_m": null,
    "swell_period_s": null,
    "rain_mm": 0,
+   "target_species": "Brown Trout",
    "confidence_detail": {
     "level": "medium",
     "lead_days": 6,
@@ -2151,6 +2195,7 @@
    "near_best": true
   },
   {
+   "id": "central_otago_lakes:2026-11-01T15:00:00+13:00/2026-11-01T20:00:00+13:00",
    "start": "2026-11-01T15:00:00+13:00",
    "end": "2026-11-01T20:00:00+13:00",
    "score": 4.8,
@@ -2175,6 +2220,7 @@
    "swell_m": null,
    "swell_period_s": null,
    "rain_mm": 0,
+   "target_species": "Brown Trout",
    "confidence_detail": {
     "level": "medium",
     "lead_days": 6,
@@ -5054,7 +5100,7 @@
   }
  ],
  "data_status": "engine",
- "engine_version": "2.3.0",
+ "engine_version": "2.4.0",
  "hourly_step_h": 1,
  "timezone": "Pacific/Auckland",
  "model_runs": {

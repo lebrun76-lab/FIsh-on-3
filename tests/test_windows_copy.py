@@ -144,15 +144,15 @@ def test_valid_until_is_end_of_current_hour(boi):
         assert fc["valid_until"] == "2026-10-26T01:00:00+13:00"
 
 
-def test_engine_version_2_3_0(boi):
-    assert fishon_engine.__version__ == "2.3.0"
-    assert boi["live"]["engine_version"] == "2.3.0"
+def test_engine_version_2_4_0(boi):
+    assert fishon_engine.__version__ == "2.4.0"
+    assert boi["live"]["engine_version"] == "2.4.0"
     for fn in os.listdir(make_sample.OUT):
         if fn.endswith(".json"):
             with open(os.path.join(make_sample.OUT, fn), encoding="utf-8") as f:
                 fc = json.load(f)
             if "engine_version" in fc and "valid_until" in fc:
-                assert fc["engine_version"] == "2.3.0", fn
+                assert fc["engine_version"] == "2.4.0", fn
 
 
 def test_linz_display_names():

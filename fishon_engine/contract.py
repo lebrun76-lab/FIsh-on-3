@@ -1,6 +1,6 @@
 """Minimal validator for the site's v1 SpotForecast contract
 (web/docs/forecast-api.md on branch site-prototype). Checks the v1 fields
-only; additive fields are allowed. ``validate_v1(fc)`` returns a list of
+only, plus the engine's windows[].id (2.4.0); additive fields are allowed. ``validate_v1(fc)`` returns a list of
 problems (empty = valid)."""
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ SPOT = {"id": str, "name": str, "region": str, "island": str, "lat": NUM, "lon":
 HOUR = {"time": str, "wind_kn": NUM, "gust_kn": NUM, "wind_dir_deg": NUM, "swell_m": NUM,
         "swell_period_s": NUM, "sst_c": NUM, "tide_m": NUM, "rain_mm": NUM, "score": NUM}
 TIDE = {"time": str, "type": str, "height_m": NUM}
-WINDOW = {"start": str, "end": str, "score": NUM, "rating": str, "headline": str, "advice": str,
+WINDOW = {"id": str, "start": str, "end": str, "score": NUM, "rating": str, "headline": str, "advice": str,
           "reasons": list}
 DAY = {"date": str, "score": NUM, "rating": str, "summary": str, "wind_kn_avg": NUM,
        "gust_kn_max": NUM, "swell_m_avg": NUM, "rain_mm": NUM, "sst_c_avg": NUM,
@@ -66,8 +66,19 @@ def validate_v1(fc: Dict) -> List[str]:
         errs.append("sources must include 'Open-Meteo (CC BY 4.0)'")
     for i, x in enumerate(fc.get("days") or []):
         _check(x, DAY, f"days[{i}]", errs)
+    sid = (fc.get("spot") or {}).get("id")
+    seen = set()
     for i, x in enumerate(fc.get("windows") or []):
         _check(x, WINDOW, f"windows[{i}]", errs)
+        if isinstance(x, dict) and isinstance(x.get("id"), str):
+            if x["id"] != f"{sid}:{x.get('start')}/{x.get('end')}":
+                errs.append(f"windows[{i}].id: not '<spot.id>:<start>/<end>'")
+            if x["id"] in seen:
+                errs.append(f"windows[{i}].id: duplicate")
+            seen.add(x["id"])
+    vw = (fc.get("verdict") or {}).get("window")
+    if isinstance(vw, dict) and vw.get("id") not in seen:
+        errs.append("verdict.window.id: not in windows[]")
     for i, x in enumerate(fc.get("tides") or []):
         _check(x, TIDE, f"tides[{i}]", errs)
         if x.get("type") not in ("high", "low"):
