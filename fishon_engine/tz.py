@@ -32,11 +32,11 @@ def fmt_hour(dt: datetime) -> str:
 
 
 def fmt_range(start: datetime, end: datetime) -> str:
-    """'Sat 6-10am' or 'Sat 11am-2pm'."""
+    """'Sat 6–10am' or 'Sat 11am–2pm' (unspaced en dash, as the site shows)."""
     s, e = fmt_hour(start), fmt_hour(end)
     if s[-2:] == e[-2:]:
         s = s[:-2]
-    return f"{start.strftime('%a')} {s}-{e}"
+    return f"{start.strftime('%a')} {s}\u2013{e}"
 
 
 def day_label(d: date) -> str:

@@ -119,7 +119,8 @@ def test_every_coastal_spot_has_a_port_and_facings_unchanged():
             assert s.tide_port is None
             continue
         assert s.tide_port_id and s.tide_port_km is not None
-        assert tp.get_port(s.tide_port_id).name == s.tide_port
+        p = tp.get_port(s.tide_port_id)
+        assert p.name == s.tide_port_linz_name and p.display == s.tide_port and " - " not in s.tide_port
         if s.id in FACINGS:
             assert s.facing == FACINGS[s.id], s.id
 

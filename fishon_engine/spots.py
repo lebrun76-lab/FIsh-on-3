@@ -54,6 +54,7 @@ class Spot:
     tide_port_id: Optional[str] = None     # tideports.TidePort.id
     tide_port_km: Optional[float] = None   # spot lat/lon -> port, km
     legacy_tide_port: Optional[str] = None  # engine v2 hand-picked port
+    tide_port_linz_name: Optional[str] = None  # raw LINZ name (tide_port is the display form)
     wx_lat: Optional[float] = None    # weather-model point (on water), see WX_POINTS
     wx_lon: Optional[float] = None
     wx_note: str = ""
@@ -171,10 +172,10 @@ def _tide_note(m: "tideports.Match") -> str:
     if p.kind == "daily":
         if not m.far:
             return ""
-        s = f"Tides: LINZ daily predictions for {p.name}, {m.km:g} km from the spot centre."
+        s = f"Tides: LINZ daily predictions for {p.display}, {m.km:g} km from the spot centre."
     else:
-        s = (f"Tides: LINZ secondary port {p.name}, {m.km:g} km from the spot centre; times/heights "
-             f"derived from {p.standard} with LINZ mean differences (HW {p.hw_diff_min:+d} min, "
+        s = (f"Tides: LINZ secondary port {p.display}, {m.km:g} km from the spot centre; times/heights "
+             f"derived from {tideports.display_name(p.standard)} with LINZ mean differences (HW {p.hw_diff_min:+d} min, "
              f"LW {p.lw_diff_min:+d} min).")
     if p.approximate:
         s += " LINZ marks this port's data approximate."
@@ -200,7 +201,8 @@ def _build() -> Dict[str, Spot]:
             marine_note=(("Marine data (waves, SST) taken from a sea point %.3f, %.3f." % MARINE_POINTS[c.id]
                           if c.id in MARINE_POINTS else "") + _MARINE_CAVEAT.get(c.id, "")).strip(),
             facing=facing, facing_note=fnote,
-            tide_port=match.port.name if match else None,
+            tide_port=match.port.display if match else None,
+            tide_port_linz_name=match.port.name if match else None,
             tide_port_id=match.port.id if match else None,
             tide_port_km=match.km if match else None,
             tide_note=_tide_note(match) if match else "",

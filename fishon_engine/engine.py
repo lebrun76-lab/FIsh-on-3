@@ -85,6 +85,7 @@ def _spot_out(spot: Spot, wx: Dict, marine: Optional[Dict], cell_sel: str) -> Di
         "tags": list(spot.tags), "coastal": spot.is_coastal,
         "facing_deg": spot.facing, "facing_note": spot.facing_note,
         "tide_port": spot.tide_port, "tide_port_id": spot.tide_port_id, "tide_port_km": spot.tide_port_km,
+        "tide_port_linz_name": spot.tide_port_linz_name,
         "tide_note": spot.tide_note,
         "forecast_point": {"lat": spot.forecast_lat, "lon": spot.forecast_lon, "cell_selection": cell_sel,
                            "model_cell": cell(wx), "note": spot.wx_note or None},
@@ -440,6 +441,10 @@ def forecast_spot(spot_id: str, start: Optional[date] = None, days: int = 7,
         "api_version": API_VERSION,
         "spot": _spot_out(spot, wx, marine, cell_sel),
         "generated_at": now.isoformat(),
+        # End of the current hour: after it, today's past-hour cut (score,
+        # score_remaining, windows) is out of date, and the 1 h forecast cache
+        # has refreshed too. Regenerate rather than show it past this time.
+        "valid_until": (now.replace(minute=0, second=0, microsecond=0) + timedelta(hours=1)).isoformat(),
         "model_run": model_run,
         "sources": sources,
         "verdict": _verdict(windows, least_bad_all, out_days, start),

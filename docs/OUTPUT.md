@@ -13,7 +13,7 @@ Real samples, regenerated offline from recorded responses with `python tools/mak
 
 | # | Item | Engine 2.1 / 2.2 |
 |---|---|---|
-| 1 | packaging | `pyproject.toml`: `pip install -e /path/to/fish-engine`, version from `fishon_engine.__version__` (2.2.0), extras `[sstmap]`, `[test]`, script `fishon-forecast` |
+| 1 | packaging | `pyproject.toml`: `pip install -e /path/to/fish-engine`, version from `fishon_engine.__version__` (2.3.0), extras `[sstmap]`, `[test]`, script `fishon-forecast` |
 | 2 | SST too warm? | Checked against NOAA satellite SST: real and anomalously warm. See SST_CHECK.md; `warnings[]` carries a note |
 | 3 | scores too optimistic | Recalibrated weights. See SCORING.md |
 | 4 | gusts 2–2.6× mean | Sea cells and sea weather points. See WEATHER_POINTS.md; `spot.forecast_point` |
@@ -41,7 +41,7 @@ Real samples, regenerated offline from recorded responses with `python tools/mak
 ## Additive (v1.1) fields
 
 `data_status: "engine"`, `engine_version`, `hourly_step_h`, `timezone`, `model_runs`, `tide_source`, `tide_datum`, `tide_series[] {time,height_m}` (30 min), `species[]`, `warnings[]`, `attribution[]`, `cache`, and `tide_comparison` (only with `compare_tides=True`).
-- `spot`: `facing_deg`, `facing_note`, `tide_port`, `tide_port_id`, `tide_port_km`, `tide_note`, `forecast_point`, `marine_point` (2.2: `marine_point.note` when the marine cell is far from the spot; docs/MARINE_POINTS.md).
+- `spot`: `facing_deg`, `facing_note`, `tide_port`, `tide_port_id`, `tide_port_km`, `tide_port_linz_name` (2.3), `tide_note`, `forecast_point`, `marine_point` (2.2: `marine_point.note` when the marine cell is far from the spot; docs/MARINE_POINTS.md).
 - `verdict` (2.2): `no_window_reason`, `least_bad`, `best_later`, `horizon_days`, `horizon_end`.
 - `hourly[]`: `wave_m`, `wind_rel`, `light`, `tide_phase`, `rating`.
 - `windows[]`: `confidence`, `confidence_detail` (2.2), `date`, `wind_kn`, `gust_max_kn`, `wind_from`, `wind_rel`, `wave_m`, `swell_m`, `swell_period_s`, `rain_mm`.
@@ -73,9 +73,14 @@ All additive; `validate_v1` still passes.
 | `windows[].near_best` | bool | `score >= (day's best window score - 1.5)`, rounded to 1 dp. Always true for the day's best. Also on `days[].best_window` and `days[].least_bad_window` |
 | `days[].score_remaining` | float \| null | Today only: the day score over the daylight hours not yet past at `generated_at` (best remaining window x 0.6 + mean remaining daylight hour x 0.4). Null on other days, and when no daylight is left |
 | `days[].remaining_from` | string \| null | Today only: ISO start of the first hour counted in `score_remaining` (the current hour) |
+| `valid_until` | string | Top level, 2.3. ISO time (NZ offset) at the end of the hour `generated_at` falls in, i.e. `remaining_from` + 1 h. See below |
 | `days[].score_full_day` | float \| null | The same formula over every daylight hour of the date, gone or not. Equals `score` on days other than today |
 
-**Which score to show.** `days[].score` is unchanged: for today it was already computed over the hours left at `generated_at`, so it equals `score_remaining`. Show `score_remaining` for today (it says what it is, and `remaining_from` lets you tell when cached output has gone stale: if the current hour is later than `remaining_from`, regenerate or label the score with that time). Show `score` for every other day. `score_full_day` is for "how was today overall"; don't show it as today's outlook.
+**Which score to show.** `days[].score` is unchanged: for today it was already computed over the hours left at `generated_at`, so it equals `score_remaining`. Show `score_remaining` for today. Treat the output as current until `valid_until`; after that, regenerate (or label today's score "as of `remaining_from`"). Show `score` for every other day. `score_full_day` is for "how was today overall"; don't show it as today's outlook.
+
+**`valid_until` (2.3).** The engine drops past hours at hour granularity, so today's `score`, `score_remaining`, today's windows and the verdict only change when the clock passes the top of the hour. `valid_until` is that moment: `generated_at` floored to the hour, plus 1 h (08:48 gives `"2026-10-26T09:00:00+13:00"`; 00:54 gives `01:00`). The forecast cache TTL is also 1 h, so a fresh run after `valid_until` may also pick up new forecast data; marine and model-comparison caches live 3 h and LINZ tide tables 30 days, so those can be older than `generated_at`. It is a "recompute after" time, not a guarantee the weather data was refreshed at that point.
+
+**Version.** `engine_version` is `"2.3.0"` (pyproject reads it from `fishon_engine.__version__`). The samples are regenerated, so every sample carrying `near_best`, `score_remaining` or `valid_until` reports 2.3.0.
 
 The headline and verdict are unchanged: the verdict still picks the best fishable window (with the confidence margin), so the extra lower windows can't change it. "Also good" still lists other days.
 
@@ -88,16 +93,16 @@ Bay of Islands, 26 Oct (from `docs/samples/v1_bay_of_islands_2026-10-26_0848.jso
           "remaining_from": null, "score_full_day": 6.1, "...": "..."}],
 "windows": [
   {"start": "2026-10-26T08:00:00+13:00", "end": "2026-10-26T11:00:00+13:00", "score": 7.6, "rating": "great",
-   "headline": "Mon 8-11am looks great", "near_best": true, "...": "..."},
+   "headline": "Mon 8–11am looks great", "near_best": true, "...": "..."},
   {"start": "2026-10-26T13:00:00+13:00", "end": "2026-10-26T16:00:00+13:00", "score": 5.2, "rating": "marginal",
-   "headline": "Mon 1-4pm is fishable", "near_best": false, "...": "..."},
+   "headline": "Mon 1–4pm is fishable", "near_best": false, "...": "..."},
   {"start": "2026-10-26T18:00:00+13:00", "end": "2026-10-26T21:00:00+13:00", "score": 6.4, "rating": "good",
-   "headline": "Mon 6-9pm looks good", "near_best": true, "...": "..."}]
+   "headline": "Mon 6–9pm looks good", "near_best": true, "...": "..."}]
 ```
 
-Replayed with the clock at 00:54 (whole day) the same data gives 5-8am 8.8 (near_best), 10am-1pm 6.6 and 6-9pm 6.4 (both not near_best); before this change only 5-8am was listed.
+Replayed with the clock at 00:54 (whole day) the same data gives 5–8am 8.8 (near_best), 10am–1pm 6.6 and 6–9pm 6.4 (both not near_best); before this change only 5-8am was listed.
 
-**Copy.** Generated text has no em dashes, no spaced en dashes and no spaced hyphens used as dashes (a test checks every string in the samples and the CLI text; LINZ port names such as "Lottin Point - Wakatiri" are left as LINZ spells them). Changed wording:
+**Copy.** Generated text has no em dashes, no spaced en dashes and no spaced hyphens used as dashes (a test checks every string in the samples and the CLI text, except the raw `spot.tide_port_linz_name`). Changed wording:
 
 | before | after |
 |---|---|
@@ -111,6 +116,18 @@ Replayed with the clock at 00:54 (whole day) the same data gives 5-8am 8.8 (near
 | SST notes: `# SST notes — valid ...`, `9.1–12.8 °C` | `# SST notes, valid ...`, `9.1 to 12.8 °C` |
 | CLI: `VERDICT: Go Monday early morning - great 8.2/10 [high]` | `VERDICT: Go Monday early morning (great, 8.2/10) [high]` |
 
-The day `summary` still starts with the rating word, so it now reads e.g. "Excellent, go fishing. Gentle winds all day (~10 kn); 0.3 m sea. Best: Mon 5-8am."
+The day `summary` still starts with the rating word, so it now reads e.g. "Excellent, go fishing. Gentle winds all day (~10 kn); 0.3 m sea. Best: Mon 5–8am."
+
+**Time ranges (2.3).** Window headlines, `advice`, day `summary` ("Best: Mon 8–11am"), `no_window_reason` and the CLI write hour ranges with an unspaced en dash, as the site does: `Mon 8–11am`, `Mon 10am–1pm` (was `Mon 8-11am`). Date ranges in prose (`closed 1 Sep to 10 Jan`) keep "to". The no spaced dash test still passes because the en dash is unspaced.
+
+**LINZ port names (2.3).** LINZ writes some port names as "Area - Place" with a spaced hyphen. They are now shown as "Area (Place)" everywhere the engine writes a port name: `spot.tide_port`, `spot.tide_note`, `tide_source`, `tides[].source`, `sources[]` ("Tides: ...") and warnings. The raw LINZ name is kept in the new `spot.tide_port_linz_name` (string | null, null for freshwater spots) and is still what lookups and LINZ file names use. Names without a spaced hyphen (e.g. "Halfmoon Bay / Oban", "Wharekahika / Hicks Bay") are unchanged.
+
+| LINZ name | shown as |
+|---|---|
+| `Coromandel Harbour - Whanganui Island` (spot `coromandel`) | `Coromandel Harbour (Whanganui Island)` |
+| `Lottin Point - Wakatiri` (LINZ file name) | `Lottin Point (Wakatiri)` |
+| `Te Whanganui / Port Underwood - Ocean Bay` | `Te Whanganui / Port Underwood (Ocean Bay)` |
+
+Of the 21 coastal spots only `coromandel` currently matches a port with a spaced hyphen, so its `tide_port`, `tide_note` and `tide_source` change (e.g. `tide_source` "LINZ secondary port Coromandel Harbour (Whanganui Island) (offsets from Auckland)"). docs/TIDE_PORTS.md keeps the raw LINZ names.
 
 **Brand.** Salt Supply Co (was Fish On): HTTP User-Agent `SaltSupplyCo-engine/2.0 (+https://github.com/lebrun76-lab/FIsh-on-3)`, the pyproject description, README title and the Streamlit app's titles. The package (`fishon_engine`, `fishon-engine`), the CLI script name (`fishon-forecast`) and the cache path (`~/.cache/fishon`) are unchanged.

@@ -8,7 +8,7 @@ from fishon_engine.contract import validate_v1
 fc = forecast_spot("hauraki_gulf", days=7)  # dict, JSON-serialisable
 assert validate_v1(fc) == []
 fc["verdict"]["headline"]       # 'Go Monday early morning'  (docs/samples/v1_hauraki_gulf_2026-10-26.json)
-fc["windows"][0]["advice"]      # 'Mon 5-8am, gentle cross-offshore NW 8 kn, 0.1 m sea @ 3 s, rising tide, ...'
+fc["windows"][0]["advice"]      # 'Mon 5–8am, gentle cross-offshore NW 8 kn, 0.1 m sea @ 3 s, rising tide, ...'
 ```
 
 CLI: `python -m fishon_engine hauraki_gulf kaikoura bluff --days 3 [--hourly] [--json]` (or `fishon-forecast …` once installed). Example: docs/samples/cli_2026-10-26.txt.

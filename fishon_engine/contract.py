@@ -52,7 +52,7 @@ def validate_v1(fc: Dict) -> List[str]:
     errs: List[str] = []
     if fc.get("api_version") != "1":
         errs.append("api_version != '1'")
-    for k, t in (("generated_at", str), ("model_run", str), ("sources", list), ("days", list),
+    for k, t in (("generated_at", str), ("valid_until", str), ("model_run", str), ("sources", list), ("days", list),
                  ("windows", list), ("tides", list), ("hourly", list)):
         if not isinstance(fc.get(k), t):
             errs.append(f"{k}: missing or wrong type")
