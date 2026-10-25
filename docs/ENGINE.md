@@ -63,10 +63,9 @@ How to read this: the model's highs and lows came 30–70 min *earlier* than LIN
 - **LINZ tide predictions**: CC BY 4.0. Attribution: "Contains data sourced from Land Information New Zealand (LINZ), licensed for reuse under CC BY 4.0". https://www.linz.govt.nz/products-services/tides-and-tidal-streams/tide-predictions, https://www.linz.govt.nz/copyright
 - **Species/rules**: MPI Challenger rules (Marlborough Sounds blue cod closed 1 Sep – 10 Jan), Parsons et al. 2014 and NIWA (snapper), Fisheries NZ FAR 2025/52 (West Coast southern bluefin tuna), Fish & Game Otago (lakes open all year). Links are in `data/species_seasons.json`. Rules change, so link users to MPI's NZ Fishing Rules app rather than presenting our data as the rule.
 
-## Idea: a simple SST map
+## SST map (implemented: `fishon_engine/sstmap.py`, see docs/SST_MAP.md)
 
-1. **Cheapest option (no new data source):** call the Marine API with a coarse NZ grid in one batched request. The API accepts comma-separated lat/lon lists; for example, 0.5° over 34–47.5°S and 166–179°E, ocean points only, cached for 6 h. Render a coloured scatter or heatmap with Folium/pydeck in Streamlit, with spot pins showing that day's SST and a "snapper-warm ≥15 °C" contour. Each grid point counts as a call, so a few hundred points every 6 h is about 40–50k calls/month.
-2. **Better imagery later:** NOAA OISST or Copernicus Marine SST tiles. Check each licence before using; Copernicus requires attribution and registration.
+One POST to the Open-Meteo Marine API returns `current=sea_surface_temperature` for a 0.5° grid of 663 sea cells. It is cached for 6 h in the shared SQLite cache. The outputs are a PNG with a legend and a coastline, a GeoJSON, and plain-English notes about fronts, warm edges and isotherms. `python -m fishon_engine.sstmap --out docs/sst`.
 
 ## Known limitations and open questions
 
