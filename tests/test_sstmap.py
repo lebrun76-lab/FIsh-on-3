@@ -1,0 +1,110 @@
+"""Offline tests for the SST map (no network: the HTTP poster is faked)."""
+import json
+
+import pytest
+
+from fishon_engine import sstmap as m
+from fishon_engine.cache import Cache
+
+SMALL = {"north": -44.0, "south": -46.0, "west": 170.0, "east": 172.0}
+
+
+def test_haversine_one_degree_latitude():
+    assert m.haversine_km(-40, 170, -41, 170) == pytest.approx(111.2, abs=0.2)
+
+
+def test_land_mask_uses_coastline():
+    land = m.load_land()
+    assert m.is_land(-43.6, 172.0, land)        # Canterbury Plains
+    assert m.is_land(-38.0, 176.0, land)        # central North Island
+    assert not m.is_land(-40.0, 170.0, land)    # Tasman Sea
+    assert not m.is_land(-46.0, 175.0, land)    # off Otago
+
+
+def test_default_grid_size_is_stable():
+    assert len(m.sea_points()) == 663
+
+
+def _fake_poster(calls, value_fn):
+    def poster(url, params):
+        calls.append(params)
+        lats = [float(x) for x in params["latitude"].split(",")]
+        lons = [float(x) for x in params["longitude"].split(",")]
+        return json.dumps([{"latitude": a, "longitude": b,
+                            "current": {"time": "2026-10-25T23:30", "sea_surface_temperature": value_fn(a, b)}}
+                           for a, b in zip(lats, lons)])
+    return poster
+
+
+def test_fetch_grid_one_request_and_cached():
+    calls = []
+    cache = Cache(":memory:")
+    poster = _fake_poster(calls, lambda la, lo: 20 + la / 4)
+    g1 = m.fetch_grid(cache=cache, bbox=SMALL, poster=poster)
+    g2 = m.fetch_grid(cache=cache, bbox=SMALL, poster=poster)
+    assert len(calls) == 1 and g1["requests"] == 1
+    assert calls[0]["current"] == "sea_surface_temperature"
+    assert g2["cache"][0]["cache"] == "hit"
+    assert m.SST_TTL == 6 * 3600
+    assert g1["valid_time_nz"] == "2026-10-25T23:30"
+    vals = [v for _, _, v in m.cells(g1)]
+    assert vals and all(v == pytest.approx(20 + la / 4) for la, _, v in m.cells(g1))
+
+
+def test_null_cells_dropped():
+    g = m.build_grid([(-44.0, 170.0), (-44.0, 170.5)], [None, 12.0], SMALL)
+    assert list(m.cells(g)) == [(-44.0, 170.5, 12.0)]
+
+
+def _step_grid():
+    # all sea, 10 C south of -45 and 14 C at/north of -45 (a sharp front)
+    lats, lons = m.grid_axes(SMALL)
+    pts = [(a, b) for a in lats for b in lons]
+    vals = [14.0 if a >= -45.0 else 10.0 for a, b in pts]
+    return m.build_grid(pts, vals, SMALL)
+
+
+def test_fronts_found_between_cells():
+    fr = m.fronts(_step_grid())
+    assert fr and all(f["delta_c"] == 4.0 for f in fr)
+    assert {f["warm_side"] for f in fr} == {"N"}
+    assert all(f["mid"][0] == -45.25 for f in fr)
+
+
+def test_isotherms_follow_the_front():
+    iso = m.isotherms(_step_grid())
+    assert {11.0, 12.0, 13.0} <= set(iso)
+    for x, y in iso[12.0][0]:
+        assert -45.5 <= y <= -45.0
+
+
+def test_notes_name_nearby_spots():
+    ns = m.notes(_step_grid())
+    text = "\n".join(ns)
+    assert "Warmest water on the map: 14.0" in text
+    assert "Temperature front" in text and "warmer water to the N" in text
+    # Moeraki (-45.36, 170.86) and Dunedin are inside the small box, near the front
+    assert "Moeraki" in text or "Dunedin" in text
+    assert "Warm water edge near" in text
+
+
+def test_spot_edges_direction():
+    edges = {e["spot"]: e for e in m.spot_edges(_step_grid())}
+    assert "moeraki" in edges
+    assert edges["moeraki"]["max_c"] == 14.0 and edges["moeraki"]["min_c"] == 10.0
+
+
+def test_geojson_and_png(tmp_path):
+    g = _step_grid()
+    g["valid_time_nz"] = "2026-10-25T23:30"
+    gj = m.to_geojson(g)
+    kinds = {f["properties"]["kind"] for f in gj["features"]}
+    assert kinds == {"sst_cell", "isotherm"}
+    assert "CC BY 4.0" in gj["properties"]["attribution"]
+    png = m.render_png(g, str(tmp_path / "x.png"))
+    with open(png, "rb") as f:
+        assert f.read(8) == b"\x89PNG\r\n\x1a\n"
+
+
+def test_nice_time_label():
+    assert m.nice_time("2026-10-25T23:30") == "Sun 25 Oct 2026 11:30pm NZDT"
