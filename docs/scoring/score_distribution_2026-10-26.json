@@ -1,0 +1,617 @@
+{
+ "start": "2026-10-27",
+ "days": 7,
+ "spots": [
+  "bay_of_islands",
+  "bay_of_plenty",
+  "coromandel",
+  "east_cape",
+  "far_north",
+  "hauraki_gulf",
+  "hawkes_bay",
+  "taranaki",
+  "wellington",
+  "banks_peninsula",
+  "bluff",
+  "catlins",
+  "dunedin",
+  "fiordland",
+  "greymouth",
+  "haast_jackson",
+  "kaikoura",
+  "marlborough_sounds",
+  "moeraki",
+  "nelson_bays",
+  "stewart_island"
+ ],
+ "setups": {
+  "2.0": {
+   "daylight_hours": {
+    "n": 2440,
+    "min": 0.0,
+    "p10": 0.2,
+    "p25": 2.5,
+    "median": 5.0,
+    "p75": 6.8,
+    "p90": 7.8,
+    "max": 9.5,
+    "mean": 4.61,
+    "share_ge_8": 0.084,
+    "share_ge_7_5": 0.153,
+    "share_ge_6": 0.393,
+    "share_lt_4_5": 0.411
+   },
+   "best_window_per_day": {
+    "n": 147,
+    "min": 0.0,
+    "p10": 3.06,
+    "p25": 5.35,
+    "median": 7.0,
+    "p75": 7.9,
+    "p90": 8.4,
+    "max": 9.3,
+    "mean": 6.33,
+    "share_ge_8": 0.231,
+    "share_ge_7_5": 0.381,
+    "share_ge_6": 0.68,
+    "share_lt_4_5": 0.204
+   },
+   "day_score": {
+    "n": 147,
+    "min": 0.0,
+    "p10": 2.32,
+    "p25": 4.5,
+    "median": 6.0,
+    "p75": 7.2,
+    "p90": 7.94,
+    "max": 8.9,
+    "mean": 5.65,
+    "share_ge_8": 0.102,
+    "share_ge_7_5": 0.211,
+    "share_ge_6": 0.517,
+    "share_lt_4_5": 0.231
+   },
+   "per_spot": {
+    "bay_of_islands": {
+     "best_window_median": 8.4,
+     "best_window_max": 9.3,
+     "day_median": 7.9,
+     "gust_ratio_median": 2.25,
+     "wind_kn_mean": 6.8
+    },
+    "bay_of_plenty": {
+     "best_window_median": 8.1,
+     "best_window_max": 8.8,
+     "day_median": 7.1,
+     "gust_ratio_median": 1.92,
+     "wind_kn_mean": 9.8
+    },
+    "coromandel": {
+     "best_window_median": 5.7,
+     "best_window_max": 8.2,
+     "day_median": 4.7,
+     "gust_ratio_median": 2.45,
+     "wind_kn_mean": 10.3
+    },
+    "east_cape": {
+     "best_window_median": 7.2,
+     "best_window_max": 8.4,
+     "day_median": 6.7,
+     "gust_ratio_median": 2.26,
+     "wind_kn_mean": 8.6
+    },
+    "far_north": {
+     "best_window_median": 6.0,
+     "best_window_max": 7.5,
+     "day_median": 5.7,
+     "gust_ratio_median": 2.08,
+     "wind_kn_mean": 8.7
+    },
+    "hauraki_gulf": {
+     "best_window_median": 7.4,
+     "best_window_max": 9.0,
+     "day_median": 6.7,
+     "gust_ratio_median": 2.01,
+     "wind_kn_mean": 11.5
+    },
+    "hawkes_bay": {
+     "best_window_median": 8.1,
+     "best_window_max": 9.1,
+     "day_median": 7.8,
+     "gust_ratio_median": 2.15,
+     "wind_kn_mean": 9.0
+    },
+    "taranaki": {
+     "best_window_median": 4.3,
+     "best_window_max": 7.9,
+     "day_median": 3.3,
+     "gust_ratio_median": 1.81,
+     "wind_kn_mean": 11.3
+    },
+    "wellington": {
+     "best_window_median": 6.3,
+     "best_window_max": 7.3,
+     "day_median": 5.1,
+     "gust_ratio_median": 2.17,
+     "wind_kn_mean": 14.4
+    },
+    "banks_peninsula": {
+     "best_window_median": 6.3,
+     "best_window_max": 8.4,
+     "day_median": 5.9,
+     "gust_ratio_median": 3.12,
+     "wind_kn_mean": 6.2
+    },
+    "bluff": {
+     "best_window_median": 3.0,
+     "best_window_max": 8.6,
+     "day_median": 2.1,
+     "gust_ratio_median": 1.97,
+     "wind_kn_mean": 15.8
+    },
+    "catlins": {
+     "best_window_median": 3.7,
+     "best_window_max": 7.6,
+     "day_median": 2.9,
+     "gust_ratio_median": 2.34,
+     "wind_kn_mean": 11.5
+    },
+    "dunedin": {
+     "best_window_median": 7.2,
+     "best_window_max": 8.8,
+     "day_median": 6.2,
+     "gust_ratio_median": 2.34,
+     "wind_kn_mean": 8.8
+    },
+    "fiordland": {
+     "best_window_median": 3.9,
+     "best_window_max": 6.4,
+     "day_median": 3.3,
+     "gust_ratio_median": 4.03,
+     "wind_kn_mean": 6.0
+    },
+    "greymouth": {
+     "best_window_median": 4.2,
+     "best_window_max": 6.3,
+     "day_median": 3.7,
+     "gust_ratio_median": 2.49,
+     "wind_kn_mean": 9.9
+    },
+    "haast_jackson": {
+     "best_window_median": 4.0,
+     "best_window_max": 6.4,
+     "day_median": 3.6,
+     "gust_ratio_median": 2.46,
+     "wind_kn_mean": 8.3
+    },
+    "kaikoura": {
+     "best_window_median": 7.5,
+     "best_window_max": 9.1,
+     "day_median": 7.3,
+     "gust_ratio_median": 2.81,
+     "wind_kn_mean": 3.3
+    },
+    "marlborough_sounds": {
+     "best_window_median": 7.5,
+     "best_window_max": 8.4,
+     "day_median": 6.9,
+     "gust_ratio_median": 2.7,
+     "wind_kn_mean": 9.9
+    },
+    "moeraki": {
+     "best_window_median": 7.5,
+     "best_window_max": 8.2,
+     "day_median": 6.8,
+     "gust_ratio_median": 1.99,
+     "wind_kn_mean": 8.3
+    },
+    "nelson_bays": {
+     "best_window_median": 7.6,
+     "best_window_max": 8.4,
+     "day_median": 6.9,
+     "gust_ratio_median": 1.49,
+     "wind_kn_mean": 12.5
+    },
+    "stewart_island": {
+     "best_window_median": 5.8,
+     "best_window_max": 7.8,
+     "day_median": 4.7,
+     "gust_ratio_median": 2.53,
+     "wind_kn_mean": 13.6
+    }
+   }
+  },
+  "2.1-points+2.0-weights": {
+   "daylight_hours": {
+    "n": 2441,
+    "min": 0.0,
+    "p10": 0.0,
+    "p25": 2.2,
+    "median": 5.0,
+    "p75": 6.8,
+    "p90": 7.8,
+    "max": 10.0,
+    "mean": 4.52,
+    "share_ge_8": 0.076,
+    "share_ge_7_5": 0.147,
+    "share_ge_6": 0.396,
+    "share_lt_4_5": 0.416
+   },
+   "best_window_per_day": {
+    "n": 147,
+    "min": 0.0,
+    "p10": 1.82,
+    "p25": 5.0,
+    "median": 6.6,
+    "p75": 7.9,
+    "p90": 8.5,
+    "max": 9.6,
+    "mean": 6.02,
+    "share_ge_8": 0.238,
+    "share_ge_7_5": 0.401,
+    "share_ge_6": 0.626,
+    "share_lt_4_5": 0.224
+   },
+   "day_score": {
+    "n": 147,
+    "min": 0.0,
+    "p10": 1.36,
+    "p25": 4.3,
+    "median": 6.1,
+    "p75": 7.4,
+    "p90": 8.0,
+    "max": 8.8,
+    "mean": 5.42,
+    "share_ge_8": 0.109,
+    "share_ge_7_5": 0.231,
+    "share_ge_6": 0.517,
+    "share_lt_4_5": 0.272
+   },
+   "per_spot": {
+    "bay_of_islands": {
+     "best_window_median": 8.4,
+     "best_window_max": 9.1,
+     "day_median": 8.0,
+     "gust_ratio_median": 1.43,
+     "wind_kn_mean": 6.7
+    },
+    "bay_of_plenty": {
+     "best_window_median": 7.9,
+     "best_window_max": 9.1,
+     "day_median": 7.1,
+     "gust_ratio_median": 1.43,
+     "wind_kn_mean": 12.8
+    },
+    "coromandel": {
+     "best_window_median": 5.2,
+     "best_window_max": 8.4,
+     "day_median": 4.7,
+     "gust_ratio_median": 1.43,
+     "wind_kn_mean": 13.7
+    },
+    "east_cape": {
+     "best_window_median": 6.6,
+     "best_window_max": 7.9,
+     "day_median": 5.8,
+     "gust_ratio_median": 1.37,
+     "wind_kn_mean": 13.3
+    },
+    "far_north": {
+     "best_window_median": 6.0,
+     "best_window_max": 7.5,
+     "day_median": 5.2,
+     "gust_ratio_median": 1.42,
+     "wind_kn_mean": 9.7
+    },
+    "hauraki_gulf": {
+     "best_window_median": 6.5,
+     "best_window_max": 8.7,
+     "day_median": 6.1,
+     "gust_ratio_median": 1.41,
+     "wind_kn_mean": 13.3
+    },
+    "hawkes_bay": {
+     "best_window_median": 8.1,
+     "best_window_max": 8.8,
+     "day_median": 7.5,
+     "gust_ratio_median": 1.47,
+     "wind_kn_mean": 10.7
+    },
+    "taranaki": {
+     "best_window_median": 3.1,
+     "best_window_max": 7.8,
+     "day_median": 2.7,
+     "gust_ratio_median": 1.36,
+     "wind_kn_mean": 17.2
+    },
+    "wellington": {
+     "best_window_median": 7.0,
+     "best_window_max": 8.3,
+     "day_median": 6.2,
+     "gust_ratio_median": 1.45,
+     "wind_kn_mean": 11.9
+    },
+    "banks_peninsula": {
+     "best_window_median": 6.8,
+     "best_window_max": 8.4,
+     "day_median": 6.1,
+     "gust_ratio_median": 1.53,
+     "wind_kn_mean": 8.5
+    },
+    "bluff": {
+     "best_window_median": 2.7,
+     "best_window_max": 8.6,
+     "day_median": 1.9,
+     "gust_ratio_median": 1.4,
+     "wind_kn_mean": 19.4
+    },
+    "catlins": {
+     "best_window_median": 4.8,
+     "best_window_max": 7.8,
+     "day_median": 3.7,
+     "gust_ratio_median": 1.45,
+     "wind_kn_mean": 16.7
+    },
+    "dunedin": {
+     "best_window_median": 5.9,
+     "best_window_max": 8.8,
+     "day_median": 5.2,
+     "gust_ratio_median": 1.42,
+     "wind_kn_mean": 12.8
+    },
+    "fiordland": {
+     "best_window_median": 3.1,
+     "best_window_max": 6.2,
+     "day_median": 2.3,
+     "gust_ratio_median": 1.49,
+     "wind_kn_mean": 14.7
+    },
+    "greymouth": {
+     "best_window_median": 5.3,
+     "best_window_max": 6.3,
+     "day_median": 4.4,
+     "gust_ratio_median": 1.42,
+     "wind_kn_mean": 14.7
+    },
+    "haast_jackson": {
+     "best_window_median": 3.8,
+     "best_window_max": 6.3,
+     "day_median": 3.2,
+     "gust_ratio_median": 1.48,
+     "wind_kn_mean": 12.3
+    },
+    "kaikoura": {
+     "best_window_median": 7.8,
+     "best_window_max": 9.6,
+     "day_median": 7.6,
+     "gust_ratio_median": 1.45,
+     "wind_kn_mean": 5.0
+    },
+    "marlborough_sounds": {
+     "best_window_median": 8.0,
+     "best_window_max": 8.6,
+     "day_median": 7.5,
+     "gust_ratio_median": 1.56,
+     "wind_kn_mean": 9.1
+    },
+    "moeraki": {
+     "best_window_median": 7.6,
+     "best_window_max": 8.5,
+     "day_median": 6.8,
+     "gust_ratio_median": 1.52,
+     "wind_kn_mean": 8.4
+    },
+    "nelson_bays": {
+     "best_window_median": 7.6,
+     "best_window_max": 8.4,
+     "day_median": 6.9,
+     "gust_ratio_median": 1.49,
+     "wind_kn_mean": 12.5
+    },
+    "stewart_island": {
+     "best_window_median": 7.5,
+     "best_window_max": 8.8,
+     "day_median": 6.2,
+     "gust_ratio_median": 1.53,
+     "wind_kn_mean": 14.0
+    }
+   }
+  },
+  "2.1": {
+   "daylight_hours": {
+    "n": 2441,
+    "min": 0.0,
+    "p10": 0.0,
+    "p25": 0.8,
+    "median": 4.0,
+    "p75": 6.0,
+    "p90": 7.2,
+    "max": 9.5,
+    "mean": 3.7,
+    "share_ge_8": 0.035,
+    "share_ge_7_5": 0.086,
+    "share_ge_6": 0.265,
+    "share_lt_4_5": 0.526
+   },
+   "best_window_per_day": {
+    "n": 147,
+    "min": 0.0,
+    "p10": 0.68,
+    "p25": 3.6,
+    "median": 5.6,
+    "p75": 7.35,
+    "p90": 8.0,
+    "max": 8.8,
+    "mean": 5.1,
+    "share_ge_8": 0.122,
+    "share_ge_7_5": 0.238,
+    "share_ge_6": 0.442,
+    "share_lt_4_5": 0.327
+   },
+   "day_score": {
+    "n": 147,
+    "min": 0.0,
+    "p10": 0.46,
+    "p25": 2.8,
+    "median": 5.0,
+    "p75": 6.65,
+    "p90": 7.44,
+    "max": 8.1,
+    "mean": 4.54,
+    "share_ge_8": 0.014,
+    "share_ge_7_5": 0.102,
+    "share_ge_6": 0.367,
+    "share_lt_4_5": 0.422
+   },
+   "per_spot": {
+    "bay_of_islands": {
+     "best_window_median": 8.0,
+     "best_window_max": 8.3,
+     "day_median": 7.8,
+     "gust_ratio_median": 1.43,
+     "wind_kn_mean": 6.7
+    },
+    "bay_of_plenty": {
+     "best_window_median": 7.8,
+     "best_window_max": 8.5,
+     "day_median": 6.8,
+     "gust_ratio_median": 1.43,
+     "wind_kn_mean": 12.8
+    },
+    "coromandel": {
+     "best_window_median": 3.7,
+     "best_window_max": 8.2,
+     "day_median": 3.2,
+     "gust_ratio_median": 1.43,
+     "wind_kn_mean": 13.7
+    },
+    "east_cape": {
+     "best_window_median": 5.4,
+     "best_window_max": 7.2,
+     "day_median": 4.4,
+     "gust_ratio_median": 1.37,
+     "wind_kn_mean": 13.3
+    },
+    "far_north": {
+     "best_window_median": 4.5,
+     "best_window_max": 6.5,
+     "day_median": 4.0,
+     "gust_ratio_median": 1.42,
+     "wind_kn_mean": 9.7
+    },
+    "hauraki_gulf": {
+     "best_window_median": 5.6,
+     "best_window_max": 8.4,
+     "day_median": 5.0,
+     "gust_ratio_median": 1.41,
+     "wind_kn_mean": 13.3
+    },
+    "hawkes_bay": {
+     "best_window_median": 7.6,
+     "best_window_max": 8.6,
+     "day_median": 6.9,
+     "gust_ratio_median": 1.47,
+     "wind_kn_mean": 10.7
+    },
+    "taranaki": {
+     "best_window_median": 1.8,
+     "best_window_max": 6.8,
+     "day_median": 1.2,
+     "gust_ratio_median": 1.36,
+     "wind_kn_mean": 17.2
+    },
+    "wellington": {
+     "best_window_median": 5.8,
+     "best_window_max": 6.6,
+     "day_median": 5.0,
+     "gust_ratio_median": 1.45,
+     "wind_kn_mean": 11.9
+    },
+    "banks_peninsula": {
+     "best_window_median": 5.4,
+     "best_window_max": 7.1,
+     "day_median": 4.6,
+     "gust_ratio_median": 1.53,
+     "wind_kn_mean": 8.5
+    },
+    "bluff": {
+     "best_window_median": 1.1,
+     "best_window_max": 7.2,
+     "day_median": 0.7,
+     "gust_ratio_median": 1.4,
+     "wind_kn_mean": 19.4
+    },
+    "catlins": {
+     "best_window_median": 3.3,
+     "best_window_max": 6.5,
+     "day_median": 2.4,
+     "gust_ratio_median": 1.45,
+     "wind_kn_mean": 16.7
+    },
+    "dunedin": {
+     "best_window_median": 5.0,
+     "best_window_max": 7.9,
+     "day_median": 4.2,
+     "gust_ratio_median": 1.42,
+     "wind_kn_mean": 12.8
+    },
+    "fiordland": {
+     "best_window_median": 1.0,
+     "best_window_max": 5.4,
+     "day_median": 0.7,
+     "gust_ratio_median": 1.49,
+     "wind_kn_mean": 14.7
+    },
+    "greymouth": {
+     "best_window_median": 4.1,
+     "best_window_max": 5.4,
+     "day_median": 3.3,
+     "gust_ratio_median": 1.42,
+     "wind_kn_mean": 14.7
+    },
+    "haast_jackson": {
+     "best_window_median": 2.2,
+     "best_window_max": 5.4,
+     "day_median": 1.7,
+     "gust_ratio_median": 1.48,
+     "wind_kn_mean": 12.3
+    },
+    "kaikoura": {
+     "best_window_median": 7.6,
+     "best_window_max": 8.8,
+     "day_median": 6.8,
+     "gust_ratio_median": 1.45,
+     "wind_kn_mean": 5.0
+    },
+    "marlborough_sounds": {
+     "best_window_median": 7.8,
+     "best_window_max": 8.5,
+     "day_median": 7.2,
+     "gust_ratio_median": 1.56,
+     "wind_kn_mean": 9.1
+    },
+    "moeraki": {
+     "best_window_median": 6.4,
+     "best_window_max": 7.7,
+     "day_median": 5.9,
+     "gust_ratio_median": 1.52,
+     "wind_kn_mean": 8.4
+    },
+    "nelson_bays": {
+     "best_window_median": 6.8,
+     "best_window_max": 8.2,
+     "day_median": 6.3,
+     "gust_ratio_median": 1.49,
+     "wind_kn_mean": 12.5
+    },
+    "stewart_island": {
+     "best_window_median": 5.6,
+     "best_window_max": 8.2,
+     "day_median": 5.0,
+     "gust_ratio_median": 1.53,
+     "wind_kn_mean": 14.0
+    }
+   }
+  }
+ }
+}

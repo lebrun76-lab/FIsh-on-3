@@ -50,3 +50,49 @@ def test_blocks_3h():
     hrs = [scoring.score_hour(hour(h), coastal=True, facing=90, sun=SUN) for h in range(24)]
     b = scoring.blocks_3h(hrs, 90, True)
     assert len(b) == 8 and b[2]["label"] == "6am-9am" and b[0]["wind_rel"] == "offshore"
+
+
+# --- 2.1 calibration (item 3) --------------------------------------------
+from datetime import datetime as _dt, timedelta as _td  # noqa: E402
+
+from fishon_engine import scoring as _sc  # noqa: E402
+from fishon_engine.tz import NZ as _NZ  # noqa: E402
+
+_T = _dt(2026, 10, 26, 7, 0, tzinfo=_NZ)
+_SUN = {"sunrise": _T - _td(hours=0.5), "sunset": _T + _td(hours=13)}
+
+
+def _h(ws, g, wave, rain=0.0, t=_T, wd=None):
+    return {"time": t, "wind_speed_10m": ws, "wind_gusts_10m": g, "wind_direction_10m": wd,
+            "wave_height": wave, "swell_wave_height": wave, "swell_wave_period": 8,
+            "precipitation": rain}
+
+
+def test_calm_dawn_is_great_but_ordinary_day_is_not():
+    calm = _sc.score_hour(_h(4, 7, 0.3), coastal=True, facing=60, sun=_SUN)["score"]
+    assert calm >= 7.5
+    noon = _T + _td(hours=5)
+    # an ordinary midday hour: 12 kn, gusts 18, 0.8 m sea, dry -> marginal now
+    ordinary = _sc.score_hour(_h(12, 18, 0.8, t=noon), coastal=True, facing=60, sun=_SUN)["score"]
+    assert 4.5 <= ordinary < 6.0
+    old = _sc.score_hour(_h(12, 18, 0.8, t=noon), coastal=True, facing=60, sun=_SUN,
+                         weights=_sc.WEIGHTS_V20)["score"]
+    assert old > ordinary
+    rough = _sc.score_hour(_h(12, 18, 1.2, t=noon), coastal=True, facing=60, sun=_SUN)["score"]
+    assert rough < 4.5
+
+
+def test_gust_ratio_penalty_only_when_squally():
+    noon = _T + _td(hours=5)
+    a = _sc.score_hour(_h(10, 17, 0.5, t=noon), coastal=True, facing=60, sun=_SUN)
+    b = _sc.score_hour(_h(10, 19, 0.5, t=noon), coastal=True, facing=60, sun=_SUN)
+    assert "squally (gusts well above the mean)" not in a["why"]
+    assert "squally (gusts well above the mean)" in b["why"]
+
+
+def test_max_possible_score_below_ten():
+    W = _sc.WEIGHTS
+    top = (W["base"] + max(v for _, v in W["wind"]) + W["offshore_light"] + max(v for _, v in W["gust"])
+           + max(v for _, v in W["sea"]) + W["dry"] + W["pressure_falling"] + W["light_change"]
+           + W["tide_runin"] + W["moon"])
+    assert 9.0 <= top <= 10.0

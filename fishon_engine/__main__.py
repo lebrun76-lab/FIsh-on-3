@@ -1,47 +1,57 @@
-"""CLI: python -m fishon_engine moeraki bluff hauraki_gulf [--days 3] [--json]"""
+"""CLI: python -m fishon_engine moeraki bluff hauraki_gulf [--days 3] [--json] [--hourly]"""
 from __future__ import annotations
 
 import argparse
 import json
 
-from .engine import forecast_spot
+from .engine import forecast_many
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser()
+    ap = argparse.ArgumentParser(prog="fishon-forecast")
     ap.add_argument("spots", nargs="+")
     ap.add_argument("--days", type=int, default=3)
-    ap.add_argument("--json", action="store_true")
-    ap.add_argument("--blocks", action="store_true", help="print 3-hour blocks")
+    ap.add_argument("--json", action="store_true", help="print the v1 SpotForecast JSON")
+    ap.add_argument("--hourly", action="store_true", help="print hourly rows")
     a = ap.parse_args(argv)
-    for sid in a.spots:
-        fc = forecast_spot(sid, days=a.days, compare_tides=True)
-        if a.json:
-            print(json.dumps(fc, indent=1, default=str))
+    out = forecast_many(a.spots, days=a.days, compare_tides=True)
+    for sid, fc in out.items():
+        if "error" in fc:
+            print(f"=== {sid}: ERROR {fc['error']}")
             continue
-        s = fc["spot"]
-        print(f"=== {s['name']} ({s['region']}) - shore faces {s['facing_deg']} deg; tides: {fc['tide_source']}")
+        if a.json:
+            print(json.dumps(fc, indent=1, ensure_ascii=False))
+            continue
+        s, v = fc["spot"], fc["verdict"]
+        fp = s["forecast_point"]
+        print(f"=== {s['name']} ({s['region']}, {s['island']}) - shore faces {s['facing_deg']} deg")
+        print(f"  weather point {fp['lat']}, {fp['lon']} (cell {fp['model_cell']}); model run {fc['model_run']}")
+        print(f"  tides: {fc['tide_source']} [datum: {fc['tide_datum']}]")
+        print(f"  VERDICT: {v['headline']} - {v['rating']} {v['score']}/10 [{v['confidence']}]")
+        print(f"    {v['advice']}")
         for d in fc["days"]:
-            bw = d["best_window"]
-            print(f"  {d["label"]}: {"-" if d["score"] is None else d["score"]}/10 {d['verdict']} [{d['confidence']} confidence]"
-                  f" | SST {d['sst_c']} C | {d['moon']['phase']} {d['moon']['illumination_pct']}%")
-            if bw:
-                print(f"    Best: {bw['text']}  ({bw['score']}/10)")
-            if d["tides"]:
-                print("    Tides: " + "; ".join(f"{t['kind']} {t['time'][11:16]} {t['height_m']} m" for t in d["tides"]))
-            top = [f"{x['name']} ({x['status']})" for x in d["species"][:4]]
-            print("    Species: " + ", ".join(top))
-            closed = [x for x in d["species"] if x["status"] == "closed"]
-            for x in closed:
-                print(f"    CLOSED: {x['name']} - {x['notes'][0]}")
-            if a.blocks:
-                for b in d["blocks_3h"]:
-                    print(f"      {b['label']:>10} {b['score']:>4} wind {b['wind_from']} {b['wind_kn']} kn ({b['wind_rel']}) sea {b['sea_m']} m @{b['swell_period_s']}s rain {b['rain_mm']}")
+            print(f"  {d['label']}: {'-' if d['score'] is None else d['score']}/10 {d['rating']} "
+                  f"[{d['confidence']}] wind avg {d['wind_kn_avg']} kn, gust max {d['gust_kn_max']} kn, "
+                  f"wave {d['wave_m_avg']} m, swell {d['swell_m_avg']} m, rain {d['rain_mm']} mm, SST {d['sst_c_avg']} C")
+            print(f"    {d['summary']}")
+            for w in [w for w in fc["windows"] if w["date"] == d["date"]]:
+                print(f"    - {w['headline']} ({w['score']}/10): {w['advice']}")
+            tl = [t for t in fc["tides"] if t["time"][:10] == d["date"]]
+            if tl:
+                print("    Tides: " + "; ".join(f"{t['type']} {t['time'][11:16]} {t['height_m']} m" for t in tl))
+            if a.hourly:
+                for h in [h for h in fc["hourly"] if h["time"][:10] == d["date"]]:
+                    print(f"      {h['time'][11:16]} {h['score']:>4} wind {h['wind_kn']} g{h['gust_kn']} kn "
+                          f"wave {h['wave_m']} swell {h['swell_m']} @{h['swell_period_s']}s tide {h['tide_m']} rain {h['rain_mm']}")
+        sp = [f"{x['name']} ({x['status']})" for x in fc["species"][:5]]
+        print("  Species: " + ", ".join(sp))
+        for x in fc["species"]:
+            if x["status"] == "closed":
+                print(f"  CLOSED: {x['name']} - {x['notes'][0]}")
         if fc.get("tide_comparison"):
             print(f"  LINZ vs Open-Meteo tide check: {fc['tide_comparison']}")
         for w in fc["warnings"]:
             print(f"  note: {w}")
-        print(f"  cache: {fc['cache']}")
 
 
 if __name__ == "__main__":

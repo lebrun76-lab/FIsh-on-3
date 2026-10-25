@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fishon-engine"
+dynamic = ["version"]
+description = "Fish On forecast engine: NZ fishing-conditions scores, windows and tides (Open-Meteo + LINZ)"
+readme = "docs/ENGINE.md"
+requires-python = ">=3.10"
+license = { text = "Proprietary (code); data licences: see docs/ENGINE.md" }
+dependencies = ["requests>=2.31"]
+
+[project.optional-dependencies]
+sstmap = ["matplotlib>=3.8", "numpy>=1.26"]
+test = ["pytest>=7"]
+
+[project.scripts]
+fishon-forecast = "fishon_engine.__main__:main"
+
+[tool.setuptools]
+packages = ["fishon_engine"]
+
+[tool.setuptools.dynamic]
+version = { attr = "fishon_engine.__version__" }
+
+[tool.setuptools.package-data]
+fishon_engine = ["data/*.json", "data/*.csv", "data/**/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

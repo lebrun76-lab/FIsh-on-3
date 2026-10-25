@@ -54,6 +54,17 @@ class Spot:
     tide_port_id: Optional[str] = None     # tideports.TidePort.id
     tide_port_km: Optional[float] = None   # spot lat/lon -> port, km
     legacy_tide_port: Optional[str] = None  # engine v2 hand-picked port
+    wx_lat: Optional[float] = None    # weather-model point (on water), see WX_POINTS
+    wx_lon: Optional[float] = None
+    wx_note: str = ""
+
+    @property
+    def forecast_lat(self) -> float:
+        return self.wx_lat if self.wx_lat is not None else self.lat
+
+    @property
+    def forecast_lon(self) -> float:
+        return self.wx_lon if self.wx_lon is not None else self.lon
 
     @property
     def is_coastal(self) -> bool:
@@ -85,6 +96,38 @@ _EXTRA: Dict[str, Tuple[Optional[float], Optional[str], str, str]] = {
     "stewart_island": (80, "Halfmoon Bay - Oban", "Halfmoon Bay faces E", ""),
     "central_otago_lakes": (None, None, "Lake – wind direction vs shore not scored", ""),
     "southern_lakes": (None, None, "Lake – wind direction vs shore not scored", ""),
+}
+
+
+# Weather-model point for coastal spots whose region centre is on land.
+# The centres in regions.py sit on land for 16 of 21 coastal spots (Open-Meteo
+# 90 m DEM elevation > 0 and/or inside the Natural Earth 10 m land polygon), and
+# Open-Meteo's default cell_selection=land then picks a LAND grid cell, whose
+# 10 m wind is slowed by terrain while gusts are not, giving gust/mean ratios of
+# 2-4x. Each point below is the nearest point to the centre (searched 1-15 km
+# along the shore bearing +/-60 deg) with DEM elevation 0 AND outside the
+# Natural Earth land polygon; far_north, taranaki and fiordland were moved
+# further out because the nearest water cell was still a land-influenced model
+# cell (see docs/COORDS.md for the before/after table and wind checks).
+# Shore bearings (facing) are NOT changed. The spot's display lat/lon (and the
+# tide-port match) stay on the region centre.
+WX_POINTS: Dict[str, Tuple[float, float]] = {
+    "bay_of_islands": (-35.244, 174.128),
+    "coromandel": (-36.759, 175.481),
+    "east_cape": (-37.671, 178.544),
+    "far_north": (-34.76, 173.17),
+    "hawkes_bay": (-39.506, 176.946),
+    "taranaki": (-39.0, 174.0),
+    "wellington": (-41.312, 174.832),
+    "banks_peninsula": (-43.808, 172.956),
+    "bluff": (-46.616, 168.317),
+    "catlins": (-46.601, 169.524),
+    "dunedin": (-45.917, 170.539),
+    "fiordland": (-44.55, 167.75),
+    "greymouth": (-42.45, 171.198),
+    "kaikoura": (-42.4, 173.717),
+    "moeraki": (-45.36, 170.886),
+    "stewart_island": (-46.914, 168.147),
 }
 
 
@@ -123,6 +166,10 @@ def _build() -> Dict[str, Spot]:
             tide_port_km=match.km if match else None,
             tide_note=_tide_note(match) if match else "",
             legacy_tide_port=port,
+            wx_lat=WX_POINTS.get(c.id, (None, None))[0],
+            wx_lon=WX_POINTS.get(c.id, (None, None))[1],
+            wx_note=("Weather taken from a sea point %.3f, %.3f (the region centre is on land)"
+                     % WX_POINTS[c.id] if c.id in WX_POINTS else ""),
         )
     return out
 
