@@ -96,11 +96,13 @@ def test_windows_multiple_per_day_and_verdict(out):
         by_day = {}
         for w in fc["windows"]:
             by_day.setdefault(w["date"], []).append(w)
-        assert all(1 <= len(v) <= engine.MAX_WINDOWS_PER_DAY for v in by_day.values())
+        assert all(len(v) >= 1 for v in by_day.values())
         for v in by_day.values():
             for a, b in zip(v, v[1:]):
                 assert a["end"] <= b["start"]
             assert all(x["score"] >= 4.5 for x in v[1:])
+            top = max(x["score"] for x in v)
+            assert all(x["near_best"] == (x["score"] >= round(top - engine.NEAR_BEST_POINTS, 1)) for x in v)
         assert fc["verdict"]["score"] == max(w["score"] for w in fc["windows"]
                                              if w["confidence"] == fc["verdict"]["confidence"])
     assert max(len([w for w in out["dunedin"]["windows"] if w["date"] == d]) for d in

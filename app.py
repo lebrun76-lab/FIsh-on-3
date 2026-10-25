@@ -1,6 +1,6 @@
 """
-Fish on! – NZ Fishing Forecast
-Interactive web app – select centres, check any dates, get live conditions.
+Salt Supply Co: NZ Fishing Forecast
+Interactive web app: select centres, check any dates, get live conditions.
 """
 
 import streamlit as st
@@ -23,7 +23,7 @@ from messenger import get_centre_conditions, generate_message, describe_period
 # Page config
 # ------------------------------------------------------------
 st.set_page_config(
-    page_title="Fish on! – NZ Fishing Forecast",
+    page_title="Salt Supply Co: NZ Fishing Forecast",
     page_icon="🎣",
     layout="wide",
     initial_sidebar_state="expanded",
@@ -54,7 +54,7 @@ def score_colour(score) -> str:
 # ------------------------------------------------------------
 # Sidebar
 # ------------------------------------------------------------
-st.sidebar.title("🎣 Fish on!")
+st.sidebar.title("🎣 Salt Supply Co")
 st.sidebar.markdown("Select the areas you care about and check any day.")
 
 home_base = st.sidebar.text_input("Your home base (optional)", value="Hawea")
@@ -101,7 +101,7 @@ for note in range_notes:
 # ------------------------------------------------------------
 # Main
 # ------------------------------------------------------------
-st.title("🎣 Fish on!")
+st.title("🎣 Salt Supply Co")
 st.caption("Live conditions + usability scores for the centres you care about")
 
 if not selected_centres:
@@ -117,12 +117,12 @@ for i, centre in enumerate(selected_centres):
 
 progress.empty()
 
-st.subheader(f"Quick outlook – {start_date:%a %-d %b} to {end_date:%a %-d %b}")
+st.subheader(f"Quick outlook, {start_date:%a %-d %b} to {end_date:%a %-d %b}")
 try:
     msg = generate_message(results=results, start=start_date, end=end_date)
     st.success(msg)
 except Exception:
-    st.info("Could not generate summary right now – detailed cards below still work.")
+    st.info("Could not generate summary right now. The detailed cards below still work.")
 
 st.divider()
 
@@ -141,21 +141,21 @@ for r in results:
             st.markdown(f"### {score_colour(score)} {centre.name}")
             st.caption(f"{centre.region} · {centre.island} Island")
         with col_b:
-            st.metric("Score", f"{score}/10" if score is not None else "–")
+            st.metric("Score", f"{score}/10" if score is not None else "n/a")
 
         if "error" in summary:
             st.error(f"Could not load data: {summary['error']}")
         else:
             m1, m2, m3, m4 = st.columns(4)
             wind = summary.get("avg_wind_kts")
-            m1.metric("Avg Wind", f"{wind} kn" if wind is not None else "–")
+            m1.metric("Avg Wind", f"{wind} kn" if wind is not None else "n/a")
             gust = summary.get("max_gust_kts")
-            m2.metric("Max Gust", f"{gust} kn" if gust is not None else "–")
+            m2.metric("Max Gust", f"{gust} kn" if gust is not None else "n/a")
             swell = summary.get("avg_swell_m")
             if not centre.is_coastal:
-                m3.metric("Avg Swell", "n/a", help="Freshwater – swell not applicable")
+                m3.metric("Avg Swell", "n/a", help="Freshwater, so swell is not applicable")
             else:
-                m3.metric("Avg Swell", f"{swell} m" if swell is not None else "–")
+                m3.metric("Avg Swell", f"{swell} m" if swell is not None else "n/a")
             rain = summary.get("total_rain_mm", 0)
             m4.metric("Rain (period)", f"{rain} mm")
 
@@ -163,13 +163,13 @@ for r in results:
             st.markdown(f"*{centre.notes}*")
 
             if score >= 8:
-                st.success("Excellent window – get out there if you can.")
+                st.success("Excellent window. Get out there if you can.")
             elif score >= 6.5:
                 st.info("Solid conditions. Worth the mission.")
             elif score >= 4.5:
-                st.warning("Marginal – pick your times carefully.")
+                st.warning("Marginal. Pick your times carefully.")
             else:
-                st.error("Poor window – consider another area or wait.")
+                st.error("Poor window. Try another area or wait.")
 
         st.divider()
 

@@ -95,8 +95,8 @@ _EXTRA: Dict[str, Tuple[Optional[float], Optional[str], str, str]] = {
     "moeraki": (90, "Oamaru", "Moeraki coast faces E", "Oamaru is ~30 km north; LINZ lists Moeraki as a secondary port of Timaru"),
     "nelson_bays": (0, "Nelson", "Tasman Bay shore faces N", ""),
     "stewart_island": (80, "Halfmoon Bay - Oban", "Halfmoon Bay faces E", ""),
-    "central_otago_lakes": (None, None, "Lake – wind direction vs shore not scored", ""),
-    "southern_lakes": (None, None, "Lake – wind direction vs shore not scored", ""),
+    "central_otago_lakes": (None, None, "Lake, so wind direction against the shore isn't scored", ""),
+    "southern_lakes": (None, None, "Lake, so wind direction against the shore isn't scored", ""),
 }
 
 

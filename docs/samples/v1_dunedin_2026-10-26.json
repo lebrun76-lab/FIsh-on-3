@@ -60,7 +60,7 @@
   "rating": "good",
   "score": 6.9,
   "headline": "Go Wednesday early morning",
-  "advice": "Wed 5-8am, gentle cross-offshore N 9 kn, 1.2 m sea @ 8 s, falling tide, dawn - try blue cod: baits on the bottom off the rocks or over foul ground",
+  "advice": "Wed 5-8am, gentle cross-offshore N 9 kn, 1.2 m sea @ 8 s, falling tide, dawn. Try blue cod: baits on the bottom off the rocks or over foul ground",
   "confidence": "medium",
   "window": {
    "start": "2026-10-28T05:00:00+13:00",
@@ -77,7 +77,7 @@
    "score": 6.5,
    "rating": "good",
    "headline": "Sun 6-9pm looks good",
-   "advice": "Sun 6-9pm, gentle cross-offshore N 9 kn, 1.1 m sea @ 7 s, rising tide, high 9:20pm, dusk - try blue cod: baits on the bottom off the rocks or over foul ground",
+   "advice": "Sun 6-9pm, gentle cross-offshore N 9 kn, 1.1 m sea @ 7 s, rising tide, high 9:20pm, dusk. Try blue cod: baits on the bottom off the rocks or over foul ground",
    "confidence": "low"
   }
  },
@@ -86,7 +86,7 @@
    "date": "2026-10-26",
    "score": 4.5,
    "rating": "marginal",
-   "summary": "Marginal - pick your window. Moderate morning (~11 kn), moderate afternoon (~15 kn); 1.0 m sea; 11 mm rain. Best: Mon 9am-12pm.",
+   "summary": "Marginal, pick your window. Moderate morning (~11 kn), moderate afternoon (~15 kn); 1.0 m sea; 11 mm rain. Best: Mon 9am-12pm.",
    "wind_kn_avg": 13.6,
    "gust_kn_max": 36.7,
    "swell_m_avg": 0.69,
@@ -101,14 +101,14 @@
    "label": "Mon 26 Oct",
    "confidence": "medium",
    "lead_confidence": "high",
-   "verdict_text": "Marginal - pick your window",
+   "verdict_text": "Marginal, pick your window",
    "best_window": {
     "start": "2026-10-26T09:00:00+13:00",
     "end": "2026-10-26T12:00:00+13:00",
     "score": 5.2,
     "rating": "marginal",
     "headline": "Mon 9am-12pm is fishable",
-    "advice": "Mon 9am-12pm, gentle cross-offshore N 10 kn, 1.0 m sea @ 9 s, rising tide - try blue cod: baits on the bottom off the rocks or over foul ground",
+    "advice": "Mon 9am-12pm, gentle cross-offshore N 10 kn, 1.0 m sea @ 9 s, rising tide. Try blue cod: baits on the bottom off the rocks or over foul ground",
     "reasons": [
      "Wind N 10 kn (cross-offshore)",
      "Gusts to 15 kn",
@@ -147,9 +147,10 @@
      "downgrades": [
       "models disagree: window scores 3.8-6.2 (wind:icon_seamless vs waves:ncep_gfswave025), spread 2.4 >= 1.5"
      ]
-    }
+    },
+    "near_best": true
    },
-   "best_window_text": "Mon 9am-12pm, gentle cross-offshore N 10 kn, 1.0 m sea @ 9 s, rising tide - try blue cod: baits on the bottom off the rocks or over foul ground",
+   "best_window_text": "Mon 9am-12pm, gentle cross-offshore N 10 kn, 1.0 m sea @ 9 s, rising tide. Try blue cod: baits on the bottom off the rocks or over foul ground",
    "windows": 1,
    "no_window_reason": null,
    "least_bad_window": null,
@@ -296,13 +297,16 @@
      "sst_c": 12.7,
      "label": "9pm-12am"
     }
-   ]
+   ],
+   "score_remaining": 4.5,
+   "remaining_from": "2026-10-26T00:00:00+13:00",
+   "score_full_day": 4.5
   },
   {
    "date": "2026-10-27",
    "score": 2.0,
    "rating": "poor",
-   "summary": "Poor - stay home / sheltered water only. Strong morning (~23 kn), easing to ~17 kn in the afternoon; 1.9 m sea; 2 mm rain.",
+   "summary": "Poor, stay home or stick to sheltered water. Strong morning (~23 kn), easing to ~17 kn in the afternoon; 1.9 m sea; 2 mm rain.",
    "wind_kn_avg": 19.1,
    "gust_kn_max": 33.4,
    "swell_m_avg": 1.48,
@@ -317,7 +321,7 @@
    "label": "Tue 27 Oct",
    "confidence": "medium",
    "lead_confidence": "high",
-   "verdict_text": "Poor - stay home / sheltered water only",
+   "verdict_text": "Poor, stay home or stick to sheltered water",
    "best_window": null,
    "best_window_text": "No fishable window on Tue 27 Oct: no daylight run of hours scores 4.5 (marginal) or more. Least-bad is Tue 6-9pm at 2.8/10 (Wind W 12 kn (cross-offshore); Gusts to 21 kn; Waves 1.8 m (swell 1.6 m @ 7 s)).",
    "windows": 0,
@@ -370,6 +374,7 @@
       "models disagree: window scores 2.1-4.7 (wind:icon_seamless vs wind:gfs_seamless), spread 2.6 >= 1.5"
      ]
     },
+    "near_best": true,
     "label": "least-bad (not recommended)"
    },
    "moon": {
@@ -515,7 +520,10 @@
      "sst_c": 12.2,
      "label": "9pm-12am"
     }
-   ]
+   ],
+   "score_remaining": null,
+   "remaining_from": null,
+   "score_full_day": 2.0
   },
   {
    "date": "2026-10-28",
@@ -543,7 +551,7 @@
     "score": 6.9,
     "rating": "good",
     "headline": "Wed 5-8am looks good",
-    "advice": "Wed 5-8am, gentle cross-offshore N 9 kn, 1.2 m sea @ 8 s, falling tide, dawn - try blue cod: baits on the bottom off the rocks or over foul ground",
+    "advice": "Wed 5-8am, gentle cross-offshore N 9 kn, 1.2 m sea @ 8 s, falling tide, dawn. Try blue cod: baits on the bottom off the rocks or over foul ground",
     "reasons": [
      "Wind N 9 kn (cross-offshore)",
      "Gusts to 15 kn",
@@ -583,9 +591,10 @@
      "downgrades": [
       "models disagree: window scores 5.7-7.2 (wind:ecmwf_ifs025 vs wind:gfs_seamless), spread 1.5 >= 1.5"
      ]
-    }
+    },
+    "near_best": true
    },
-   "best_window_text": "Wed 5-8am, gentle cross-offshore N 9 kn, 1.2 m sea @ 8 s, falling tide, dawn - try blue cod: baits on the bottom off the rocks or over foul ground",
+   "best_window_text": "Wed 5-8am, gentle cross-offshore N 9 kn, 1.2 m sea @ 8 s, falling tide, dawn. Try blue cod: baits on the bottom off the rocks or over foul ground",
    "windows": 3,
    "no_window_reason": null,
    "least_bad_window": null,
@@ -732,13 +741,16 @@
      "sst_c": 12.4,
      "label": "9pm-12am"
     }
-   ]
+   ],
+   "score_remaining": null,
+   "remaining_from": null,
+   "score_full_day": 6.3
   },
   {
    "date": "2026-10-29",
    "score": 1.1,
    "rating": "poor",
-   "summary": "Poor - stay home / sheltered water only. Fresh morning (~18 kn), strong afternoon (~23 kn); 2.1 m sea; 5 mm rain.",
+   "summary": "Poor, stay home or stick to sheltered water. Fresh morning (~18 kn), strong afternoon (~23 kn); 2.1 m sea; 5 mm rain.",
    "wind_kn_avg": 21.0,
    "gust_kn_max": 32.9,
    "swell_m_avg": 1.78,
@@ -753,7 +765,7 @@
    "label": "Thu 29 Oct",
    "confidence": "low",
    "lead_confidence": "medium",
-   "verdict_text": "Poor - stay home / sheltered water only",
+   "verdict_text": "Poor, stay home or stick to sheltered water",
    "best_window": null,
    "best_window_text": "No fishable window on Thu 29 Oct: no daylight run of hours scores 4.5 (marginal) or more. Least-bad is Thu 5-8am at 1.5/10 (Wind W 17 kn (cross-offshore); Gusts to 24 kn; Waves 1.8 m (swell 1.6 m @ 9 s)).",
    "windows": 0,
@@ -805,6 +817,7 @@
       "models disagree: window scores 0.0-3.8 (wind:gfs_seamless vs wind:icon_seamless), spread 3.8 >= 3"
      ]
     },
+    "near_best": true,
     "label": "least-bad (not recommended)"
    },
    "moon": {
@@ -950,13 +963,16 @@
      "sst_c": 12.3,
      "label": "9pm-12am"
     }
-   ]
+   ],
+   "score_remaining": null,
+   "remaining_from": null,
+   "score_full_day": 1.1
   },
   {
    "date": "2026-10-30",
    "score": 0.6,
    "rating": "poor",
-   "summary": "Poor - stay home / sheltered water only. Fresh winds all day (~21 kn); 2.8 m sea; 5 mm rain.",
+   "summary": "Poor, stay home or stick to sheltered water. Fresh winds all day (~21 kn); 2.8 m sea; 5 mm rain.",
    "wind_kn_avg": 20.9,
    "gust_kn_max": 32.1,
    "swell_m_avg": 2.31,
@@ -971,7 +987,7 @@
    "label": "Fri 30 Oct",
    "confidence": "medium",
    "lead_confidence": "medium",
-   "verdict_text": "Poor - stay home / sheltered water only",
+   "verdict_text": "Poor, stay home or stick to sheltered water",
    "best_window": null,
    "best_window_text": "No fishable window on Fri 30 Oct: no daylight run of hours scores 4.5 (marginal) or more. Least-bad is Fri 5-8am at 0.9/10 (Wind W 17 kn (cross-offshore); Gusts to 27 kn; Waves 2.4 m (swell 2.2 m @ 9 s)).",
    "windows": 0,
@@ -1022,6 +1038,7 @@
      "gap_hours": 0,
      "downgrades": []
     },
+    "near_best": true,
     "label": "least-bad (not recommended)"
    },
    "moon": {
@@ -1167,13 +1184,16 @@
      "sst_c": 12.2,
      "label": "9pm-12am"
     }
-   ]
+   ],
+   "score_remaining": null,
+   "remaining_from": null,
+   "score_full_day": 0.6
   },
   {
    "date": "2026-10-31",
    "score": 3.4,
    "rating": "poor",
-   "summary": "Poor - stay home / sheltered water only. Moderate morning (~12 kn), easing to ~6 kn in the afternoon; 2.1 m sea; 13 mm rain.",
+   "summary": "Poor, stay home or stick to sheltered water. Moderate morning (~12 kn), easing to ~6 kn in the afternoon; 2.1 m sea; 13 mm rain.",
    "wind_kn_avg": 8.6,
    "gust_kn_max": 34.2,
    "swell_m_avg": 1.87,
@@ -1188,7 +1208,7 @@
    "label": "Sat 31 Oct",
    "confidence": "medium",
    "lead_confidence": "medium",
-   "verdict_text": "Poor - stay home / sheltered water only",
+   "verdict_text": "Poor, stay home or stick to sheltered water",
    "best_window": null,
    "best_window_text": "No fishable window on Sat 31 Oct: no daylight run of hours scores 4.5 (marginal) or more. Least-bad is Sat 2-7pm at 4.0/10 (Wind NE 6 kn (cross-shore); Gusts to 13 kn; Waves 1.9 m (swell 1.5 m @ 9 s)).",
    "windows": 0,
@@ -1236,6 +1256,7 @@
      "gap_hours": 0,
      "downgrades": []
     },
+    "near_best": true,
     "label": "least-bad (not recommended)"
    },
    "moon": {
@@ -1381,7 +1402,10 @@
      "sst_c": 12.4,
      "label": "9pm-12am"
     }
-   ]
+   ],
+   "score_remaining": null,
+   "remaining_from": null,
+   "score_full_day": 3.4
   },
   {
    "date": "2026-11-01",
@@ -1409,7 +1433,7 @@
     "score": 6.5,
     "rating": "good",
     "headline": "Sun 6-9pm looks good",
-    "advice": "Sun 6-9pm, gentle cross-offshore N 9 kn, 1.1 m sea @ 7 s, rising tide, high 9:20pm, dusk - try blue cod: baits on the bottom off the rocks or over foul ground",
+    "advice": "Sun 6-9pm, gentle cross-offshore N 9 kn, 1.1 m sea @ 7 s, rising tide, high 9:20pm, dusk. Try blue cod: baits on the bottom off the rocks or over foul ground",
     "reasons": [
      "Wind N 9 kn (cross-offshore)",
      "Gusts to 14 kn",
@@ -1450,9 +1474,10 @@
      "downgrades": [
       "models disagree: window scores 5.1-6.8 (wind:gfs_seamless vs wind:ecmwf_ifs025), spread 1.7 >= 1.5"
      ]
-    }
+    },
+    "near_best": true
    },
-   "best_window_text": "Sun 6-9pm, gentle cross-offshore N 9 kn, 1.1 m sea @ 7 s, rising tide, high 9:20pm, dusk - try blue cod: baits on the bottom off the rocks or over foul ground",
+   "best_window_text": "Sun 6-9pm, gentle cross-offshore N 9 kn, 1.1 m sea @ 7 s, rising tide, high 9:20pm, dusk. Try blue cod: baits on the bottom off the rocks or over foul ground",
    "windows": 3,
    "no_window_reason": null,
    "least_bad_window": null,
@@ -1599,7 +1624,10 @@
      "sst_c": 12.6,
      "label": "9pm-12am"
     }
-   ]
+   ],
+   "score_remaining": null,
+   "remaining_from": null,
+   "score_full_day": 6.2
   }
  ],
  "windows": [
@@ -1609,7 +1637,7 @@
    "score": 5.2,
    "rating": "marginal",
    "headline": "Mon 9am-12pm is fishable",
-   "advice": "Mon 9am-12pm, gentle cross-offshore N 10 kn, 1.0 m sea @ 9 s, rising tide - try blue cod: baits on the bottom off the rocks or over foul ground",
+   "advice": "Mon 9am-12pm, gentle cross-offshore N 10 kn, 1.0 m sea @ 9 s, rising tide. Try blue cod: baits on the bottom off the rocks or over foul ground",
    "reasons": [
     "Wind N 10 kn (cross-offshore)",
     "Gusts to 15 kn",
@@ -1648,7 +1676,8 @@
     "downgrades": [
      "models disagree: window scores 3.8-6.2 (wind:icon_seamless vs waves:ncep_gfswave025), spread 2.4 >= 1.5"
     ]
-   }
+   },
+   "near_best": true
   },
   {
    "start": "2026-10-28T05:00:00+13:00",
@@ -1656,7 +1685,7 @@
    "score": 6.9,
    "rating": "good",
    "headline": "Wed 5-8am looks good",
-   "advice": "Wed 5-8am, gentle cross-offshore N 9 kn, 1.2 m sea @ 8 s, falling tide, dawn - try blue cod: baits on the bottom off the rocks or over foul ground",
+   "advice": "Wed 5-8am, gentle cross-offshore N 9 kn, 1.2 m sea @ 8 s, falling tide, dawn. Try blue cod: baits on the bottom off the rocks or over foul ground",
    "reasons": [
     "Wind N 9 kn (cross-offshore)",
     "Gusts to 15 kn",
@@ -1696,7 +1725,8 @@
     "downgrades": [
      "models disagree: window scores 5.7-7.2 (wind:ecmwf_ifs025 vs wind:gfs_seamless), spread 1.5 >= 1.5"
     ]
-   }
+   },
+   "near_best": true
   },
   {
    "start": "2026-10-28T10:00:00+13:00",
@@ -1704,7 +1734,7 @@
    "score": 5.7,
    "rating": "marginal",
    "headline": "Wed 10am-1pm is fishable",
-   "advice": "Wed 10am-1pm, gentle cross-offshore N 7 kn, 1.2 m sea @ 9 s, falling tide, low 11:07am - try blue cod: baits on the bottom off the rocks or over foul ground",
+   "advice": "Wed 10am-1pm, gentle cross-offshore N 7 kn, 1.2 m sea @ 9 s, falling tide, low 11:07am. Try blue cod: baits on the bottom off the rocks or over foul ground",
    "reasons": [
     "Wind N 7 kn (cross-offshore)",
     "Gusts to 15 kn",
@@ -1743,7 +1773,8 @@
     "downgrades": [
      "models disagree: window scores 4.6-6.7 (wind:icon_seamless vs waves:ncep_gfswave025), spread 2.1 >= 1.5"
     ]
-   }
+   },
+   "near_best": true
   },
   {
    "start": "2026-10-28T18:00:00+13:00",
@@ -1751,7 +1782,7 @@
    "score": 5.4,
    "rating": "marginal",
    "headline": "Wed 6-9pm is fishable",
-   "advice": "Wed 6-9pm, moderate offshore NW 12 kn, 1.2 m sea @ 11 s, falling tide, dusk - try blue cod: baits on the bottom off the rocks or over foul ground",
+   "advice": "Wed 6-9pm, moderate offshore NW 12 kn, 1.2 m sea @ 11 s, falling tide, dusk. Try blue cod: baits on the bottom off the rocks or over foul ground",
    "reasons": [
     "Wind NW 12 kn (offshore)",
     "Gusts to 16 kn",
@@ -1791,7 +1822,8 @@
     "downgrades": [
      "models disagree: window scores 2.5-5.4 (wind:icon_seamless vs best_match), spread 2.9 >= 1.5"
     ]
-   }
+   },
+   "near_best": true
   },
   {
    "start": "2026-11-01T06:00:00+13:00",
@@ -1799,7 +1831,7 @@
    "score": 6.3,
    "rating": "good",
    "headline": "Sun 6-9am looks good",
-   "advice": "Sun 6-9am, gentle cross-offshore N 6 kn, 1.4 m sea @ 7 s, rising tide, high 8:50am, dawn - try blue cod: baits on the bottom off the rocks or over foul ground",
+   "advice": "Sun 6-9am, gentle cross-offshore N 6 kn, 1.4 m sea @ 7 s, rising tide, high 8:50am, dawn. Try blue cod: baits on the bottom off the rocks or over foul ground",
    "reasons": [
     "Wind N 6 kn (cross-offshore)",
     "Gusts to 13 kn",
@@ -1840,7 +1872,8 @@
     "downgrades": [
      "models disagree: window scores 5.3-6.8 (waves:ecmwf_wam vs wind:icon_seamless), spread 1.5 >= 1.5"
     ]
-   }
+   },
+   "near_best": true
   },
   {
    "start": "2026-11-01T11:00:00+13:00",
@@ -1848,7 +1881,7 @@
    "score": 5.1,
    "rating": "marginal",
    "headline": "Sun 11am-2pm is fishable",
-   "advice": "Sun 11am-2pm, gentle cross-shore NE 10 kn, 1.3 m sea @ 7 s, falling tide - try blue cod: baits on the bottom off the rocks or over foul ground",
+   "advice": "Sun 11am-2pm, gentle cross-shore NE 10 kn, 1.3 m sea @ 7 s, falling tide. Try blue cod: baits on the bottom off the rocks or over foul ground",
    "reasons": [
     "Wind NE 10 kn (cross-shore)",
     "Gusts to 12 kn",
@@ -1884,7 +1917,8 @@
     "models_missing": [],
     "gap_hours": 0,
     "downgrades": []
-   }
+   },
+   "near_best": true
   },
   {
    "start": "2026-11-01T18:00:00+13:00",
@@ -1892,7 +1926,7 @@
    "score": 6.5,
    "rating": "good",
    "headline": "Sun 6-9pm looks good",
-   "advice": "Sun 6-9pm, gentle cross-offshore N 9 kn, 1.1 m sea @ 7 s, rising tide, high 9:20pm, dusk - try blue cod: baits on the bottom off the rocks or over foul ground",
+   "advice": "Sun 6-9pm, gentle cross-offshore N 9 kn, 1.1 m sea @ 7 s, rising tide, high 9:20pm, dusk. Try blue cod: baits on the bottom off the rocks or over foul ground",
    "reasons": [
     "Wind N 9 kn (cross-offshore)",
     "Gusts to 14 kn",
@@ -1933,7 +1967,8 @@
     "downgrades": [
      "models disagree: window scores 5.1-6.8 (wind:gfs_seamless vs wind:ecmwf_ifs025), spread 1.7 >= 1.5"
     ]
-   }
+   },
+   "near_best": true
   }
  ],
  "tides": [

@@ -248,33 +248,47 @@ def best_window(day_hours: List[Dict], sun: Optional[Dict], min_len=3, max_len=5
 
 
 def windows(day_hours: List[Dict], sun: Optional[Dict], min_len=3, max_len=5,
-            not_before: Optional[datetime] = None, max_n: int = 3,
-            min_score: float = 4.5, within: float = 1.5, gap_h: int = 2) -> List[List[Dict]]:
-    """Up to ``max_n`` non-overlapping daylight windows for one day, in time
-    order. The first is always the day's best (even if poor). Each extra
-    window must score >= ``min_score`` (v1 'marginal') and be within
-    ``within`` points of the best, and is kept >= ``gap_h`` hours away from the
-    windows already chosen, so the list reads e.g. "dawn ... and again at dusk"
-    rather than two halves of the same spell."""
+            not_before: Optional[datetime] = None, max_n: Optional[int] = None,
+            min_score: float = 4.5, gap_h: int = 2) -> List[List[Dict]]:
+    """Every separate daylight window for one day, in time order.
+
+    The first pick is always the day's best run (even if poor, so the caller
+    can show a least-bad option). After that, every further run that scores
+    >= ``min_score`` (v1 'marginal') is kept, best first, until none is left
+    (or ``max_n`` if given). A run that would overlap or touch a window
+    already picked, or start less than ``gap_h`` hours after it, is the same
+    spell rather than a separate window, so it is not listed on its own; any
+    windows that still end up touching are merged into one. How close each
+    window is to the best is the caller's job (engine sets ``near_best``)."""
     cand = _candidates(day_hours, sun, not_before)
     first = _best_run(cand, min_len, max_len)
     if not first:
         return []
     chosen = [first]
-    top = _mean([h["score"] for h in first])
-    while len(chosen) < max_n:
+    while max_n is None or len(chosen) < max_n:
         taken = set()
         for w in chosen:
             for k in range(-gap_h, len(w) + gap_h):
                 taken.add(w[0]["time"] + timedelta(hours=k))
         nxt = _best_run(cand, min_len, max_len, taken)
-        if not nxt:
-            break
-        sc = _mean([h["score"] for h in nxt])
-        if sc < min_score or sc < top - within:
+        if not nxt or _mean([h["score"] for h in nxt]) < min_score:
             break
         chosen.append(nxt)
-    return sorted(chosen, key=lambda w: w[0]["time"])
+    return merge_touching(chosen)
+
+
+def merge_touching(runs: List[List[Dict]]) -> List[List[Dict]]:
+    """Sort runs by start and merge any that overlap or touch (no clear hour
+    between them). Hours are de-duplicated by time."""
+    out: List[List[Dict]] = []
+    for w in sorted(runs, key=lambda w: w[0]["time"]):
+        if out and w[0]["time"] <= out[-1][-1]["time"] + timedelta(hours=1):
+            seen = {h["time"] for h in out[-1]}
+            out[-1] = out[-1] + [h for h in w if h["time"] not in seen]
+            out[-1].sort(key=lambda h: h["time"])
+        else:
+            out.append(list(w))
+    return out
 
 
 def day_summary(hours: List[Dict], daylight: List[Dict], best: Optional[Dict], verdict_text: str,
@@ -333,7 +347,7 @@ def window_text(summary: Dict, hours: List[Dict], coastal: bool, target: Optiona
         parts.append("dawn" if summary["start"].hour < 12 else "dusk")
     text = ", ".join(parts)
     if target:
-        text += f" - try {target['name'].lower()}" + (f": {target['how']}" if target.get("how") else "")
+        text += f". Try {target['name'].lower()}" + (f": {target['how']}" if target.get("how") else "")
     return text
 
 
@@ -341,9 +355,9 @@ def verdict(score: float) -> str:
     """Day wording; the bands are the v1 rating bands (great >= 7.5,
     good >= 6, marginal >= 4.5, else poor) so text and rating always agree."""
     if score >= 7.5:
-        return "Excellent - go fishing"
+        return "Excellent, go fishing"
     if score >= 6.0:
         return "Good"
     if score >= 4.5:
-        return "Marginal - pick your window"
-    return "Poor - stay home / sheltered water only"
+        return "Marginal, pick your window"
+    return "Poor, stay home or stick to sheltered water"

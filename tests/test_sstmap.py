@@ -102,6 +102,7 @@ def test_notes_name_nearby_spots():
     # Moeraki (-45.36, 170.86) and Dunedin are inside the small box, near the front
     assert "Moeraki" in text or "Dunedin" in text
     assert "Warm water edge near" in text
+    assert "—" not in text and "–" not in text and " °C within" in text
 
 
 def test_spot_edges_direction():
