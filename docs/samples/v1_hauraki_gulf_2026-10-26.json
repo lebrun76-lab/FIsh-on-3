@@ -61,7 +61,7 @@
   "rating": "great",
   "score": 8.2,
   "headline": "Go Monday early morning",
-  "advice": "Mon 5-8am, gentle cross-offshore NW 8 kn, 0.1 m sea @ 3 s, rising tide, high 7:54am, dawn - try snapper: soft-baits or berleyed baits along reef edges and work-ups. Also good: Wed 28 Oct.",
+  "advice": "Mon 5-8am, gentle cross-offshore NW 8 kn, 0.1 m sea @ 3 s, rising tide, high 7:54am, dawn. Try snapper: soft-baits or berleyed baits along reef edges and work-ups. Also good: Wed 28 Oct.",
   "confidence": "high",
   "window": {
    "start": "2026-10-26T05:00:00+13:00",
@@ -78,7 +78,7 @@
    "score": 8.4,
    "rating": "great",
    "headline": "Sun 6-9pm looks great",
-   "advice": "Sun 6-9pm, light cross-offshore NW 5 kn, 0.1 m sea @ 7 s, falling tide, low 6:59pm, dusk - try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Sun 6-9pm, light cross-offshore NW 5 kn, 0.1 m sea @ 7 s, falling tide, low 6:59pm, dusk. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
    "confidence": "low"
   }
  },
@@ -87,7 +87,7 @@
    "date": "2026-10-26",
    "score": 7.7,
    "rating": "great",
-   "summary": "Excellent - go fishing. Gentle winds all day (~10 kn); 0.3 m sea. Best: Mon 5-8am.",
+   "summary": "Excellent, go fishing. Gentle winds all day (~10 kn); 0.3 m sea. Best: Mon 5-8am.",
    "wind_kn_avg": 10.1,
    "gust_kn_max": 19.0,
    "swell_m_avg": 0.12,
@@ -102,14 +102,14 @@
    "label": "Mon 26 Oct",
    "confidence": "high",
    "lead_confidence": "high",
-   "verdict_text": "Excellent - go fishing",
+   "verdict_text": "Excellent, go fishing",
    "best_window": {
     "start": "2026-10-26T05:00:00+13:00",
     "end": "2026-10-26T08:00:00+13:00",
     "score": 8.2,
     "rating": "great",
     "headline": "Mon 5-8am looks great",
-    "advice": "Mon 5-8am, gentle cross-offshore NW 8 kn, 0.1 m sea @ 3 s, rising tide, high 7:54am, dawn - try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+    "advice": "Mon 5-8am, gentle cross-offshore NW 8 kn, 0.1 m sea @ 3 s, rising tide, high 7:54am, dawn. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
     "reasons": [
      "Wind NW 8 kn (cross-offshore)",
      "Gusts to 12 kn",
@@ -147,9 +147,10 @@
      "models_missing": [],
      "gap_hours": 0,
      "downgrades": []
-    }
+    },
+    "near_best": true
    },
-   "best_window_text": "Mon 5-8am, gentle cross-offshore NW 8 kn, 0.1 m sea @ 3 s, rising tide, high 7:54am, dawn - try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "best_window_text": "Mon 5-8am, gentle cross-offshore NW 8 kn, 0.1 m sea @ 3 s, rising tide, high 7:54am, dawn. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
    "windows": 3,
    "no_window_reason": null,
    "least_bad_window": null,
@@ -296,13 +297,16 @@
      "sst_c": 17.1,
      "label": "9pm-12am"
     }
-   ]
+   ],
+   "score_remaining": 7.7,
+   "remaining_from": "2026-10-26T00:00:00+13:00",
+   "score_full_day": 7.7
   },
   {
    "date": "2026-10-27",
    "score": 3.7,
    "rating": "poor",
-   "summary": "Poor - stay home / sheltered water only. Fresh winds all day (~17 kn); 0.8 m sea; 5 mm rain.",
+   "summary": "Poor, stay home or stick to sheltered water. Fresh winds all day (~17 kn); 0.8 m sea; 5 mm rain.",
    "wind_kn_avg": 17.3,
    "gust_kn_max": 29.9,
    "swell_m_avg": 0.41,
@@ -317,7 +321,7 @@
    "label": "Tue 27 Oct",
    "confidence": "medium",
    "lead_confidence": "high",
-   "verdict_text": "Poor - stay home / sheltered water only",
+   "verdict_text": "Poor, stay home or stick to sheltered water",
    "best_window": null,
    "best_window_text": "No fishable window on Tue 27 Oct: no daylight run of hours scores 4.5 (marginal) or more. Least-bad is Tue 6-9am at 4.2/10 (Wind NW 16 kn (cross-shore); Gusts to 22 kn; Waves 0.8 m (swell 0.3 m @ 5 s)).",
    "windows": 0,
@@ -370,6 +374,7 @@
       "models disagree: window scores 3.2-5.5 (waves:ecmwf_wam vs wind:icon_seamless), spread 2.3 >= 1.5"
      ]
     },
+    "near_best": true,
     "label": "least-bad (not recommended)"
    },
    "moon": {
@@ -515,7 +520,10 @@
      "sst_c": 16.7,
      "label": "9pm-12am"
     }
-   ]
+   ],
+   "score_remaining": null,
+   "remaining_from": null,
+   "score_full_day": 3.7
   },
   {
    "date": "2026-10-28",
@@ -543,7 +551,7 @@
     "score": 7.4,
     "rating": "good",
     "headline": "Wed 9am-1pm looks good",
-    "advice": "Wed 9am-1pm, gentle offshore SW 9 kn, 0.4 m sea @ 5 s, falling tide - try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+    "advice": "Wed 9am-1pm, gentle offshore SW 9 kn, 0.4 m sea @ 5 s, falling tide. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
     "reasons": [
      "Wind SW 9 kn (offshore)",
      "Gusts to 15 kn",
@@ -579,10 +587,11 @@
      "models_missing": [],
      "gap_hours": 0,
      "downgrades": []
-    }
+    },
+    "near_best": true
    },
-   "best_window_text": "Wed 9am-1pm, gentle offshore SW 9 kn, 0.4 m sea @ 5 s, falling tide - try snapper: soft-baits or berleyed baits along reef edges and work-ups",
-   "windows": 1,
+   "best_window_text": "Wed 9am-1pm, gentle offshore SW 9 kn, 0.4 m sea @ 5 s, falling tide. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "windows": 2,
    "no_window_reason": null,
    "least_bad_window": null,
    "moon": {
@@ -728,13 +737,16 @@
      "sst_c": 16.9,
      "label": "9pm-12am"
     }
-   ]
+   ],
+   "score_remaining": null,
+   "remaining_from": null,
+   "score_full_day": 6.9
   },
   {
    "date": "2026-10-29",
    "score": 3.6,
    "rating": "poor",
-   "summary": "Poor - stay home / sheltered water only. Moderate morning (~16 kn), fresh afternoon (~20 kn); 0.7 m sea; 6 mm rain. Best: Thu 5-8am.",
+   "summary": "Poor, stay home or stick to sheltered water. Moderate morning (~16 kn), fresh afternoon (~20 kn); 0.7 m sea; 6 mm rain. Best: Thu 5-8am.",
    "wind_kn_avg": 18.5,
    "gust_kn_max": 33.2,
    "swell_m_avg": 0.22,
@@ -749,14 +761,14 @@
    "label": "Thu 29 Oct",
    "confidence": "low",
    "lead_confidence": "medium",
-   "verdict_text": "Poor - stay home / sheltered water only",
+   "verdict_text": "Poor, stay home or stick to sheltered water",
    "best_window": {
     "start": "2026-10-29T05:00:00+13:00",
     "end": "2026-10-29T08:00:00+13:00",
     "score": 4.8,
     "rating": "marginal",
     "headline": "Thu 5-8am is fishable",
-    "advice": "Thu 5-8am, moderate cross-offshore W 14 kn, 0.5 m sea @ 5 s, rising tide, dawn - try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+    "advice": "Thu 5-8am, moderate cross-offshore W 14 kn, 0.5 m sea @ 5 s, rising tide, dawn. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
     "reasons": [
      "Wind W 14 kn (cross-offshore)",
      "Gusts to 21 kn",
@@ -796,9 +808,10 @@
      "downgrades": [
       "models disagree: window scores 3.1-5.7 (wind:gfs_seamless vs wind:icon_seamless), spread 2.6 >= 1.5"
      ]
-    }
+    },
+    "near_best": true
    },
-   "best_window_text": "Thu 5-8am, moderate cross-offshore W 14 kn, 0.5 m sea @ 5 s, rising tide, dawn - try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "best_window_text": "Thu 5-8am, moderate cross-offshore W 14 kn, 0.5 m sea @ 5 s, rising tide, dawn. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
    "windows": 1,
    "no_window_reason": null,
    "least_bad_window": null,
@@ -945,13 +958,16 @@
      "sst_c": 17.0,
      "label": "9pm-12am"
     }
-   ]
+   ],
+   "score_remaining": null,
+   "remaining_from": null,
+   "score_full_day": 3.6
   },
   {
    "date": "2026-10-30",
    "score": 2.5,
    "rating": "poor",
-   "summary": "Poor - stay home / sheltered water only. Fresh winds all day (~19 kn); 0.6 m sea.",
+   "summary": "Poor, stay home or stick to sheltered water. Fresh winds all day (~19 kn); 0.6 m sea.",
    "wind_kn_avg": 19.1,
    "gust_kn_max": 29.2,
    "swell_m_avg": 0.15,
@@ -966,7 +982,7 @@
    "label": "Fri 30 Oct",
    "confidence": "low",
    "lead_confidence": "medium",
-   "verdict_text": "Poor - stay home / sheltered water only",
+   "verdict_text": "Poor, stay home or stick to sheltered water",
    "best_window": null,
    "best_window_text": "No fishable window on Fri 30 Oct: no daylight run of hours scores 4.5 (marginal) or more. Least-bad is Fri 6-9am at 3.2/10 (Wind SW 17 kn (offshore); Gusts to 28 kn; Waves 0.5 m (swell 0.2 m @ 5 s)).",
    "windows": 0,
@@ -1017,6 +1033,7 @@
       "models disagree: window scores 2.5-6.5 (waves:ecmwf_wam vs wind:icon_seamless), spread 4.0 >= 3"
      ]
     },
+    "near_best": true,
     "label": "least-bad (not recommended)"
    },
    "moon": {
@@ -1162,13 +1179,16 @@
      "sst_c": 16.9,
      "label": "9pm-12am"
     }
-   ]
+   ],
+   "score_remaining": null,
+   "remaining_from": null,
+   "score_full_day": 2.5
   },
   {
    "date": "2026-10-31",
    "score": 5.0,
    "rating": "marginal",
-   "summary": "Marginal - pick your window. Moderate winds all day (~15 kn); 0.5 m sea. Best: Sat 2-5pm.",
+   "summary": "Marginal, pick your window. Moderate winds all day (~15 kn); 0.5 m sea. Best: Sat 2-5pm.",
    "wind_kn_avg": 15.3,
    "gust_kn_max": 24.3,
    "swell_m_avg": 0.08,
@@ -1183,14 +1203,14 @@
    "label": "Sat 31 Oct",
    "confidence": "low",
    "lead_confidence": "medium",
-   "verdict_text": "Marginal - pick your window",
+   "verdict_text": "Marginal, pick your window",
    "best_window": {
     "start": "2026-10-31T14:00:00+13:00",
     "end": "2026-10-31T17:00:00+13:00",
     "score": 5.5,
     "rating": "marginal",
     "headline": "Sat 2-5pm is fishable",
-    "advice": "Sat 2-5pm, moderate offshore SW 14 kn, 0.5 m sea @ 6 s, falling tide - try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+    "advice": "Sat 2-5pm, moderate offshore SW 14 kn, 0.5 m sea @ 6 s, falling tide. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
     "reasons": [
      "Wind SW 14 kn (offshore)",
      "Gusts to 21 kn",
@@ -1229,9 +1249,10 @@
      "downgrades": [
       "models disagree: window scores 3.8-5.5 (wind:ecmwf_ifs025 vs best_match), spread 1.7 >= 1.5"
      ]
-    }
+    },
+    "near_best": true
    },
-   "best_window_text": "Sat 2-5pm, moderate offshore SW 14 kn, 0.5 m sea @ 6 s, falling tide - try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "best_window_text": "Sat 2-5pm, moderate offshore SW 14 kn, 0.5 m sea @ 6 s, falling tide. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
    "windows": 1,
    "no_window_reason": null,
    "least_bad_window": null,
@@ -1378,13 +1399,16 @@
      "sst_c": 16.9,
      "label": "9pm-12am"
     }
-   ]
+   ],
+   "score_remaining": null,
+   "remaining_from": null,
+   "score_full_day": 5.0
   },
   {
    "date": "2026-11-01",
    "score": 8.1,
    "rating": "great",
-   "summary": "Excellent - go fishing. Light winds all day (~6 kn); 0.1 m sea. Best: Sun 6-9pm.",
+   "summary": "Excellent, go fishing. Light winds all day (~6 kn); 0.1 m sea. Best: Sun 6-9pm.",
    "wind_kn_avg": 5.7,
    "gust_kn_max": 20.2,
    "swell_m_avg": 0.05,
@@ -1399,14 +1423,14 @@
    "label": "Sun 1 Nov",
    "confidence": "low",
    "lead_confidence": "medium",
-   "verdict_text": "Excellent - go fishing",
+   "verdict_text": "Excellent, go fishing",
    "best_window": {
     "start": "2026-11-01T18:00:00+13:00",
     "end": "2026-11-01T21:00:00+13:00",
     "score": 8.4,
     "rating": "great",
     "headline": "Sun 6-9pm looks great",
-    "advice": "Sun 6-9pm, light cross-offshore NW 5 kn, 0.1 m sea @ 7 s, falling tide, low 6:59pm, dusk - try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+    "advice": "Sun 6-9pm, light cross-offshore NW 5 kn, 0.1 m sea @ 7 s, falling tide, low 6:59pm, dusk. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
     "reasons": [
      "Wind NW 5 kn (cross-offshore)",
      "Gusts to 10 kn",
@@ -1445,9 +1469,10 @@
      "downgrades": [
       "models disagree: window scores 3.7-8.4 (wind:gfs_seamless vs best_match), spread 4.7 >= 3"
      ]
-    }
+    },
+    "near_best": true
    },
-   "best_window_text": "Sun 6-9pm, light cross-offshore NW 5 kn, 0.1 m sea @ 7 s, falling tide, low 6:59pm, dusk - try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "best_window_text": "Sun 6-9pm, light cross-offshore NW 5 kn, 0.1 m sea @ 7 s, falling tide, low 6:59pm, dusk. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
    "windows": 2,
    "no_window_reason": null,
    "least_bad_window": null,
@@ -1594,7 +1619,10 @@
      "sst_c": 17.1,
      "label": "9pm-12am"
     }
-   ]
+   ],
+   "score_remaining": null,
+   "remaining_from": null,
+   "score_full_day": 8.1
   }
  ],
  "windows": [
@@ -1604,7 +1632,7 @@
    "score": 8.2,
    "rating": "great",
    "headline": "Mon 5-8am looks great",
-   "advice": "Mon 5-8am, gentle cross-offshore NW 8 kn, 0.1 m sea @ 3 s, rising tide, high 7:54am, dawn - try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Mon 5-8am, gentle cross-offshore NW 8 kn, 0.1 m sea @ 3 s, rising tide, high 7:54am, dawn. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
    "reasons": [
     "Wind NW 8 kn (cross-offshore)",
     "Gusts to 12 kn",
@@ -1642,7 +1670,8 @@
     "models_missing": [],
     "gap_hours": 0,
     "downgrades": []
-   }
+   },
+   "near_best": true
   },
   {
    "start": "2026-10-26T10:00:00+13:00",
@@ -1650,7 +1679,7 @@
    "score": 7.1,
    "rating": "good",
    "headline": "Mon 10am-1pm looks good",
-   "advice": "Mon 10am-1pm, gentle cross-shore N 8 kn, 0.2 m sea @ 4 s, falling tide, low 1:58pm - try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Mon 10am-1pm, gentle cross-shore N 8 kn, 0.2 m sea @ 4 s, falling tide, low 1:58pm. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
    "reasons": [
     "Wind N 8 kn (cross-shore)",
     "Gusts to 12 kn",
@@ -1686,7 +1715,8 @@
     "models_missing": [],
     "gap_hours": 0,
     "downgrades": []
-   }
+   },
+   "near_best": true
   },
   {
    "start": "2026-10-26T18:00:00+13:00",
@@ -1694,7 +1724,7 @@
    "score": 7.7,
    "rating": "great",
    "headline": "Mon 6-9pm looks great",
-   "advice": "Mon 6-9pm, gentle cross-offshore W 11 kn, 0.4 m sea @ 3 s, rising tide, high 8:09pm, dusk - try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Mon 6-9pm, gentle cross-offshore W 11 kn, 0.4 m sea @ 3 s, rising tide, high 8:09pm, dusk. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
    "reasons": [
     "Wind W 11 kn (cross-offshore)",
     "Gusts to 16 kn",
@@ -1735,7 +1765,8 @@
     "downgrades": [
      "models disagree: window scores 6.9-8.4 (waves:ecmwf_wam vs wind:icon_seamless), spread 1.5 >= 1.5"
     ]
-   }
+   },
+   "near_best": true
   },
   {
    "start": "2026-10-28T09:00:00+13:00",
@@ -1743,7 +1774,7 @@
    "score": 7.4,
    "rating": "good",
    "headline": "Wed 9am-1pm looks good",
-   "advice": "Wed 9am-1pm, gentle offshore SW 9 kn, 0.4 m sea @ 5 s, falling tide - try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Wed 9am-1pm, gentle offshore SW 9 kn, 0.4 m sea @ 5 s, falling tide. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
    "reasons": [
     "Wind SW 9 kn (offshore)",
     "Gusts to 15 kn",
@@ -1779,7 +1810,57 @@
     "models_missing": [],
     "gap_hours": 0,
     "downgrades": []
-   }
+   },
+   "near_best": true
+  },
+  {
+   "start": "2026-10-28T15:00:00+13:00",
+   "end": "2026-10-28T18:00:00+13:00",
+   "score": 5.7,
+   "rating": "marginal",
+   "headline": "Wed 3-6pm is fishable",
+   "advice": "Wed 3-6pm, moderate offshore W 15 kn, 0.5 m sea @ 5 s, falling tide, low 3:33pm. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "reasons": [
+    "Wind W 15 kn (offshore)",
+    "Gusts to 21 kn",
+    "Waves 0.5 m (swell 0.3 m @ 5 s)",
+    "Dry",
+    "Falling pressure",
+    "Gusty",
+    "Offshore breeze"
+   ],
+   "confidence": "medium",
+   "date": "2026-10-28",
+   "wind_kn": 15.0,
+   "gust_max_kn": 21.0,
+   "wind_from": "W",
+   "wind_rel": "offshore",
+   "wave_m": 0.5,
+   "swell_m": 0.3,
+   "swell_period_s": 5.0,
+   "rain_mm": 0,
+   "confidence_detail": {
+    "level": "medium",
+    "lead_days": 2,
+    "lead_level": "high",
+    "agreement": "poor",
+    "score_best_match": 5.7,
+    "model_scores": {
+     "wind:ecmwf_ifs025": 4.8,
+     "wind:gfs_seamless": 4.5,
+     "wind:icon_seamless": 6.9,
+     "waves:meteofrance_wave": 5.7,
+     "waves:ecmwf_wam": 4.9,
+     "waves:ncep_gfswave025": 5.2
+    },
+    "score_spread": 2.4,
+    "models_missing": [],
+    "gap_hours": 0,
+    "downgrades": [
+     "models disagree: window scores 4.5-6.9 (wind:gfs_seamless vs wind:icon_seamless), spread 2.4 >= 1.5"
+    ]
+   },
+   "near_best": false
   },
   {
    "start": "2026-10-29T05:00:00+13:00",
@@ -1787,7 +1868,7 @@
    "score": 4.8,
    "rating": "marginal",
    "headline": "Thu 5-8am is fishable",
-   "advice": "Thu 5-8am, moderate cross-offshore W 14 kn, 0.5 m sea @ 5 s, rising tide, dawn - try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Thu 5-8am, moderate cross-offshore W 14 kn, 0.5 m sea @ 5 s, rising tide, dawn. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
    "reasons": [
     "Wind W 14 kn (cross-offshore)",
     "Gusts to 21 kn",
@@ -1827,7 +1908,8 @@
     "downgrades": [
      "models disagree: window scores 3.1-5.7 (wind:gfs_seamless vs wind:icon_seamless), spread 2.6 >= 1.5"
     ]
-   }
+   },
+   "near_best": true
   },
   {
    "start": "2026-10-31T14:00:00+13:00",
@@ -1835,7 +1917,7 @@
    "score": 5.5,
    "rating": "marginal",
    "headline": "Sat 2-5pm is fishable",
-   "advice": "Sat 2-5pm, moderate offshore SW 14 kn, 0.5 m sea @ 6 s, falling tide - try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Sat 2-5pm, moderate offshore SW 14 kn, 0.5 m sea @ 6 s, falling tide. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
    "reasons": [
     "Wind SW 14 kn (offshore)",
     "Gusts to 21 kn",
@@ -1874,7 +1956,8 @@
     "downgrades": [
      "models disagree: window scores 3.8-5.5 (wind:ecmwf_ifs025 vs best_match), spread 1.7 >= 1.5"
     ]
-   }
+   },
+   "near_best": true
   },
   {
    "start": "2026-11-01T09:00:00+13:00",
@@ -1882,7 +1965,7 @@
    "score": 7.8,
    "rating": "great",
    "headline": "Sun 9am-1pm looks great",
-   "advice": "Sun 9am-1pm, light W 4 kn, 0.1 m sea @ 7 s, rising tide, high 12:42pm - try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Sun 9am-1pm, light W 4 kn, 0.1 m sea @ 7 s, rising tide, high 12:42pm. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
    "reasons": [
     "Wind W 4 kn (offshore)",
     "Gusts to 16 kn",
@@ -1921,7 +2004,8 @@
     "downgrades": [
      "models disagree: window scores 4.9-7.8 (wind:icon_seamless vs best_match), spread 2.9 >= 1.5"
     ]
-   }
+   },
+   "near_best": true
   },
   {
    "start": "2026-11-01T18:00:00+13:00",
@@ -1929,7 +2013,7 @@
    "score": 8.4,
    "rating": "great",
    "headline": "Sun 6-9pm looks great",
-   "advice": "Sun 6-9pm, light cross-offshore NW 5 kn, 0.1 m sea @ 7 s, falling tide, low 6:59pm, dusk - try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Sun 6-9pm, light cross-offshore NW 5 kn, 0.1 m sea @ 7 s, falling tide, low 6:59pm, dusk. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
    "reasons": [
     "Wind NW 5 kn (cross-offshore)",
     "Gusts to 10 kn",
@@ -1968,7 +2052,8 @@
     "downgrades": [
      "models disagree: window scores 3.7-8.4 (wind:gfs_seamless vs best_match), spread 4.7 >= 3"
     ]
-   }
+   },
+   "near_best": true
   }
  ],
  "tides": [

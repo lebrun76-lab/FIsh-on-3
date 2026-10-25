@@ -405,7 +405,7 @@ def notes(grid, spots=None, max_fronts: int = 4, max_edges: int = 5) -> List[str
                    f"{f['cold'][2]:.1f} → {f['warm'][2]:.1f} °C across {f['km']:.0f} km, "
                    f"warmer water to the {f['warm_side']}.")
     for e in spot_edges(grid, spots)[:max_edges]:
-        out.append(f"Warm water edge near {e['name']}: {e['min_c']:.1f}–{e['max_c']:.1f} °C within "
+        out.append(f"Warm water edge near {e['name']}: {e['min_c']:.1f} to {e['max_c']:.1f} °C within "
                    f"{EDGE_RADIUS_KM:.0f} km; the warmest water ({e['max_c']:.1f} °C) is {e['warm_km']} km "
                    f"{compass(bearing_deg(*_spot_ll(e['spot']), *e['warm_cell']))} of the spot.")
     hits = isotherm_coast_hits(isotherms(grid), spots)
@@ -520,7 +520,7 @@ def build(out_dir: str, cache: Optional[Cache] = None, step: float = STEP, stamp
     ns = notes(grid)
     txt = os.path.join(out_dir, f"sst_notes_{stamp}.md")
     with open(txt, "w", encoding="utf-8") as f:
-        f.write(f"# SST notes — valid {nice_time(grid.get('valid_time_nz'))}\n\n")
+        f.write(f"# SST notes, valid {nice_time(grid.get('valid_time_nz'))}\n\n")
         pts = grid.get("points", {})
         f.write(f"Layout `{layout}`: {pts.get('coarse')} cells at {step}°"
                 + (f" (within {COARSE_MAX_KM:.0f} km of the coast) + {pts.get('fine')} points at "

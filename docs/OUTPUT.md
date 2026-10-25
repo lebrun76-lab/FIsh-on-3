@@ -7,6 +7,7 @@ Real samples, regenerated offline from recorded responses with `python tools/mak
 - `docs/samples/v1_dunedin_2026-10-26.json` (several windows a day)
 - `docs/samples/v1_central_otago_lakes_2026-10-26.json` (freshwater: no tides, null sea fields)
 - `docs/samples/cli_2026-10-26.txt` (the same data as CLI text)
+- `docs/samples/v1_bay_of_islands_2026-10-26_0848.json` (Bay of Islands, recorded and replayed at 08:48 NZDT on 26 Oct, so today's early hours have gone: shows `score_remaining` / `score_full_day` and three windows on the day)
 
 ## How each Site Builder item is handled
 
@@ -17,7 +18,7 @@ Real samples, regenerated offline from recorded responses with `python tools/mak
 | 3 | scores too optimistic | Recalibrated weights. See SCORING.md |
 | 4 | gusts 2–2.6× mean | Sea cells and sea weather points. See WEATHER_POINTS.md; `spot.forecast_point` |
 | 5 | hourly | `hourly[]`: one row per hour (`hourly_step_h: 1`), 24 per day |
-| 6 | windows / verdict | Up to 3 non-overlapping windows per day (`windows[]`, time order). Extra windows must be ≥ 4.5 and within 1.5 of the day's best, and at least 2 h clear of the other windows. Plus top-level `verdict` |
+| 6 | windows / verdict | Every separate window that scores ≥ 4.5 (`windows[]`, time order, no cap). Windows are at least 2 h apart; touching or overlapping runs are merged. `near_best` flags those within 1.5 of the day's best. Plus top-level `verdict` |
 | 7 | tide `kind` | `tides[].type` = `high`/`low` |
 | 8 | tide datum | `tide_datum` plus per-event `datum`: `chart_datum` (LINZ) or `msl` (Open-Meteo fallback). `hourly[].tide_m` and `tide_series[]` use the same datum |
 | 9 | swell vs wave | `swell_m` = Open-Meteo `swell_wave_height` (swell only); `wave_m` (additive) = `wave_height` (total sea). Scoring uses total sea |
@@ -60,3 +61,56 @@ Removed vs 2.0: `days[].tides` (use top-level `tides[]`), `days[].species` (use 
 - Species: kingfish at Wellington, East Cape and Hawke's Bay, and trout/salmon at the Southern Lakes, now have sourced seasons.
 - Species names: the generic "Tuna" (Kaikōura) and "Tuna (seasonal)" (Far North, Greymouth) are replaced by **Southern Bluefin Tuna** and **Pacific Bluefin Tuna** (main) and **Albacore** (secondary), per local knowledge from Alex Le Brun, 26 Oct 2026. `spot.species[]` for those three spots changes accordingly. Seasons: albacore Nov–May, peak Feb–Mar at all three (MFish 2009, NZBGFC club records); Pacific bluefin Aug–Sep at Greymouth (2008 TOR plenary); southern bluefin keeps the existing west-coast Jan–Aug at Greymouth; SBT at Kaikōura / Far North and PBF at Kaikōura / Far North say "no seasonal data". 97 of 124 spot–species pairs now say "no seasonal data".
 - `species[]` items gain additive `role` (`"main"` or `"secondary"`) and `species_source` (why the species is listed at this spot, e.g. `"local knowledge: Alex Le Brun, 26 Oct 2026"`; null when it comes from the original spot list). Secondary species sort after main species with the same status, and the verdict's target species is a main species whenever one is open.
+
+## Windows, today's score and copy (feat/windows-and-copy)
+
+All additive; `validate_v1` still passes.
+
+**Windows.** `windows[]` (and `days[].windows`, the count) now holds every separate window of the day scoring ≥ 4.5, not just those within 1.5 of the day's best, and there is no longer a cap of 3 a day. A window is a 3 to 5 h daylight run. The first pick is the day's best; each further pick is the best run left that is at least 2 h clear of the windows already picked; touching or overlapping runs are merged into one. In practice a day fits at most 4.
+
+| field | type | meaning |
+|---|---|---|
+| `windows[].near_best` | bool | `score >= (day's best window score - 1.5)`, rounded to 1 dp. Always true for the day's best. Also on `days[].best_window` and `days[].least_bad_window` |
+| `days[].score_remaining` | float \| null | Today only: the day score over the daylight hours not yet past at `generated_at` (best remaining window x 0.6 + mean remaining daylight hour x 0.4). Null on other days, and when no daylight is left |
+| `days[].remaining_from` | string \| null | Today only: ISO start of the first hour counted in `score_remaining` (the current hour) |
+| `days[].score_full_day` | float \| null | The same formula over every daylight hour of the date, gone or not. Equals `score` on days other than today |
+
+**Which score to show.** `days[].score` is unchanged: for today it was already computed over the hours left at `generated_at`, so it equals `score_remaining`. Show `score_remaining` for today (it says what it is, and `remaining_from` lets you tell when cached output has gone stale: if the current hour is later than `remaining_from`, regenerate or label the score with that time). Show `score` for every other day. `score_full_day` is for "how was today overall"; don't show it as today's outlook.
+
+The headline and verdict are unchanged: the verdict still picks the best fishable window (with the confidence margin), so the extra lower windows can't change it. "Also good" still lists other days.
+
+Bay of Islands, 26 Oct (from `docs/samples/v1_bay_of_islands_2026-10-26_0848.json`, `generated_at` 08:48 NZDT):
+
+```json
+"days": [{"date": "2026-10-26", "score": 7.0, "score_remaining": 7.0,
+          "remaining_from": "2026-10-26T08:00:00+13:00", "score_full_day": 8.0, "windows": 3, "...": "..."},
+         {"date": "2026-10-27", "score": 6.1, "score_remaining": null,
+          "remaining_from": null, "score_full_day": 6.1, "...": "..."}],
+"windows": [
+  {"start": "2026-10-26T08:00:00+13:00", "end": "2026-10-26T11:00:00+13:00", "score": 7.6, "rating": "great",
+   "headline": "Mon 8-11am looks great", "near_best": true, "...": "..."},
+  {"start": "2026-10-26T13:00:00+13:00", "end": "2026-10-26T16:00:00+13:00", "score": 5.2, "rating": "marginal",
+   "headline": "Mon 1-4pm is fishable", "near_best": false, "...": "..."},
+  {"start": "2026-10-26T18:00:00+13:00", "end": "2026-10-26T21:00:00+13:00", "score": 6.4, "rating": "good",
+   "headline": "Mon 6-9pm looks good", "near_best": true, "...": "..."}]
+```
+
+Replayed with the clock at 00:54 (whole day) the same data gives 5-8am 8.8 (near_best), 10am-1pm 6.6 and 6-9pm 6.4 (both not near_best); before this change only 5-8am was listed.
+
+**Copy.** Generated text has no em dashes, no spaced en dashes and no spaced hyphens used as dashes (a test checks every string in the samples and the CLI text; LINZ port names such as "Lottin Point - Wakatiri" are left as LINZ spells them). Changed wording:
+
+| before | after |
+|---|---|
+| `Excellent - go fishing` | `Excellent, go fishing` |
+| `Marginal - pick your window` | `Marginal, pick your window` |
+| `Poor - stay home / sheltered water only` | `Poor, stay home or stick to sheltered water` |
+| `..., dawn - try snapper: soft-baits ...` | `..., dawn. Try snapper: soft-baits ...` |
+| `Lake – wind direction vs shore not scored` (`spot.facing_note`) | `Lake, so wind direction against the shore isn't scored` |
+| `Many rivers close 30 Apr - check the Otago Fish & Game regulations.` | `Many rivers close 30 Apr, so check the Otago Fish & Game regulations.` |
+| `closed 1 Sep - 10 Jan inclusive` / `open 1 Nov - 31 May only` | `closed 1 Sep to 10 Jan inclusive` / `open 1 Nov to 31 May only` |
+| SST notes: `# SST notes — valid ...`, `9.1–12.8 °C` | `# SST notes, valid ...`, `9.1 to 12.8 °C` |
+| CLI: `VERDICT: Go Monday early morning - great 8.2/10 [high]` | `VERDICT: Go Monday early morning (great, 8.2/10) [high]` |
+
+The day `summary` still starts with the rating word, so it now reads e.g. "Excellent, go fishing. Gentle winds all day (~10 kn); 0.3 m sea. Best: Mon 5-8am."
+
+**Brand.** Salt Supply Co (was Fish On): HTTP User-Agent `SaltSupplyCo-engine/2.0 (+https://github.com/lebrun76-lab/FIsh-on-3)`, the pyproject description, README title and the Streamlit app's titles. The package (`fishon_engine`, `fishon-engine`), the CLI script name (`fishon-forecast`) and the cache path (`~/.cache/fishon`) are unchanged.

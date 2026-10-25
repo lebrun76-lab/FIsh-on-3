@@ -36,7 +36,7 @@ def test_best_window_and_text():
     assert w[0]["time"].hour >= 12 and 3 <= len(w) <= 5
     summ = scoring.summarise(w, 90, True)
     txt = scoring.window_text(summ, w, True, {"name": "Blue Cod", "how": "off the rocks"})
-    assert txt.startswith("Sat ") and "W" in txt and "try blue cod: off the rocks" in txt
+    assert txt.startswith("Sat ") and "W" in txt and "Try blue cod: off the rocks" in txt
 
 
 def test_not_before_excludes_past():

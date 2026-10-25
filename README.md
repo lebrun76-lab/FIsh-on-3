@@ -1,4 +1,4 @@
-# Fish on! 🎣 – NZ Fishing Forecast
+# Salt Supply Co 🎣 NZ Fishing Forecast
 
 Free interactive fishing forecast for New Zealand.
 
@@ -8,7 +8,7 @@ Select your favourite fishing centres, check any dates, get live wind/swell/rain
 - 23 main NZ fishing centres (North + South Island)
 - Multi-select your areas
 - Live weather + marine data
-- Usability score (0–10)
+- Usability score (0 to 10)
 - Target species for each centre
 - Natural language outlook
 
@@ -30,11 +30,11 @@ streamlit run app.py
 
 You’ll get a public link like `https://yourname-fish-on.streamlit.app` that you can share with your mates.
 
-That’s it – completely free.
+That’s it, completely free.
 
 ## Forecast engine 2.1 (preview)
 
-`fishon_engine/` is a standalone forecast engine. Its output is the site's v1 `SpotForecast` contract (see [docs/OUTPUT.md](docs/OUTPUT.md)). It gives hourly and daily scores, up to 3 windows a day plus a verdict, best fishing windows in plain English, wind vs coastline, swell period, LINZ tides, SST, seasonal species, moon/sun, and a shared SQLite cache. See [docs/ENGINE.md](docs/ENGINE.md).
+`fishon_engine/` is a standalone forecast engine. Its output is the site's v1 `SpotForecast` contract (see [docs/OUTPUT.md](docs/OUTPUT.md)). It gives hourly and daily scores, every window a day that scores 4.5 or more plus a verdict, best fishing windows in plain English, wind vs coastline, swell period, LINZ tides, SST, seasonal species, moon/sun, and a shared SQLite cache. See [docs/ENGINE.md](docs/ENGINE.md).
 
 ```bash
 pip install -e '.[test]'      # or: pip install -r requirements.txt pytest

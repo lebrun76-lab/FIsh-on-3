@@ -26,43 +26,57 @@ with open(os.path.join(FIX, "RECORDED.json")) as _f:
     NOW = datetime.fromisoformat(json.load(_f)["recorded_at"]).astimezone(NZ)
 START, DAYS = date(2026, 10, 26), 7
 SPOTS = ["hauraki_gulf", "dunedin", "central_otago_lakes"]
-LINZ = {"Mātiatia Bay": "linz_Mātiatia_Bay_2026_oct-nov.csv", "Green Island": "linz_Green_Island_2026_oct-nov.csv"}
+LINZ = {"Mātiatia Bay": "linz_Mātiatia_Bay_2026_oct-nov.csv", "Green Island": "linz_Green_Island_2026_oct-nov.csv",
+        "Marsden Point": "linz_Marsden_Point_2026_oct-nov.csv"}
+# Bay of Islands, recorded 2026-10-26 08:48 NZDT for the window before/after
+# check (docs/WINDOWS.md); its 26 Oct rows start at 00:00, so the earlier hours
+# are Open-Meteo's analysis of what already happened.
+BOI_FIX = os.path.join(ROOT, "tests", "fixtures", "real_2026-10-26_boi")
 
 
-def _load(name):
-    with open(os.path.join(FIX, name), encoding="utf-8") as f:
+def _load(name, fix=None):
+    with open(os.path.join(fix or FIX, name), encoding="utf-8") as f:
         return json.load(f)
 
 
+def recorded_at(fix):
+    with open(os.path.join(fix, "RECORDED.json")) as f:
+        return datetime.fromisoformat(json.load(f)["recorded_at"]).astimezone(NZ)
+
+
 @contextmanager
-def recorded():
+def recorded(fix=None, spots=None, now=None):
+    fix, spots, now = fix or FIX, spots or SPOTS, now or NOW
+
+    def ld(name):  # this replay's fixture dir
+        return _load(name, fix)
     by_point = {}
-    for sid in SPOTS:
+    for sid in spots:
         sp = engine.get_spot(sid)
         by_point[("f", round(sp.forecast_lat, 3), round(sp.forecast_lon, 3))] = f"{sid}_forecast.json"
         if sp.is_coastal:
             by_point[("m", round(sp.marine_lat, 3), round(sp.marine_lon, 3))] = f"{sid}_marine.json"
 
     def ff(lat, lon, s, e, cache=None, cell_selection="land"):
-        d = _load(by_point[("f", round(lat, 3), round(lon, 3))])
+        d = ld(by_point[("f", round(lat, 3), round(lon, 3))])
         d["_cache"] = {"cache": "fixture"}
         return d
 
     def fm(lat, lon, s, e, cache=None):
-        d = _load(by_point[("m", round(lat, 3), round(lon, 3))])
+        d = ld(by_point[("m", round(lat, 3), round(lon, 3))])
         d["_cache"] = {"cache": "fixture"}
         return d
 
     def fw(lat, lon, s, e, cache=None, cell_selection="land"):
         k = by_point[("f", round(lat, 3), round(lon, 3))].replace("_forecast", "_wind_models")
-        return dict(_load(k), _cache={"cache": "fixture"})
+        return dict(ld(k), _cache={"cache": "fixture"})
 
     def fv(lat, lon, s, e, cache=None):
         k = by_point[("m", round(lat, 3), round(lon, 3))].replace("_marine", "_wave_models")
-        return dict(_load(k), _cache={"cache": "fixture"})
+        return dict(ld(k), _cache={"cache": "fixture"})
 
     def fl(port, s, e, cache=None):
-        with open(os.path.join(FIX, LINZ[port]), encoding="utf-8") as f:
+        with open(os.path.join(fix, LINZ[port]), encoding="utf-8") as f:
             return tides.parse_linz_csv(f.read())
 
     saved = (openmeteo.fetch_forecast, openmeteo.fetch_marine, tides.fetch_linz,
@@ -70,8 +84,8 @@ def recorded():
              openmeteo.fetch_wind_models, openmeteo.fetch_wave_models)
     openmeteo.fetch_forecast, openmeteo.fetch_marine, tides.fetch_linz = ff, fm, fl
     openmeteo.fetch_wind_models, openmeteo.fetch_wave_models = fw, fv
-    openmeteo.fetch_model_runs = lambda cache=None: _load("model_runs.json")
-    engine.now_nz, engine.today_nz = (lambda: NOW), (lambda: NOW.date())
+    openmeteo.fetch_model_runs = lambda cache=None: ld("model_runs.json")
+    engine.now_nz, engine.today_nz = (lambda: now), (lambda: now.date())
     try:
         yield
     finally:
@@ -85,8 +99,27 @@ def build(sid):
         return engine.forecast_spot(sid, start=START, days=DAYS, model_runs=_load("model_runs.json"))
 
 
+BOI_EARLY = datetime(2026, 10, 26, 0, 54, tzinfo=NZ)   # same clock as the other samples
+
+
+def build_boi(now=None):
+    """Bay of Islands from its own 08:48 NZDT recording. ``now`` defaults to
+    the recording time (so today's past hours drop out, as live); pass
+    BOI_EARLY to see the whole of 26 Oct."""
+    now = now or recorded_at(BOI_FIX)
+    with recorded(BOI_FIX, ["bay_of_islands"], now):
+        return engine.forecast_spot("bay_of_islands", start=START, days=DAYS,
+                                    model_runs=_load("model_runs.json", BOI_FIX))
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
+    fc = build_boi()
+    path = os.path.join(OUT, "v1_bay_of_islands_2026-10-26_0848.json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(fc, f, indent=1, ensure_ascii=False, allow_nan=False)
+        f.write("\n")
+    print(path, fc["verdict"]["headline"], fc["verdict"]["score"])
     for sid in SPOTS:
         fc = build(sid)
         path = os.path.join(OUT, f"v1_{sid}_2026-10-26.json")

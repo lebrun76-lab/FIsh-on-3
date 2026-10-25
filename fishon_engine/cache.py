@@ -91,7 +91,7 @@ class Cache:
             return cur.rowcount
 
 
-UA = {"User-Agent": "FishOn/2.0 (+https://github.com/lebrun76-lab/FIsh-on-3)"}
+UA = {"User-Agent": "SaltSupplyCo-engine/2.0 (+https://github.com/lebrun76-lab/FIsh-on-3)"}
 
 
 def http_get_text(url: str, params: Optional[Dict[str, Any]] = None, timeout: float = 20) -> str:

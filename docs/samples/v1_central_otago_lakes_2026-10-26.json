@@ -20,7 +20,7 @@
   ],
   "coastal": false,
   "facing_deg": null,
-  "facing_note": "Lake – wind direction vs shore not scored",
+  "facing_note": "Lake, so wind direction against the shore isn't scored",
   "tide_port": null,
   "tide_port_id": null,
   "tide_port_km": null,
@@ -48,7 +48,7 @@
   "rating": "good",
   "score": 6.6,
   "headline": "Go Wednesday early morning",
-  "advice": "Wed 5-8am, light N 5 kn, dawn - try brown trout: spin or fly from the shore at first and last light. Also good: Tue 27 Oct.",
+  "advice": "Wed 5-8am, light N 5 kn, dawn. Try brown trout: spin or fly from the shore at first and last light. Also good: Tue 27 Oct.",
   "confidence": "high",
   "window": {
    "start": "2026-10-28T05:00:00+13:00",
@@ -65,7 +65,7 @@
    "score": 6.0,
    "rating": "good",
    "headline": "Sat 5-8am looks good",
-   "advice": "Sat 5-8am, light NW 3 kn, dawn - try brown trout: spin or fly from the shore at first and last light",
+   "advice": "Sat 5-8am, light NW 3 kn, dawn. Try brown trout: spin or fly from the shore at first and last light",
    "confidence": "medium"
   }
  },
@@ -74,7 +74,7 @@
    "date": "2026-10-26",
    "score": 4.4,
    "rating": "poor",
-   "summary": "Poor - stay home / sheltered water only. Gentle winds all day (~7 kn); 46 mm rain. Best: Mon 6-9am.",
+   "summary": "Poor, stay home or stick to sheltered water. Gentle winds all day (~7 kn); 46 mm rain. Best: Mon 6-9am.",
    "wind_kn_avg": 6.9,
    "gust_kn_max": 28.0,
    "swell_m_avg": null,
@@ -89,14 +89,14 @@
    "label": "Mon 26 Oct",
    "confidence": "high",
    "lead_confidence": "high",
-   "verdict_text": "Poor - stay home / sheltered water only",
+   "verdict_text": "Poor, stay home or stick to sheltered water",
    "best_window": {
     "start": "2026-10-26T06:00:00+13:00",
     "end": "2026-10-26T09:00:00+13:00",
     "score": 5.2,
     "rating": "marginal",
     "headline": "Mon 6-9am is fishable",
-    "advice": "Mon 6-9am, light NW 5 kn, dawn - try brown trout: spin or fly from the shore at first and last light",
+    "advice": "Mon 6-9am, light NW 5 kn, dawn. Try brown trout: spin or fly from the shore at first and last light",
     "reasons": [
      "Wind NW 5 kn",
      "Gusts to 17 kn",
@@ -130,9 +130,10 @@
      "models_missing": [],
      "gap_hours": 0,
      "downgrades": []
-    }
+    },
+    "near_best": true
    },
-   "best_window_text": "Mon 6-9am, light NW 5 kn, dawn - try brown trout: spin or fly from the shore at first and last light",
+   "best_window_text": "Mon 6-9am, light NW 5 kn, dawn. Try brown trout: spin or fly from the shore at first and last light",
    "windows": 1,
    "no_window_reason": null,
    "least_bad_window": null,
@@ -279,13 +280,16 @@
      "sst_c": null,
      "label": "9pm-12am"
     }
-   ]
+   ],
+   "score_remaining": 4.4,
+   "remaining_from": "2026-10-26T00:00:00+13:00",
+   "score_full_day": 4.4
   },
   {
    "date": "2026-10-27",
    "score": 5.7,
    "rating": "marginal",
-   "summary": "Marginal - pick your window. Light morning (~3 kn), gentle afternoon (~7 kn); 2 mm rain. Best: Tue 6-9am.",
+   "summary": "Marginal, pick your window. Light morning (~3 kn), gentle afternoon (~7 kn); 2 mm rain. Best: Tue 6-9am.",
    "wind_kn_avg": 5.6,
    "gust_kn_max": 20.6,
    "swell_m_avg": null,
@@ -300,14 +304,14 @@
    "label": "Tue 27 Oct",
    "confidence": "high",
    "lead_confidence": "high",
-   "verdict_text": "Marginal - pick your window",
+   "verdict_text": "Marginal, pick your window",
    "best_window": {
     "start": "2026-10-27T06:00:00+13:00",
     "end": "2026-10-27T09:00:00+13:00",
     "score": 6.0,
     "rating": "good",
     "headline": "Tue 6-9am looks good",
-    "advice": "Tue 6-9am, light SW 1 kn, dawn - try brown trout: spin or fly from the shore at first and last light",
+    "advice": "Tue 6-9am, light SW 1 kn, dawn. Try brown trout: spin or fly from the shore at first and last light",
     "reasons": [
      "Wind SW 1 kn",
      "Gusts to 7 kn",
@@ -339,9 +343,10 @@
      "models_missing": [],
      "gap_hours": 0,
      "downgrades": []
-    }
+    },
+    "near_best": true
    },
-   "best_window_text": "Tue 6-9am, light SW 1 kn, dawn - try brown trout: spin or fly from the shore at first and last light",
+   "best_window_text": "Tue 6-9am, light SW 1 kn, dawn. Try brown trout: spin or fly from the shore at first and last light",
    "windows": 3,
    "no_window_reason": null,
    "least_bad_window": null,
@@ -488,7 +493,10 @@
      "sst_c": null,
      "label": "9pm-12am"
     }
-   ]
+   ],
+   "score_remaining": null,
+   "remaining_from": null,
+   "score_full_day": 5.7
   },
   {
    "date": "2026-10-28",
@@ -516,7 +524,7 @@
     "score": 6.6,
     "rating": "good",
     "headline": "Wed 5-8am looks good",
-    "advice": "Wed 5-8am, light N 5 kn, dawn - try brown trout: spin or fly from the shore at first and last light",
+    "advice": "Wed 5-8am, light N 5 kn, dawn. Try brown trout: spin or fly from the shore at first and last light",
     "reasons": [
      "Wind N 5 kn",
      "Gusts to 16 kn",
@@ -549,9 +557,10 @@
      "models_missing": [],
      "gap_hours": 0,
      "downgrades": []
-    }
+    },
+    "near_best": true
    },
-   "best_window_text": "Wed 5-8am, light N 5 kn, dawn - try brown trout: spin or fly from the shore at first and last light",
+   "best_window_text": "Wed 5-8am, light N 5 kn, dawn. Try brown trout: spin or fly from the shore at first and last light",
    "windows": 2,
    "no_window_reason": null,
    "least_bad_window": null,
@@ -698,13 +707,16 @@
      "sst_c": null,
      "label": "9pm-12am"
     }
-   ]
+   ],
+   "score_remaining": null,
+   "remaining_from": null,
+   "score_full_day": 6.0
   },
   {
    "date": "2026-10-29",
    "score": 5.0,
    "rating": "marginal",
-   "summary": "Marginal - pick your window. Light morning (~4 kn), gentle afternoon (~9 kn); 5 mm rain. Best: Thu 6-9am.",
+   "summary": "Marginal, pick your window. Light morning (~4 kn), gentle afternoon (~9 kn); 5 mm rain. Best: Thu 6-9am.",
    "wind_kn_avg": 7.1,
    "gust_kn_max": 25.7,
    "swell_m_avg": null,
@@ -719,14 +731,14 @@
    "label": "Thu 29 Oct",
    "confidence": "medium",
    "lead_confidence": "medium",
-   "verdict_text": "Marginal - pick your window",
+   "verdict_text": "Marginal, pick your window",
    "best_window": {
     "start": "2026-10-29T06:00:00+13:00",
     "end": "2026-10-29T09:00:00+13:00",
     "score": 5.6,
     "rating": "marginal",
     "headline": "Thu 6-9am is fishable",
-    "advice": "Thu 6-9am, light W 2 kn, dawn - try brown trout: spin or fly from the shore at first and last light",
+    "advice": "Thu 6-9am, light W 2 kn, dawn. Try brown trout: spin or fly from the shore at first and last light",
     "reasons": [
      "Wind W 2 kn",
      "Gusts to 13 kn",
@@ -758,9 +770,10 @@
      "models_missing": [],
      "gap_hours": 0,
      "downgrades": []
-    }
+    },
+    "near_best": true
    },
-   "best_window_text": "Thu 6-9am, light W 2 kn, dawn - try brown trout: spin or fly from the shore at first and last light",
+   "best_window_text": "Thu 6-9am, light W 2 kn, dawn. Try brown trout: spin or fly from the shore at first and last light",
    "windows": 1,
    "no_window_reason": null,
    "least_bad_window": null,
@@ -907,13 +920,16 @@
      "sst_c": null,
      "label": "9pm-12am"
     }
-   ]
+   ],
+   "score_remaining": null,
+   "remaining_from": null,
+   "score_full_day": 5.0
   },
   {
    "date": "2026-10-30",
    "score": 5.3,
    "rating": "marginal",
-   "summary": "Marginal - pick your window. Gentle winds all day (~7 kn); 1 mm rain. Best: Fri 5-8am.",
+   "summary": "Marginal, pick your window. Gentle winds all day (~7 kn); 1 mm rain. Best: Fri 5-8am.",
    "wind_kn_avg": 7.0,
    "gust_kn_max": 24.3,
    "swell_m_avg": null,
@@ -928,14 +944,14 @@
    "label": "Fri 30 Oct",
    "confidence": "medium",
    "lead_confidence": "medium",
-   "verdict_text": "Marginal - pick your window",
+   "verdict_text": "Marginal, pick your window",
    "best_window": {
     "start": "2026-10-30T05:00:00+13:00",
     "end": "2026-10-30T08:00:00+13:00",
     "score": 5.8,
     "rating": "marginal",
     "headline": "Fri 5-8am is fishable",
-    "advice": "Fri 5-8am, light NW 3 kn, dawn - try brown trout: spin or fly from the shore at first and last light",
+    "advice": "Fri 5-8am, light NW 3 kn, dawn. Try brown trout: spin or fly from the shore at first and last light",
     "reasons": [
      "Wind NW 3 kn",
      "Gusts to 14 kn",
@@ -967,9 +983,10 @@
      "models_missing": [],
      "gap_hours": 0,
      "downgrades": []
-    }
+    },
+    "near_best": true
    },
-   "best_window_text": "Fri 5-8am, light NW 3 kn, dawn - try brown trout: spin or fly from the shore at first and last light",
+   "best_window_text": "Fri 5-8am, light NW 3 kn, dawn. Try brown trout: spin or fly from the shore at first and last light",
    "windows": 2,
    "no_window_reason": null,
    "least_bad_window": null,
@@ -1116,13 +1133,16 @@
      "sst_c": null,
      "label": "9pm-12am"
     }
-   ]
+   ],
+   "score_remaining": null,
+   "remaining_from": null,
+   "score_full_day": 5.3
   },
   {
    "date": "2026-10-31",
    "score": 5.8,
    "rating": "marginal",
-   "summary": "Marginal - pick your window. Light winds all day (~5 kn). Best: Sat 5-8am.",
+   "summary": "Marginal, pick your window. Light winds all day (~5 kn). Best: Sat 5-8am.",
    "wind_kn_avg": 4.8,
    "gust_kn_max": 17.5,
    "swell_m_avg": null,
@@ -1137,14 +1157,14 @@
    "label": "Sat 31 Oct",
    "confidence": "medium",
    "lead_confidence": "medium",
-   "verdict_text": "Marginal - pick your window",
+   "verdict_text": "Marginal, pick your window",
    "best_window": {
     "start": "2026-10-31T05:00:00+13:00",
     "end": "2026-10-31T08:00:00+13:00",
     "score": 6.0,
     "rating": "good",
     "headline": "Sat 5-8am looks good",
-    "advice": "Sat 5-8am, light NW 3 kn, dawn - try brown trout: spin or fly from the shore at first and last light",
+    "advice": "Sat 5-8am, light NW 3 kn, dawn. Try brown trout: spin or fly from the shore at first and last light",
     "reasons": [
      "Wind NW 3 kn",
      "Gusts to 12 kn",
@@ -1176,9 +1196,10 @@
      "models_missing": [],
      "gap_hours": 0,
      "downgrades": []
-    }
+    },
+    "near_best": true
    },
-   "best_window_text": "Sat 5-8am, light NW 3 kn, dawn - try brown trout: spin or fly from the shore at first and last light",
+   "best_window_text": "Sat 5-8am, light NW 3 kn, dawn. Try brown trout: spin or fly from the shore at first and last light",
    "windows": 3,
    "no_window_reason": null,
    "least_bad_window": null,
@@ -1325,13 +1346,16 @@
      "sst_c": null,
      "label": "9pm-12am"
     }
-   ]
+   ],
+   "score_remaining": null,
+   "remaining_from": null,
+   "score_full_day": 5.8
   },
   {
    "date": "2026-11-01",
    "score": 5.7,
    "rating": "marginal",
-   "summary": "Marginal - pick your window. Light morning (~3 kn), gentle afternoon (~7 kn); 1 mm rain. Best: Sun 5-8am.",
+   "summary": "Marginal, pick your window. Light morning (~3 kn), gentle afternoon (~7 kn); 1 mm rain. Best: Sun 5-8am.",
    "wind_kn_avg": 5.3,
    "gust_kn_max": 22.4,
    "swell_m_avg": null,
@@ -1346,14 +1370,14 @@
    "label": "Sun 1 Nov",
    "confidence": "medium",
    "lead_confidence": "medium",
-   "verdict_text": "Marginal - pick your window",
+   "verdict_text": "Marginal, pick your window",
    "best_window": {
     "start": "2026-11-01T05:00:00+13:00",
     "end": "2026-11-01T08:00:00+13:00",
     "score": 6.0,
     "rating": "good",
     "headline": "Sun 5-8am looks good",
-    "advice": "Sun 5-8am, light W 2 kn, dawn - try brown trout: spin or fly from the shore at first and last light",
+    "advice": "Sun 5-8am, light W 2 kn, dawn. Try brown trout: spin or fly from the shore at first and last light",
     "reasons": [
      "Wind W 2 kn",
      "Gusts to 10 kn",
@@ -1385,9 +1409,10 @@
      "models_missing": [],
      "gap_hours": 0,
      "downgrades": []
-    }
+    },
+    "near_best": true
    },
-   "best_window_text": "Sun 5-8am, light W 2 kn, dawn - try brown trout: spin or fly from the shore at first and last light",
+   "best_window_text": "Sun 5-8am, light W 2 kn, dawn. Try brown trout: spin or fly from the shore at first and last light",
    "windows": 3,
    "no_window_reason": null,
    "least_bad_window": null,
@@ -1534,7 +1559,10 @@
      "sst_c": null,
      "label": "9pm-12am"
     }
-   ]
+   ],
+   "score_remaining": null,
+   "remaining_from": null,
+   "score_full_day": 5.7
   }
  ],
  "windows": [
@@ -1544,7 +1572,7 @@
    "score": 5.2,
    "rating": "marginal",
    "headline": "Mon 6-9am is fishable",
-   "advice": "Mon 6-9am, light NW 5 kn, dawn - try brown trout: spin or fly from the shore at first and last light",
+   "advice": "Mon 6-9am, light NW 5 kn, dawn. Try brown trout: spin or fly from the shore at first and last light",
    "reasons": [
     "Wind NW 5 kn",
     "Gusts to 17 kn",
@@ -1578,7 +1606,8 @@
     "models_missing": [],
     "gap_hours": 0,
     "downgrades": []
-   }
+   },
+   "near_best": true
   },
   {
    "start": "2026-10-27T06:00:00+13:00",
@@ -1586,7 +1615,7 @@
    "score": 6.0,
    "rating": "good",
    "headline": "Tue 6-9am looks good",
-   "advice": "Tue 6-9am, light SW 1 kn, dawn - try brown trout: spin or fly from the shore at first and last light",
+   "advice": "Tue 6-9am, light SW 1 kn, dawn. Try brown trout: spin or fly from the shore at first and last light",
    "reasons": [
     "Wind SW 1 kn",
     "Gusts to 7 kn",
@@ -1618,7 +1647,8 @@
     "models_missing": [],
     "gap_hours": 0,
     "downgrades": []
-   }
+   },
+   "near_best": true
   },
   {
    "start": "2026-10-27T11:00:00+13:00",
@@ -1626,7 +1656,7 @@
    "score": 5.0,
    "rating": "marginal",
    "headline": "Tue 11am-2pm is fishable",
-   "advice": "Tue 11am-2pm, gentle W 6 kn - try brown trout: spin or fly from the shore at first and last light",
+   "advice": "Tue 11am-2pm, gentle W 6 kn. Try brown trout: spin or fly from the shore at first and last light",
    "reasons": [
     "Wind W 6 kn",
     "Gusts to 16 kn",
@@ -1659,7 +1689,8 @@
     "downgrades": [
      "models disagree: window scores 3.2-5.5 (wind:icon_seamless vs wind:ecmwf_ifs025), spread 2.3 >= 1.5"
     ]
-   }
+   },
+   "near_best": true
   },
   {
    "start": "2026-10-27T18:00:00+13:00",
@@ -1667,7 +1698,7 @@
    "score": 5.1,
    "rating": "marginal",
    "headline": "Tue 6-9pm is fishable",
-   "advice": "Tue 6-9pm, gentle NW 8 kn, dusk - try brown trout: spin or fly from the shore at first and last light",
+   "advice": "Tue 6-9pm, gentle NW 8 kn, dusk. Try brown trout: spin or fly from the shore at first and last light",
    "reasons": [
     "Wind NW 8 kn",
     "Gusts to 19 kn",
@@ -1700,7 +1731,8 @@
     "models_missing": [],
     "gap_hours": 0,
     "downgrades": []
-   }
+   },
+   "near_best": true
   },
   {
    "start": "2026-10-28T05:00:00+13:00",
@@ -1708,7 +1740,7 @@
    "score": 6.6,
    "rating": "good",
    "headline": "Wed 5-8am looks good",
-   "advice": "Wed 5-8am, light N 5 kn, dawn - try brown trout: spin or fly from the shore at first and last light",
+   "advice": "Wed 5-8am, light N 5 kn, dawn. Try brown trout: spin or fly from the shore at first and last light",
    "reasons": [
     "Wind N 5 kn",
     "Gusts to 16 kn",
@@ -1741,7 +1773,8 @@
     "models_missing": [],
     "gap_hours": 0,
     "downgrades": []
-   }
+   },
+   "near_best": true
   },
   {
    "start": "2026-10-28T18:00:00+13:00",
@@ -1749,7 +1782,7 @@
    "score": 5.8,
    "rating": "marginal",
    "headline": "Wed 6-9pm is fishable",
-   "advice": "Wed 6-9pm, light N 6 kn, dusk - try brown trout: spin or fly from the shore at first and last light",
+   "advice": "Wed 6-9pm, light N 6 kn, dusk. Try brown trout: spin or fly from the shore at first and last light",
    "reasons": [
     "Wind N 6 kn",
     "Gusts to 19 kn",
@@ -1782,7 +1815,8 @@
     "models_missing": [],
     "gap_hours": 0,
     "downgrades": []
-   }
+   },
+   "near_best": true
   },
   {
    "start": "2026-10-29T06:00:00+13:00",
@@ -1790,7 +1824,7 @@
    "score": 5.6,
    "rating": "marginal",
    "headline": "Thu 6-9am is fishable",
-   "advice": "Thu 6-9am, light W 2 kn, dawn - try brown trout: spin or fly from the shore at first and last light",
+   "advice": "Thu 6-9am, light W 2 kn, dawn. Try brown trout: spin or fly from the shore at first and last light",
    "reasons": [
     "Wind W 2 kn",
     "Gusts to 13 kn",
@@ -1822,7 +1856,8 @@
     "models_missing": [],
     "gap_hours": 0,
     "downgrades": []
-   }
+   },
+   "near_best": true
   },
   {
    "start": "2026-10-30T05:00:00+13:00",
@@ -1830,7 +1865,7 @@
    "score": 5.8,
    "rating": "marginal",
    "headline": "Fri 5-8am is fishable",
-   "advice": "Fri 5-8am, light NW 3 kn, dawn - try brown trout: spin or fly from the shore at first and last light",
+   "advice": "Fri 5-8am, light NW 3 kn, dawn. Try brown trout: spin or fly from the shore at first and last light",
    "reasons": [
     "Wind NW 3 kn",
     "Gusts to 14 kn",
@@ -1862,7 +1897,8 @@
     "models_missing": [],
     "gap_hours": 0,
     "downgrades": []
-   }
+   },
+   "near_best": true
   },
   {
    "start": "2026-10-30T18:00:00+13:00",
@@ -1870,7 +1906,7 @@
    "score": 4.8,
    "rating": "marginal",
    "headline": "Fri 6-9pm is fishable",
-   "advice": "Fri 6-9pm, gentle NW 6 kn, dusk - try brown trout: spin or fly from the shore at first and last light",
+   "advice": "Fri 6-9pm, gentle NW 6 kn, dusk. Try brown trout: spin or fly from the shore at first and last light",
    "reasons": [
     "Wind NW 6 kn",
     "Gusts to 24 kn",
@@ -1905,7 +1941,8 @@
     "downgrades": [
      "models disagree: window scores 2.0-4.8 (wind:icon_seamless vs best_match), spread 2.8 >= 1.5"
     ]
-   }
+   },
+   "near_best": true
   },
   {
    "start": "2026-10-31T05:00:00+13:00",
@@ -1913,7 +1950,7 @@
    "score": 6.0,
    "rating": "good",
    "headline": "Sat 5-8am looks good",
-   "advice": "Sat 5-8am, light NW 3 kn, dawn - try brown trout: spin or fly from the shore at first and last light",
+   "advice": "Sat 5-8am, light NW 3 kn, dawn. Try brown trout: spin or fly from the shore at first and last light",
    "reasons": [
     "Wind NW 3 kn",
     "Gusts to 12 kn",
@@ -1945,7 +1982,8 @@
     "models_missing": [],
     "gap_hours": 0,
     "downgrades": []
-   }
+   },
+   "near_best": true
   },
   {
    "start": "2026-10-31T10:00:00+13:00",
@@ -1953,7 +1991,7 @@
    "score": 5.1,
    "rating": "marginal",
    "headline": "Sat 10am-3pm is fishable",
-   "advice": "Sat 10am-3pm, light NW 5 kn - try brown trout: spin or fly from the shore at first and last light",
+   "advice": "Sat 10am-3pm, light NW 5 kn. Try brown trout: spin or fly from the shore at first and last light",
    "reasons": [
     "Wind NW 5 kn",
     "Gusts to 14 kn",
@@ -1984,7 +2022,8 @@
     "models_missing": [],
     "gap_hours": 0,
     "downgrades": []
-   }
+   },
+   "near_best": true
   },
   {
    "start": "2026-10-31T18:00:00+13:00",
@@ -1992,7 +2031,7 @@
    "score": 5.8,
    "rating": "marginal",
    "headline": "Sat 6-9pm is fishable",
-   "advice": "Sat 6-9pm, light NW 6 kn, dusk - try brown trout: spin or fly from the shore at first and last light",
+   "advice": "Sat 6-9pm, light NW 6 kn, dusk. Try brown trout: spin or fly from the shore at first and last light",
    "reasons": [
     "Wind NW 6 kn",
     "Gusts to 18 kn",
@@ -2024,7 +2063,8 @@
     "models_missing": [],
     "gap_hours": 0,
     "downgrades": []
-   }
+   },
+   "near_best": true
   },
   {
    "start": "2026-11-01T05:00:00+13:00",
@@ -2032,7 +2072,7 @@
    "score": 6.0,
    "rating": "good",
    "headline": "Sun 5-8am looks good",
-   "advice": "Sun 5-8am, light W 2 kn, dawn - try brown trout: spin or fly from the shore at first and last light",
+   "advice": "Sun 5-8am, light W 2 kn, dawn. Try brown trout: spin or fly from the shore at first and last light",
    "reasons": [
     "Wind W 2 kn",
     "Gusts to 10 kn",
@@ -2064,7 +2104,8 @@
     "models_missing": [],
     "gap_hours": 0,
     "downgrades": []
-   }
+   },
+   "near_best": true
   },
   {
    "start": "2026-11-01T10:00:00+13:00",
@@ -2072,7 +2113,7 @@
    "score": 5.8,
    "rating": "marginal",
    "headline": "Sun 10am-1pm is fishable",
-   "advice": "Sun 10am-1pm, light NW 4 kn - try brown trout: spin or fly from the shore at first and last light",
+   "advice": "Sun 10am-1pm, light NW 4 kn. Try brown trout: spin or fly from the shore at first and last light",
    "reasons": [
     "Wind NW 4 kn",
     "Gusts to 14 kn",
@@ -2104,7 +2145,8 @@
     "models_missing": [],
     "gap_hours": 0,
     "downgrades": []
-   }
+   },
+   "near_best": true
   },
   {
    "start": "2026-11-01T15:00:00+13:00",
@@ -2112,7 +2154,7 @@
    "score": 4.8,
    "rating": "marginal",
    "headline": "Sun 3-8pm is fishable",
-   "advice": "Sun 3-8pm, gentle N 8 kn, dusk - try brown trout: spin or fly from the shore at first and last light",
+   "advice": "Sun 3-8pm, gentle N 8 kn, dusk. Try brown trout: spin or fly from the shore at first and last light",
    "reasons": [
     "Wind N 8 kn",
     "Gusts to 22 kn",
@@ -2146,7 +2188,8 @@
     "models_missing": [],
     "gap_hours": 0,
     "downgrades": []
-   }
+   },
+   "near_best": true
   }
  ],
  "tides": [],
@@ -5028,7 +5071,7 @@
    "status": "in season",
    "how": "spin or fly from the shore at first and last light",
    "notes": [
-    "Lakes Wanaka, Hawea, Wakatipu and Dunstan are open all year (bag 2 trout + 4 salmon on the main lakes). Many rivers close 30 Apr - check the Otago Fish & Game regulations. A licence is required."
+    "Lakes Wanaka, Hawea, Wakatipu and Dunstan are open all year (bag 2 trout + 4 salmon on the main lakes). Many rivers close 30 Apr, so check the Otago Fish & Game regulations. A licence is required."
    ],
    "sources": [
     "Fish & Game NZ, Otago winter fishing. https://www.fishandgame.org.nz/freshwater-fishing-in-new-zealand/where-to-fish/winter-fishing/otago/"
@@ -5042,7 +5085,7 @@
    "status": "in season",
    "how": "spin or fly from the shore at first and last light",
    "notes": [
-    "Lakes Wanaka, Hawea, Wakatipu and Dunstan are open all year (bag 2 trout + 4 salmon on the main lakes). Many rivers close 30 Apr - check the Otago Fish & Game regulations. A licence is required."
+    "Lakes Wanaka, Hawea, Wakatipu and Dunstan are open all year (bag 2 trout + 4 salmon on the main lakes). Many rivers close 30 Apr, so check the Otago Fish & Game regulations. A licence is required."
    ],
    "sources": [
     "Fish & Game NZ, Otago winter fishing. https://www.fishandgame.org.nz/freshwater-fishing-in-new-zealand/where-to-fish/winter-fishing/otago/"
@@ -5056,7 +5099,7 @@
    "status": "in season",
    "how": "spin or fly from the shore at first and last light",
    "notes": [
-    "Lakes Wanaka, Hawea, Wakatipu and Dunstan are open all year (bag 2 trout + 4 salmon on the main lakes). Many rivers close 30 Apr - check the Otago Fish & Game regulations. A licence is required."
+    "Lakes Wanaka, Hawea, Wakatipu and Dunstan are open all year (bag 2 trout + 4 salmon on the main lakes). Many rivers close 30 Apr, so check the Otago Fish & Game regulations. A licence is required."
    ],
    "sources": [
     "Fish & Game NZ, Otago winter fishing. https://www.fishandgame.org.nz/freshwater-fishing-in-new-zealand/where-to-fish/winter-fishing/otago/"
