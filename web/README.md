@@ -49,7 +49,7 @@ python3 scripts/screenshots.py /workspace/fish-on-screenshots   # CHROME=/path/t
 | `/catch-log` | Catch log stub | Pro |
 | `/pricing` | NZ$7.99/mo or NZ$49.99/yr, 14-day no-card trial (proposed) | — |
 | `/signin` | Mock magic link and Google sign-in | — |
-| `/account` | Plan/trial status, alert settings, email previews (alert, welcome, trial ending; `src/lib/emails.ts`, built from the engine's alert pick 1 to 2 days ahead inside the user's "When can you fish?" times (`src/lib/fishtimes.ts`, `profiles.fishing_times`), at most 2 per user per rolling 7 days, best scores first, never the same window twice (`src/lib/alerts.ts`, `alerts_sent`); render with `npx tsx scripts/render-emails.ts && python3 scripts/render-emails.py`) | Alerts are Pro |
+| `/account` | Plan/trial status, Pause for winter (Pro), alert settings, email previews (alert, welcome, trial ending; `src/lib/emails.ts`, built from the engine's alert pick 1 to 2 days ahead inside the user's "When can you fish?" times (`src/lib/fishtimes.ts`, `profiles.fishing_times`), at most 2 per user per rolling 7 days, best scores first, never the same window twice (`src/lib/alerts.ts`, `alerts_sent`); render with `npx tsx scripts/render-emails.ts && python3 scripts/render-emails.py`) | Alerts are Pro |
 | `/about` | Short plain about page | — |
 | `/offline` | Fallback page served by the service worker | — |
 
@@ -62,6 +62,14 @@ See `docs/forecast-api.md` (it includes the engine→v1 mapping and the proposed
 - `GET /api/v1/spots/{id}/forecast?days=1..10`
 - `GET /api/v1/spots/{id}/windows?min_score=4.5` (default 4.5)
 - `GET /api/v1/summaries`
+
+## Billing: Pause for winter (mock Stripe)
+No Stripe account exists yet. With `STRIPE_SECRET_KEY` unset, `src/lib/stripe.ts` answers in memory with Stripe-shaped objects; set an `sk_test_...` key (plus `STRIPE_TEST_SUBSCRIPTION_ID`, `STRIPE_WEBHOOK_SECRET`) to hit Stripe test mode. Live keys are refused.
+- `POST /api/billing/pause {months: 1..6}`: `pause_collection {behavior: "void", resumes_at}` (00:00 NZ on the same day n months on)
+- `POST /api/billing/resume`: clears `pause_collection`
+- `POST /api/stripe/webhook`: verifies `Stripe-Signature`, then `customer.subscription.updated/.deleted` set `subscriptions.paused_until` and `profiles.paused_until` (service role; migration `20261026140000_pause.sql`)
+- While paused: no alerts (`planUserAlerts` in `src/lib/alerts.ts`, view `alert_recipients`) and the site treats the user as Free (`effectivePlan` in `src/lib/pause.ts`).
+- Checks: `npx tsx scripts/check-pause.ts [ISO time ...]`
 
 ## Voice and visuals
 - Copy is plain and dry: short, factual, no exclamation marks, no hype words, no decorative emoji. Say what the conditions are and what to do.

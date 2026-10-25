@@ -7,11 +7,13 @@ import type { EmailTemplate } from "@/lib/emails";
 import { FishTimesPicker } from "@/components/FishTimesPicker";
 import { fitsTimes } from "@/lib/fishtimes";
 import { pickOf } from "@/lib/call";
+import { PauseControl } from "@/components/PauseControl";
+import { pauseLabel } from "@/lib/pause";
 
 /** Per spot: every window the alert could pick (1 to 2 days ahead, >= 4.5) with its email, built on the server. */
 export type AlertPreview = { verdictStart: string | null; cands: { start: string; end: string; score: number; email: EmailTemplate }[] };
 export function AccountView({ spots, alerts: alertMails, welcome, trial }: { spots: { id: string; name: string }[]; alerts: Record<string, AlertPreview>; welcome: EmailTemplate; trial: EmailTemplate }) {
-  const { user, plan, trialEnds, setPlan, alerts, setAlerts, favourites, signOut, ready, fishingTimes, setFishingTimes } = useAuth();
+  const { user, billingPlan: plan, paused, pausedUntil, trialEnds, setPlan, alerts, setAlerts, favourites, signOut, ready, fishingTimes, setFishingTimes } = useAuth();
   const upgraded = useSearchParams().get("upgraded");
   if (!ready) return null;
   if (!user) return <div className="pt-10 text-center"><Link href="/signin?next=/account" className="rounded-full bg-ocean-900 px-5 py-3 font-semibold text-white">Sign in to manage your account</Link></div>;
@@ -28,17 +30,18 @@ export function AccountView({ spots, alerts: alertMails, welcome, trial }: { spo
       <section className="rounded-2xl bg-white p-5 ring-1 ring-slate-100 space-y-1">
         <div className="text-sm text-slate-500">Signed in as</div><div className="font-semibold">{user.email}</div>
         <div className="flex items-center justify-between pt-2">
-          <div><span className="text-sm text-slate-500">Plan: </span><b>{plan === "pro" ? `Pro · $${BRAND.proPriceNzd}/mo` : plan === "trial" ? `Pro trial · ends ${trialEnds} · no card on file` : "Free"}</b></div>
+          <div><span className="text-sm text-slate-500">Plan: </span><b>{plan === "pro" && paused && pausedUntil ? `Pro · paused until ${pauseLabel(pausedUntil)}` : plan === "pro" ? `Pro · $${BRAND.proPriceNzd}/mo` : plan === "trial" ? `Pro trial · ends ${trialEnds} · no card on file` : "Free"}</b></div>
           {pro ? <button onClick={() => setPlan("free")} className="text-sm text-ocean-700">{plan === "trial" ? "End trial" : "Manage billing (mock portal)"}</button> : <Link href="/pricing" className="rounded-full bg-ocean-900 px-4 py-2 text-sm font-semibold text-white">Upgrade</Link>}
         </div>
       </section>
+      <PauseControl />
       <section id="fishing-times" className="rounded-2xl bg-white p-5 ring-1 ring-slate-100">
         <FishTimesPicker value={fishingTimes} onChange={setFishingTimes} />
       </section>
       <section className="rounded-2xl bg-white p-5 ring-1 ring-slate-100 space-y-4">
         <div className="flex items-center justify-between">
           <div><h2 className="font-bold">Fishing-window email alerts</h2><p className="text-sm text-slate-500">For your saved spots: {names.length ? names.join(", ") : "none yet"}</p></div>
-          {!pro ? <span className="text-xs rounded-full bg-slate-100 px-2 py-1">Pro</span> : <button onClick={() => upd({ enabled: !alerts.enabled })} aria-pressed={alerts.enabled} className={`h-7 w-12 rounded-full p-0.5 transition ${alerts.enabled ? "bg-emerald-500" : "bg-slate-300"}`}><span className={`block h-6 w-6 rounded-full bg-white transition ${alerts.enabled ? "translate-x-5" : ""}`} /></button>}
+          {!pro ? <span className="text-xs rounded-full bg-slate-100 px-2 py-1">Pro</span> : <button disabled={paused} onClick={() => upd({ enabled: !alerts.enabled })} aria-pressed={alerts.enabled} className={`h-7 w-12 rounded-full p-0.5 transition disabled:opacity-50 ${alerts.enabled ? "bg-emerald-500" : "bg-slate-300"}`}><span className={`block h-6 w-6 rounded-full bg-white transition ${alerts.enabled ? "translate-x-5" : ""}`} /></button>}
         </div>
         <div>
           <div className="mb-1 text-sm font-semibold">Alert type</div>
@@ -47,7 +50,8 @@ export function AccountView({ spots, alerts: alertMails, welcome, trial }: { spo
             <div className={`rounded-xl p-3 ring-1 ${pro ? "ring-ocean-500 bg-ocean-100/50" : "ring-slate-200 opacity-60"}`}>“It’s on” alert {pro ? "" : "(Pro)"}<br /><span className="text-slate-500">When a good window shows up 1 to 2 days ahead</span></div>
           </div>
         </div>
-        <fieldset disabled={!pro} className="space-y-3 disabled:opacity-50">
+        {paused && pausedUntil && <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-900 ring-1 ring-amber-200">Alerts are paused until {pauseLabel(pausedUntil)}.</p>}
+        <fieldset disabled={!pro || paused} className="space-y-3 disabled:opacity-50">
           <label className="block text-sm font-semibold">Send at <input type="time" value={alerts.sendAt} onChange={(e) => upd({ sendAt: e.target.value })} className="ml-2 rounded-lg border border-slate-200 px-2 py-1 font-normal" /> <span className="font-normal text-slate-500">NZ time</span></label>
         </fieldset>
         <p className="text-sm text-slate-600">We send at most two alerts a week, the best ones.</p>

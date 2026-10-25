@@ -9,6 +9,7 @@
 //   qualify than the cap leaves room for, the highest scores win, ties to the earliest window.
 import { alertCall, type Call } from "./call";
 import type { FishTime } from "./fishtimes";
+import { isPaused, type AnyPlan } from "./pause";
 import type { SpotForecast } from "./types";
 
 export const ALERT_CAP = 2, ALERT_CAP_DAYS = 7;
@@ -37,3 +38,11 @@ export function planAlerts(forecasts: SpotForecast[], times: FishTime[], sent: S
 /** The rows to insert into alerts_sent once the emails are out. */
 export const sentRows = (plan: AlertPlan[], now = Date.now()): SentAlert[] =>
   plan.map((p) => ({ spot_id: p.spot_id, window_start: p.call.start!, window_end: p.call.end!, score: p.call.score, sent_at: new Date(now).toISOString() }));
+
+/** The user fields the job needs. paused_until = profiles.paused_until (Pause for winter). */
+export interface AlertAccount { plan: AnyPlan; paused_until: string | null; alerts_enabled: boolean; fishing_times: FishTime[]; }
+/** Paid, alerts on, not paused. Paused users get no alerts at all until the pause ends. */
+export const alertsAllowed = (a: AlertAccount, now = Date.now()) => a.plan !== "free" && a.alerts_enabled && !isPaused(a.paused_until, now);
+/** Alerts for one user on one run: nothing while paused, otherwise planAlerts. */
+export const planUserAlerts = (a: AlertAccount, forecasts: SpotForecast[], sent: SentAlert[], now = Date.now()): AlertPlan[] =>
+  alertsAllowed(a, now) ? planAlerts(forecasts, a.fishing_times, sent, now) : [];
