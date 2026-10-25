@@ -1,0 +1,90 @@
+# LINZ "Daily Predictions" sites, copied from
+# https://www.linz.govt.nz/products-services/tides-and-tidal-streams/tide-predictions/tide-predictions-list-view
+# (read 2026-10-25). Te Weka Bay is listed as Daily but only links picton.pdf, so it is omitted.
+Akaroa
+Anakakata Bay
+Anawhata
+Auckland
+Ben Gunn Wharf
+Bluff
+Castlepoint
+Charleston
+Dargaville
+Deep Cove
+Dog Island
+Dunedin
+Elaine Bay
+Elie Bay
+Fishing Rock - Raoul Island
+Flour Cask Bay
+Fresh Water Basin
+Gisborne
+Green Island
+Halfmoon Bay / Oban
+Havelock
+Helensville
+Huruhi Harbour
+Jackson Bay
+Kaikōura
+Kaingaroa - Chatham Island
+Kaiteriteri
+Kaituna River Entrance
+Kawhia
+Korotiti Bay
+Leigh
+Long Island
+Lottin Point / Wakatiri
+Lyttelton
+Man o‘War Bay
+Mana Marina
+Manu Bay
+Māpua
+Marsden Point
+Mātiatia Bay
+Motuara Island
+Moturiki Island
+Napier
+Nelson
+New Brighton Pier
+North Cape / Otou
+Oamaru
+Ōkukari Bay
+Omaha Bridge
+Ōmokoroa
+Onehunga
+Opononi
+Ōpōtiki Wharf
+Opua
+Owenga - Chatham Island
+Paratutae Island
+Picton
+Port Chalmers
+Port Ōhope Wharf
+Port Taranaki
+Pouto Point
+Raglan
+Rangatira Point
+Rangitaiki River Entrance
+Richmond Bay
+Riverton / Aparima
+Scott Base
+Spit Wharf
+Sumner Head
+Tāmaki River
+Tarakohe
+Tauranga
+Thames
+Timaru
+Town Basin
+Waihopai River Entrance
+Waitangi - Chatham Island
+Weiti River Entrance
+Welcombe Bay
+Wellington
+Westport
+Whakatāne
+Whanganui River Entrance
+Whangārei
+Whangaroa
+Whitianga
+Wilson Bay

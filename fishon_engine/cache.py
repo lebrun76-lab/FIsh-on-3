@@ -97,6 +97,8 @@ UA = {"User-Agent": "FishOn/2.0 (+https://github.com/lebrun76-lab/FIsh-on-3)"}
 def http_get_text(url: str, params: Optional[Dict[str, Any]] = None, timeout: float = 20) -> str:
     r = requests.get(url, params=params, timeout=timeout, headers=UA)
     r.raise_for_status()
+    if "charset" not in r.headers.get("Content-Type", "").lower():
+        r.encoding = "utf-8"   # LINZ CSVs are UTF-8 but sent without a charset
     return r.text
 
 

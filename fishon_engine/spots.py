@@ -5,10 +5,13 @@ Builds on the 23 centres in ``regions.py`` and adds what the v2 engine needs:
 * ``facing`` – compass bearing (deg true) the shoreline *faces*, i.e. the
   direction you look from the beach out to sea. Wind blowing FROM that bearing
   is onshore; wind from the opposite bearing is offshore.
-* ``tide_port`` – exact LINZ standard-port name used in the LINZ CSV file name
-  (macrons and " - " instead of " / " matter; verified HTTP 200 on 2026-10-25).
-  ``None`` means no nearby LINZ standard port; the engine falls back to the
-  Open-Meteo modelled sea level.
+* ``tide_port`` – the nearest *suitable* LINZ port to the spot's lat/lon, chosen
+  by ``tideports.nearest_port`` from 87 daily-prediction sites plus LINZ
+  secondary ports (time/height offsets from a standard port). See
+  docs/TIDE_PORTS.md for the per-spot table. ``legacy_tide_port`` keeps the
+  hand-picked port from engine v2 (the second field of ``_EXTRA``) for comparison.
+  ``None`` means no port (lakes); the engine falls back to Open-Meteo's
+  modelled sea level when LINZ fails.
 
 IMPORTANT: every centre is a broad *region* (one lat/lon), not a single mark,
 so ``facing`` is a first-pass estimate for the main fishing shore of that
@@ -28,6 +31,8 @@ if _ROOT not in sys.path:
     sys.path.insert(0, _ROOT)
 import regions  # noqa: E402
 
+from . import tideports  # noqa: E402
+
 
 @dataclass(frozen=True)
 class Spot:
@@ -43,9 +48,12 @@ class Spot:
     marine_lat: float
     marine_lon: float
     facing: Optional[float]          # deg true, None for lakes
-    tide_port: Optional[str]         # LINZ standard port, None -> fallback
+    tide_port: Optional[str]         # LINZ port display name, None -> fallback
     tide_note: str = ""
     facing_note: str = ""
+    tide_port_id: Optional[str] = None     # tideports.TidePort.id
+    tide_port_km: Optional[float] = None   # spot lat/lon -> port, km
+    legacy_tide_port: Optional[str] = None  # engine v2 hand-picked port
 
     @property
     def is_coastal(self) -> bool:
@@ -80,17 +88,41 @@ _EXTRA: Dict[str, Tuple[Optional[float], Optional[str], str, str]] = {
 }
 
 
+def _tide_note(m: "tideports.Match") -> str:
+    p = m.port
+    if p.kind == "daily":
+        if not m.far:
+            return ""
+        s = f"Tides: LINZ daily predictions for {p.name}, {m.km:g} km from the spot centre."
+    else:
+        s = (f"Tides: LINZ secondary port {p.name}, {m.km:g} km from the spot centre; times/heights "
+             f"derived from {p.standard} with LINZ mean differences (HW {p.hw_diff_min:+d} min, "
+             f"LW {p.lw_diff_min:+d} min).")
+    if p.approximate:
+        s += " LINZ marks this port's data approximate."
+    if m.far:
+        s += f" More than {tideports.FAR_KM:g} km away; treat times as indicative."
+    return s
+
+
 def _build() -> Dict[str, Spot]:
     out: Dict[str, Spot] = {}
     for c in regions.list_all_centres():
-        facing, port, fnote, tnote = _EXTRA.get(c.id, (None, None, "", ""))
+        facing, port, fnote, _old_tnote = _EXTRA.get(c.id, (None, None, "", ""))
+        coastal = "freshwater" not in c.tags
+        match = tideports.nearest_port(c.lat, c.lon) if coastal else None
         out[c.id] = Spot(
             id=c.id, name=c.name, region=c.region, island=c.island,
             lat=c.lat, lon=c.lon, species=tuple(c.species), notes=c.notes,
             tags=tuple(c.tags),
             marine_lat=c.marine_lat if c.marine_lat is not None else c.lat,
             marine_lon=c.marine_lon if c.marine_lon is not None else c.lon,
-            facing=facing, tide_port=port, facing_note=fnote, tide_note=tnote,
+            facing=facing, facing_note=fnote,
+            tide_port=match.port.name if match else None,
+            tide_port_id=match.port.id if match else None,
+            tide_port_km=match.km if match else None,
+            tide_note=_tide_note(match) if match else "",
+            legacy_tide_port=port,
         )
     return out
 
