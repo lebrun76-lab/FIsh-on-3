@@ -111,15 +111,74 @@ def test_forecast_many_isolates_errors(patched):
     assert "days" in out["dunedin"] and "error" in out["nope"]
 
 
-def test_poor_day_says_no_good_window(patched, monkeypatch):
-    def windy(*a, **k):
-        d = fake_forecast(*a, **k)
-        d["hourly"]["wind_speed_10m"] = [32] * 48
-        d["hourly"]["wind_gusts_10m"] = [45] * 48
-        return d
-    monkeypatch.setattr(openmeteo, "fetch_forecast", windy)
+def _windy(*a, **k):
+    d = fake_forecast(*a, **k)
+    d["hourly"]["wind_speed_10m"] = [32] * 48
+    d["hourly"]["wind_gusts_10m"] = [45] * 48
+    return d
+
+
+def test_poor_day_has_null_window_and_labelled_least_bad(patched, monkeypatch):
+    monkeypatch.setattr(openmeteo, "fetch_forecast", _windy)
     fc = engine.forecast_spot("dunedin", start=START, days=1)
-    bw = fc["days"][0]["best_window"]
-    assert bw["advice"].startswith("No good window") and bw["rating"] == "poor"
-    assert fc["verdict"]["rating"] == "poor" and fc["verdict"]["headline"].startswith("Not worth it")
-    assert len(fc["windows"]) == 1   # extra windows need >= marginal
+    assert contract.validate_v1(fc) == []
+    d = fc["days"][0]
+    assert d["best_window"] is None and d["windows"] == 0
+    assert d["best_window_text"] == d["no_window_reason"]
+    assert d["no_window_reason"].startswith("No fishable window on Tue 27 Oct")
+    lb = d["least_bad_window"]
+    assert lb["rating"] == "poor" and lb["label"].startswith("least-bad")
+    assert lb["advice"].startswith("No good window. Least-bad")
+    v = fc["verdict"]
+    assert v["window"] is None and v["rating"] == "poor"
+    assert v["headline"] == "No fishable window today"
+    assert v["no_window_reason"].startswith("No fishable window today")
+    assert v["least_bad"]["start"] == lb["start"] and v["least_bad"]["label"].startswith("least-bad")
+    assert v["score"] == lb["score"]
+    assert fc["windows"] == []          # only fishable windows are listed
+
+
+def test_verdict_uses_next_three_days_not_best_of_period(patched, monkeypatch):
+    def fc_n(lat, lon, s, e, cache=None, cell_selection="land"):
+        n = ((e - s).days + 1) * 24
+        t0 = datetime.combine(s, datetime.min.time(), NZ)
+        ts = [int((t0 + timedelta(hours=i)).timestamp()) for i in range(n)]
+        day = [i // 24 for i in range(n)]
+        # day 1 and day 5 calm; others 10 kn (poor on a lake)
+        wind = [4 if dd in calm else 10 for dd in day]
+        return {"hourly": {"time": ts, "wind_speed_10m": wind, "wind_direction_10m": [270] * n,
+                           "wind_gusts_10m": [w + 4 for w in wind], "precipitation": [0.0] * n,
+                           "pressure_msl": [1015] * n, "temperature_2m": [14] * n, "cloud_cover": [20] * n},
+                "daily": {"time": ts[::24], "sunrise": [t + 6 * 3600 + 1500 for t in ts[::24]],
+                          "sunset": [t + 20 * 3600 + 900 for t in ts[::24]]}, "_cache": {"cache": "miss"}}
+    monkeypatch.setattr(openmeteo, "fetch_forecast", fc_n)
+    calm = {5}
+    fc = engine.forecast_spot("central_otago_lakes", start=START, days=7)
+    v = fc["verdict"]
+    assert v["horizon_days"] == 3 and v["horizon_end"] == "2026-10-29"
+    # v2.1 would have said "Go Sunday" (best of 7 days); now: nothing in 3 days
+    assert v["window"] is None and v["headline"] == "No fishable window in the next 3 days"
+    assert v["best_later"]["date"] == "2026-11-01" and "Next fishable: Sunday" in v["advice"]
+    assert v["least_bad"]["date"] <= "2026-10-29"
+    calm = {1, 5}
+    fc = engine.forecast_spot("central_otago_lakes", start=START, days=7)
+    v = fc["verdict"]
+    assert v["window"]["start"].startswith("2026-10-28") and v["headline"].startswith("Go Wednesday")
+    assert v["best_later"]["date"] == "2026-11-01" and v["least_bad"] is None
+
+
+def test_daily_max_matches_hourly_rows(patched):
+    fc = engine.forecast_spot("dunedin", start=START, days=2)
+    for d in fc["days"]:
+        hs = [h for h in fc["hourly"] if h["time"].startswith(d["date"])]
+        assert d["gust_kn_max"] == max(h["gust_kn"] for h in hs)
+        assert d["wind_kn_max"] == max(h["wind_kn"] for h in hs)
+        assert d["wind_kn_max_daylight"] <= d["wind_kn_max"]
+
+
+def test_comparison_failure_is_graceful(patched):
+    # conftest blocks the network, so the model-comparison calls fail
+    fc = engine.forecast_spot("dunedin", start=START, days=1)
+    assert any("model comparison unavailable" in w for w in fc["warnings"])
+    cd = fc["days"][0]["best_window"]["confidence_detail"]
+    assert cd["agreement"] == "unknown" and cd["level"] == cd["lead_level"] == "high"

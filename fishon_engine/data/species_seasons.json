@@ -1,5 +1,5 @@
 {
-  "_about": "Seasonality and rule notes used by fishon_engine.species. Every non-null claim carries a source. 'how' strings are general angling tips, not sourced facts. Months are 1-12. Species/spot combos not listed are treated as 'no seasonal data' (shown, never invented). Checked 2026-10-25 NZDT.",
+  "_about": "Seasonality and rule notes used by fishon_engine.species. Every non-null claim carries a source. 'how' strings are general angling tips, not sourced facts. Months are 1-12. Species/spot combos not listed are treated as 'no seasonal data' (shown, never invented). Checked 2026-10-25 NZDT; kingfish (Cook Strait/East Cape/Hawke Bay) and Southern Lakes added 2026-10-26 NZDT.",
   "entries": [
     {
       "names": ["Snapper"],
@@ -49,9 +49,11 @@
       "names": ["Brown Trout", "Rainbow Trout", "Salmon"],
       "spot_ids": ["southern_lakes"],
       "how": "spin or fly from the shore at first and last light",
-      "note": "Southland Fish & Game licence required; season dates not yet verified for this engine.",
-      "sources": []
+      "good_months": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      "note": "Lakes Te Anau and Manapouri (incl. Waiau Arm) are open all year, bag 2 trout (salmon 1 of them per the regulations' notes); their tributaries are open 1 Nov - 31 May only. A Fish & Game licence is required.",
+      "sources": ["Fish & Game NZ, Southland Sports Fishing Regulations 2026-27 (Anglers Notice for Fish and Game Regions 2026, in force 1 Oct 2026), Southland lakes table: Lake Te Anau 'All year', Lake Manapouri including Waiau Arm 'All year', tributaries 1 Nov - 31 May. https://www.fishandgame.org.nz/assets/Fishing/Fishing-Licences-Regulations/Fishing-Regulations/2026/2027/Fish-and-Game-Sportsfishing-Regs-Brochure-2026-27-Southland.pdf"]
     },
+    {"names": ["Kingfish"], "spot_ids": ["wellington", "east_cape", "hawkes_bay"], "good_months": [12, 1, 2], "how": "live-baits or jigs around pins and reefs", "note": "Fisheries NZ: in Cook Strait kingfish are encountered mainly in summer, and from East Cape to Hawke Bay most kingfish fishing occurs in summer. Months here = NZ summer (Dec-Feb); the source gives seasons, not months.", "sources": ["Holdsworth, McKenzie, Walsh, van der Straten & O Maolagain 2013, 'Catch-at-age of yellowtail kingfish (Seriola lalandi) caught by recreational fishers in KIN 1', NZ Fisheries Assessment Report 2013/3, p. 4 (citing Holdsworth et al. 2007). https://webstatic.niwa.co.nz/library/FAR-2013-3.pdf"]},
     {"names": ["Kahawai"], "spot_ids": "*", "how": "lures or soft-baits on surface work-ups", "sources": []},
     {"names": ["Kingfish"], "spot_ids": "*", "how": "live-baits or jigs around pins and reefs", "sources": []},
     {"names": ["Tarakihi"], "spot_ids": "*", "how": "ledger rigs on sand/foul edges", "sources": []},

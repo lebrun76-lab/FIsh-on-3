@@ -38,3 +38,19 @@ def test_every_sourced_claim_has_source():
     for e in species._entries():
         if e.get("good_months") or e.get("closed") or e.get("min_sst_c"):
             assert e["sources"], e["names"]
+
+
+def test_round_d_sourced_seasons():
+    # Kingfish: "mainly in summer" in Cook Strait, East Cape to Hawke Bay (FAR 2013/3)
+    for sid in ("wellington", "east_cape", "hawkes_bay"):
+        assert _status(sid, date(2027, 1, 15), "Kingfish")["status"] == "in season"
+        k = _status(sid, date(2026, 10, 26), "Kingfish")
+        assert k["status"] == "off-peak" and k["sources"]
+    # elsewhere kingfish stays unsourced
+    assert _status("hauraki_gulf", date(2027, 1, 15), "Kingfish")["status"] == "no seasonal data"
+    # Te Anau / Manapouri open all year (Southland regs 2026-27)
+    for n in ("Brown Trout", "Rainbow Trout", "Salmon"):
+        s = _status("southern_lakes", date(2026, 7, 1), n)
+        assert s["status"] == "in season" and "2026-27" in s["sources"][0]
+    # the generic "Tuna" labels are not assumed to be any one species
+    assert _status("kaikoura", date(2027, 2, 1), "Tuna")["status"] == "no seasonal data"

@@ -1,50 +1,47 @@
 # python -m fishon_engine hauraki_gulf dunedin central_otago_lakes --days 3
-# offline replay of the data recorded 2026-10-26 00:11 NZDT (tools/make_sample.py)
+# offline replay of the data recorded 2026-10-26 00:54 NZDT (tools/make_sample.py)
 === Hauraki Gulf (Auckland, North) - shore faces 60 deg
   weather point -36.7, 175.0 (cell {'lat': -36.731106, 'lon': 175.03937, 'elevation_m': 0.0}); model run ECMWF IFS 2026-10-25T00:00Z (latest run ingested by Open-Meteo best_match)
   tides: LINZ Mātiatia Bay [datum: chart_datum]
   VERDICT: Go Monday early morning - great 8.2/10 [high]
     Mon 5-8am, gentle cross-offshore NW 8 kn, 0.1 m sea @ 3 s, rising tide, high 7:54am, dawn - try snapper: soft-baits or berleyed baits along reef edges and work-ups. Also good: Wed 28 Oct.
-  Mon 26 Oct: 7.7/10 great [high] wind avg 10.1 kn, gust max 19.0 kn, wave 0.26 m, swell 0.11 m, rain 0 mm, SST 17.1 C
+  Mon 26 Oct: 7.7/10 great [high] wind avg 10.1 kn, gust max 19.0 kn, wave 0.29 m, swell 0.12 m, rain 0 mm, SST 17.1 C
     Excellent - go fishing. Gentle winds all day (~10 kn); 0.3 m sea. Best: Mon 5-8am.
     - Mon 5-8am looks great (8.2/10): Mon 5-8am, gentle cross-offshore NW 8 kn, 0.1 m sea @ 3 s, rising tide, high 7:54am, dawn - try snapper: soft-baits or berleyed baits along reef edges and work-ups
     - Mon 10am-1pm looks good (7.1/10): Mon 10am-1pm, gentle cross-shore N 8 kn, 0.2 m sea @ 4 s, falling tide, low 1:58pm - try snapper: soft-baits or berleyed baits along reef edges and work-ups
     - Mon 6-9pm looks great (7.7/10): Mon 6-9pm, gentle cross-offshore W 11 kn, 0.4 m sea @ 3 s, rising tide, high 8:09pm, dusk - try snapper: soft-baits or berleyed baits along reef edges and work-ups
     Tides: low 01:34 0.7 m; high 07:54 2.9 m; low 13:58 0.7 m; high 20:09 3.0 m
-  Tue 27 Oct: 3.7/10 poor [high] wind avg 17.3 kn, gust max 29.9 kn, wave 0.8 m, swell 0.43 m, rain 5.1 mm, SST 16.8 C
-    Poor - stay home / sheltered water only. Fresh winds all day (~17 kn); 0.8 m sea; 5 mm rain. Best: Tue 6-9am.
-    - Tue 6-9am is the least-bad option (4.2/10): No good window. Least-bad: Tue 6-9am, moderate cross-shore NW 16 kn, 0.8 m sea @ 5 s, rising tide, high 8:42am, dawn
+  Tue 27 Oct: 3.7/10 poor [medium] wind avg 17.3 kn, gust max 29.9 kn, wave 0.8 m, swell 0.41 m, rain 5.1 mm, SST 16.8 C
+    Poor - stay home / sheltered water only. Fresh winds all day (~17 kn); 0.8 m sea; 5 mm rain.
     Tides: low 02:25 0.5 m; high 08:42 3.0 m; low 14:45 0.6 m; high 20:58 3.0 m
-  Wed 28 Oct: 6.9/10 good [high] wind avg 12.2 kn, gust max 21.4 kn, wave 0.4 m, swell 0.26 m, rain 0.1 mm, SST 16.8 C
+  Wed 28 Oct: 6.9/10 good [high] wind avg 12.2 kn, gust max 22.0 kn, wave 0.44 m, swell 0.27 m, rain 0.1 mm, SST 16.8 C
     Good. Moderate winds all day (~12 kn); 0.4 m sea. Best: Wed 9am-1pm.
     - Wed 9am-1pm looks good (7.4/10): Wed 9am-1pm, gentle offshore SW 9 kn, 0.4 m sea @ 5 s, falling tide - try snapper: soft-baits or berleyed baits along reef edges and work-ups
     Tides: low 03:14 0.4 m; high 09:29 3.1 m; low 15:33 0.6 m; high 21:47 3.1 m
   Species: Snapper (in season), Kingfish (no seasonal data), Kahawai (no seasonal data), Trevally (no seasonal data), John Dory (no seasonal data)
   LINZ vs Open-Meteo tide check: {'matched': 26, 'mean_offset_min': -37.5, 'max_abs_offset_min': 51.4, 'linz_range_m': 2.9, 'model_range_m': 2.77}
-  note: Sea temperature is the Open-Meteo marine model; vs NOAA Coral Reef Watch 5 km satellite SST on 23 Oct 2026 it was within about +/-0.9 C at all 21 coastal spots (docs/SST_CHECK.md).
+  note: Sea temperature is the Open-Meteo marine model (all-hours mean; it includes daytime warming). Against NOAA Coral Reef Watch 5 km night-only satellite SST on 22-23 Oct 2026 it was within about +/-1.2 C at all 21 coastal spots, with no net bias at night (docs/SST_CHECK.md).
 === Dunedin / Otago Peninsula (Otago, South) - shore faces 120 deg
   weather point -45.917, 170.539 (cell {'lat': -45.940247, 'lon': 170.58636, 'elevation_m': 0.0}); model run ECMWF IFS 2026-10-25T00:00Z (latest run ingested by Open-Meteo best_match)
   tides: LINZ Green Island [datum: chart_datum]
-  VERDICT: Go Wednesday early morning - great 7.9/10 [high]
-    Wed 5-8am, gentle cross-offshore N 9 kn, 0.8 m sea @ 8 s, falling tide, dawn - try blue cod: baits on the bottom off the rocks or over foul ground. Also good: Mon 26 Oct.
-  Mon 26 Oct: 5.4/10 marginal [high] wind avg 13.6 kn, gust max 36.7 kn, wave 0.61 m, swell 0.45 m, rain 11.2 mm, SST 12.8 C
-    Marginal - pick your window. Moderate morning (~11 kn), moderate afternoon (~15 kn); 0.6 m sea; 11 mm rain. Best: Mon 9am-12pm.
-    - Mon 9am-12pm looks good (6.2/10): Mon 9am-12pm, gentle cross-offshore N 10 kn, 0.6 m sea @ 9 s, rising tide - try blue cod: baits on the bottom off the rocks or over foul ground
-    - Mon 4-7pm is fishable (4.8/10): Mon 4-7pm, moderate cross-offshore NW 14 kn, 0.6 m sea @ 9 s, falling tide - try blue cod: baits on the bottom off the rocks or over foul ground
+  VERDICT: Go Wednesday early morning - good 6.9/10 [medium]
+    Wed 5-8am, gentle cross-offshore N 9 kn, 1.2 m sea @ 8 s, falling tide, dawn - try blue cod: baits on the bottom off the rocks or over foul ground
+  Mon 26 Oct: 4.5/10 marginal [medium] wind avg 13.6 kn, gust max 36.7 kn, wave 1.02 m, swell 0.69 m, rain 11.2 mm, SST 12.6 C
+    Marginal - pick your window. Moderate morning (~11 kn), moderate afternoon (~15 kn); 1.0 m sea; 11 mm rain. Best: Mon 9am-12pm.
+    - Mon 9am-12pm is fishable (5.2/10): Mon 9am-12pm, gentle cross-offshore N 10 kn, 1.0 m sea @ 9 s, rising tide - try blue cod: baits on the bottom off the rocks or over foul ground
     Tides: high 03:12 2.0 m; low 09:27 0.3 m; high 15:36 2.0 m; low 21:44 0.3 m
-  Tue 27 Oct: 2.8/10 poor [high] wind avg 19.1 kn, gust max 33.2 kn, wave 1.32 m, swell 1.07 m, rain 1.6 mm, SST 12.6 C
-    Poor - stay home / sheltered water only. Strong morning (~23 kn), easing to ~17 kn in the afternoon; 1.3 m sea; 2 mm rain. Best: Tue 6-9pm.
-    - Tue 6-9pm is the least-bad option (3.8/10): No good window. Least-bad: Tue 6-9pm, moderate cross-offshore W 12 kn, 1.2 m sea @ 7 s, falling tide, dusk
+  Tue 27 Oct: 2.0/10 poor [medium] wind avg 19.1 kn, gust max 33.4 kn, wave 1.93 m, swell 1.48 m, rain 1.6 mm, SST 12.3 C
+    Poor - stay home / sheltered water only. Strong morning (~23 kn), easing to ~17 kn in the afternoon; 1.9 m sea; 2 mm rain.
     Tides: high 03:59 2.0 m; low 10:15 0.2 m; high 16:23 2.0 m; low 22:31 0.2 m
-  Wed 28 Oct: 7.3/10 good [high] wind avg 10.5 kn, gust max 17.5 kn, wave 0.71 m, swell 0.57 m, rain 0 mm, SST 12.5 C
-    Good. Gentle winds all day (~10 kn); 0.7 m sea. Best: Wed 5-8am.
-    - Wed 5-8am looks great (7.9/10): Wed 5-8am, gentle cross-offshore N 9 kn, 0.8 m sea @ 8 s, falling tide, dawn - try blue cod: baits on the bottom off the rocks or over foul ground
-    - Wed 10am-1pm looks good (6.7/10): Wed 10am-1pm, gentle cross-offshore N 7 kn, 0.7 m sea @ 9 s, falling tide, low 11:07am - try blue cod: baits on the bottom off the rocks or over foul ground
-    - Wed 6-9pm looks good (6.4/10): Wed 6-9pm, moderate offshore NW 12 kn, 0.7 m sea @ 10 s, falling tide, dusk - try blue cod: baits on the bottom off the rocks or over foul ground
+  Wed 28 Oct: 6.3/10 good [medium] wind avg 10.5 kn, gust max 17.5 kn, wave 1.19 m, swell 1.04 m, rain 0 mm, SST 12.3 C
+    Good. Gentle winds all day (~10 kn); 1.2 m sea. Best: Wed 5-8am.
+    - Wed 5-8am looks good (6.9/10): Wed 5-8am, gentle cross-offshore N 9 kn, 1.2 m sea @ 8 s, falling tide, dawn - try blue cod: baits on the bottom off the rocks or over foul ground
+    - Wed 10am-1pm is fishable (5.7/10): Wed 10am-1pm, gentle cross-offshore N 7 kn, 1.2 m sea @ 9 s, falling tide, low 11:07am - try blue cod: baits on the bottom off the rocks or over foul ground
+    - Wed 6-9pm is fishable (5.4/10): Wed 6-9pm, moderate offshore NW 12 kn, 1.2 m sea @ 11 s, falling tide, dusk - try blue cod: baits on the bottom off the rocks or over foul ground
     Tides: high 04:50 2.1 m; low 11:07 0.2 m; high 17:13 2.0 m; low 23:24 0.2 m
   Species: Blue Cod (no seasonal data), Tarakihi (no seasonal data), Kahawai (no seasonal data), Groper (no seasonal data), Barracouta (no seasonal data)
-  LINZ vs Open-Meteo tide check: {'matched': 26, 'mean_offset_min': -30.6, 'max_abs_offset_min': 38.0, 'linz_range_m': 1.9, 'model_range_m': 2.15}
-  note: Sea temperature is the Open-Meteo marine model; vs NOAA Coral Reef Watch 5 km satellite SST on 23 Oct 2026 it was within about +/-0.9 C at all 21 coastal spots (docs/SST_CHECK.md).
+  LINZ vs Open-Meteo tide check: {'matched': 26, 'mean_offset_min': -30.9, 'max_abs_offset_min': 38.0, 'linz_range_m': 1.9, 'model_range_m': 2.11}
+  note: Sea temperature is the Open-Meteo marine model (all-hours mean; it includes daytime warming). Against NOAA Coral Reef Watch 5 km night-only satellite SST on 22-23 Oct 2026 it was within about +/-1.2 C at all 21 coastal spots, with no net bias at night (docs/SST_CHECK.md).
 === Central Otago Lakes (Wānaka / Hāwea / Wakatipu) (Central Otago, South) - shore faces None deg
   weather point -44.7, 169.15 (cell {'lat': -44.67487, 'lon': 169.18336, 'elevation_m': 323.0}); model run ECMWF IFS 2026-10-25T00:00Z (latest run ingested by Open-Meteo best_match)
   tides: None [datum: None]
@@ -53,7 +50,7 @@
   Mon 26 Oct: 4.4/10 poor [high] wind avg 6.9 kn, gust max 28.0 kn, wave None m, swell None m, rain 46.4 mm, SST None C
     Poor - stay home / sheltered water only. Gentle winds all day (~7 kn); 46 mm rain. Best: Mon 6-9am.
     - Mon 6-9am is fishable (5.2/10): Mon 6-9am, light NW 5 kn, dawn - try brown trout: spin or fly from the shore at first and last light
-  Tue 27 Oct: 5.7/10 marginal [high] wind avg 5.6 kn, gust max 19.0 kn, wave None m, swell None m, rain 1.8 mm, SST None C
+  Tue 27 Oct: 5.7/10 marginal [high] wind avg 5.6 kn, gust max 20.6 kn, wave None m, swell None m, rain 1.8 mm, SST None C
     Marginal - pick your window. Light morning (~3 kn), gentle afternoon (~7 kn); 2 mm rain. Best: Tue 6-9am.
     - Tue 6-9am looks good (6.0/10): Tue 6-9am, light SW 1 kn, dawn - try brown trout: spin or fly from the shore at first and last light
     - Tue 11am-2pm is fishable (5.0/10): Tue 11am-2pm, gentle W 6 kn - try brown trout: spin or fly from the shore at first and last light

@@ -7,13 +7,19 @@ Data
   (https://www.naturalearthdata.com/about/terms-of-use/), clipped to NZ and
   thinned; vendored as ``data/nz_land_ne10m.geojson``.
 
-Call budget
-Open-Meteo counts every *location* as one API call. The default 0.5 deg grid
-over 34-48 S, 166-179 E has 663 sea cells after the land mask, so one refresh
-costs ~663 calls but only ONE HTTP request: the coordinate lists are sent in
-a single POST (a GET with that many points hits nginx "414 URI too large",
-measured 2026-10-25). The body is cached in the shared SQLite cache for 6 h,
-so a refresh every 6 h is ~2.7k calls/day of the free 10k/day.
+Call budget (docs/SST_MAP.md)
+Open-Meteo counts every *location* as one API call. v2.1 fetched every 0.5 deg
+sea cell over 34-48 S, 166-179 E (663 cells) every 6 h: ~2.65k calls/day.
+v2.2 ("coastal" layout, default) fetches
+* the 0.5 deg sea cells within COARSE_MAX_KM (150 km) of the coast: 288, and
+* a finer 0.25 deg layer of sea points within FINE_MAX_KM (25 km) of the coast
+  that are not already on the 0.5 deg lattice: 181,
+= 469 locations, still ONE HTTP POST (a GET with that many points hits nginx
+"414 URI too large", measured 2026-10-25). It asks for ``hourly`` SST for two
+days and picks the latest hour at or before "now" when the map is built, so the cached
+body stays usable for SST_TTL = 12 h (the MeteoFrance SST source behind the
+marine API is updated once a day): ~938 calls/day at two refreshes a day.
+``layout="full"`` keeps the v2.1 663-cell grid.
 
 Notes are computed only from the fetched grid: fronts are adjacent sea cells
 whose temperature differs by >= FRONT_DELTA_C; "edges" near a spot are cells
@@ -35,7 +41,10 @@ from .openmeteo import _host
 from .spots import SPOTS
 from .wind import compass
 
-SST_TTL = 6 * 3600
+SST_TTL = 12 * 3600
+COARSE_MAX_KM = 150.0
+FINE_STEP = 0.25
+FINE_MAX_KM = 25.0
 BBOX = {"north": -34.0, "south": -48.0, "west": 166.0, "east": 179.0}
 STEP = 0.5
 MAX_POINTS_PER_REQUEST = 1000     # our own chunk size, not a documented Open-Meteo limit
@@ -108,6 +117,37 @@ def sea_points(bbox=BBOX, step: float = STEP, land=None) -> List[Tuple[float, fl
     return [(la, lo) for la in lats for lo in lons if not is_land(la, lo, land)]
 
 
+def coast_vertices(land) -> List[Tuple[float, float]]:
+    """(lat, lon) of every Natural Earth coastline vertex in the NZ clip."""
+    return [(p[1], p[0]) for ring in land for p in ring]
+
+
+def coast_km(lat: float, lon: float, verts) -> float:
+    """Distance to the nearest coastline vertex (km); vertices are ~1 km apart
+    in the vendored clip, so this is a close upper bound on distance to coast."""
+    near = [v for v in verts if abs(v[0] - lat) < 2.5 and abs(v[1] - lon) < 3.5]
+    return min((haversine_km(lat, lon, a, b) for a, b in near), default=float("inf"))
+
+
+def _on_lattice(x: float, step: float) -> bool:
+    return abs(x / step - round(x / step)) < 1e-6
+
+
+def map_points(bbox=BBOX, step: float = STEP, land=None, layout: str = "coastal"
+               ) -> Tuple[List[Tuple[float, float]], List[Tuple[float, float]]]:
+    """(coarse, fine) request points. ``full``: every sea cell, no fine layer."""
+    land = load_land() if land is None else land
+    coarse = sea_points(bbox, step, land)
+    if layout == "full":
+        return coarse, []
+    verts = coast_vertices(land)
+    coarse = [p for p in coarse if coast_km(p[0], p[1], verts) <= COARSE_MAX_KM]
+    fine = [p for p in sea_points(bbox, FINE_STEP, land)
+            if not (_on_lattice(p[0], step) and _on_lattice(p[1], step))
+            and coast_km(p[0], p[1], verts) <= FINE_MAX_KM]
+    return coarse, fine
+
+
 # ---------------------------------------------------------------- fetching
 def http_post_text(url: str, params: Optional[Dict[str, Any]] = None, timeout: float = 60) -> str:
     r = requests.post(url, data=params, timeout=timeout, headers=UA)
@@ -115,20 +155,40 @@ def http_post_text(url: str, params: Optional[Dict[str, Any]] = None, timeout: f
     return r.text
 
 
+def _pick_hour(d: Dict[str, Any], now_local: str) -> Tuple[Optional[float], Optional[str]]:
+    """Value of the hourly SST series at the last hour <= now (local ISO)."""
+    h = d.get("hourly") or {}
+    ts, vs = h.get("time") or [], h.get("sea_surface_temperature") or []
+    best = None
+    for t, v in zip(ts, vs):
+        if t <= now_local and v is not None:
+            best = (v, t)
+    if best is None:   # before the first hour: take the first non-null
+        best = next(((v, t) for t, v in zip(ts, vs) if v is not None), (None, None))
+    return best
+
+
 def fetch_grid(cache: Optional[Cache] = None, bbox=BBOX, step: float = STEP,
-               poster=http_post_text, land=None) -> Dict[str, Any]:
-    """Fetch SST for every sea cell. Returns a grid dict (see ``build_grid``)."""
+               poster=http_post_text, land=None, layout: str = "coastal",
+               now: Optional[datetime] = None) -> Dict[str, Any]:
+    """Fetch SST for the map points. Returns a grid dict (see ``build_grid``)
+    with the fine coastal layer in ``grid["fine"]``."""
+    from .tz import now_nz
     cache = cache or default_cache()
-    pts = sea_points(bbox, step, land)
+    coarse, fine = map_points(bbox, step, land, layout)
+    pts = coarse + fine
+    now_local = (now or now_nz()).strftime("%Y-%m-%dT%H:%M")
     url = _host("marine")
     results: List[Optional[float]] = []
+    model_cells: List[Optional[Tuple[float, float]]] = []
     times: List[str] = []
     metas = []
     for i in range(0, len(pts), MAX_POINTS_PER_REQUEST):
         chunk = pts[i:i + MAX_POINTS_PER_REQUEST]
         params = {"latitude": ",".join(f"{p[0]:g}" for p in chunk),
                   "longitude": ",".join(f"{p[1]:g}" for p in chunk),
-                  "current": "sea_surface_temperature", "timezone": "Pacific/Auckland"}
+                  "hourly": "sea_surface_temperature", "forecast_days": "2",
+                  "timezone": "Pacific/Auckland"}
         key = os.environ.get("OPEN_METEO_API_KEY")
         if key:
             params["apikey"] = key
@@ -142,14 +202,28 @@ def fetch_grid(cache: Optional[Cache] = None, bbox=BBOX, step: float = STEP,
         if len(data) != len(chunk):
             raise RuntimeError(f"Open-Meteo returned {len(data)} locations for {len(chunk)} requested")
         for d in data:
-            cur = d.get("current") or {}
-            results.append(cur.get("sea_surface_temperature"))
-            if cur.get("time"):
-                times.append(cur["time"])
-    grid = build_grid(pts, results, bbox, step)
+            v, t = _pick_hour(d, now_local)
+            results.append(v)
+            model_cells.append((round(d["latitude"], 4), round(d["longitude"], 4))
+                               if d.get("latitude") is not None else None)
+            if t:
+                times.append(t)
+    grid = build_grid(coarse, results[:len(coarse)], bbox, step)
+    seen = {model_cells[k] for k in range(len(coarse))}
+    fl = []
+    for k, (p, v) in enumerate(zip(fine, results[len(coarse):]), start=len(coarse)):
+        mc = model_cells[k]
+        if v is None or (mc is not None and mc in seen):   # same model cell as another point: drop
+            continue
+        seen.add(mc)
+        fl.append((p[0], p[1], float(v)))
+    grid["fine"] = fl
+    grid["fine_step"] = FINE_STEP
+    grid["layout"] = layout
     grid["valid_time_nz"] = max(times) if times else None
     grid["requests"] = len(metas)
     grid["api_calls_counted"] = len(pts)
+    grid["points"] = {"coarse": len(coarse), "fine": len(fine), "fine_kept": len(fl)}
     grid["cache"] = metas
     return grid
 
@@ -176,11 +250,17 @@ def nice_time(iso_local: Optional[str]) -> str:
 
 
 def cells(grid) -> Iterable[Tuple[float, float, float]]:
+    """The regular (0.5 deg) grid cells with data - used for fronts/isotherms."""
     for i, la in enumerate(grid["lats"]):
         for j, lo in enumerate(grid["lons"]):
             v = grid["sst"][i][j]
             if v is not None:
                 yield la, lo, v
+
+
+def all_cells(grid) -> List[Tuple[float, float, float]]:
+    """Regular cells plus the fine coastal layer - used near spots."""
+    return list(cells(grid)) + list(grid.get("fine") or [])
 
 
 # ---------------------------------------------------------------- analysis
@@ -203,7 +283,7 @@ def where(lat: float, lon: float, spots=None) -> str:
 
 def spot_sst(grid, spots=None, max_km: float = 60.0) -> List[Dict[str, Any]]:
     out = []
-    cl = list(cells(grid))
+    cl = all_cells(grid)
     for s in spots or coastal_spots():
         if not cl:
             break
@@ -255,7 +335,7 @@ def spot_edges(grid, spots=None, radius_km: float = EDGE_RADIUS_KM,
     """For each spot: min/max SST of sea cells within radius_km, and which way
     the warmer water lies (bearing from the coldest to the warmest cell)."""
     out = []
-    cl = list(cells(grid))
+    cl = all_cells(grid)
     for s in spots or coastal_spots():
         near = [c for c in cl if haversine_km(s.marine_lat, s.marine_lon, c[0], c[1]) <= radius_km]
         if len(near) < 2:
@@ -310,7 +390,7 @@ def isotherm_coast_hits(iso, spots=None, max_km: float = 60.0) -> Dict[float, Li
 
 
 def notes(grid, spots=None, max_fronts: int = 4, max_edges: int = 5) -> List[str]:
-    cl = list(cells(grid))
+    cl = all_cells(grid)
     if not cl:
         return ["No sea-surface temperature data in the grid."]
     spots = spots or coastal_spots()
@@ -346,13 +426,18 @@ def to_geojson(grid, iso=None) -> Dict[str, Any]:
     feats = [{"type": "Feature", "geometry": {"type": "Point", "coordinates": [lo, la]},
               "properties": {"kind": "sst_cell", "sst_c": v, "cell_deg": grid["step"]}}
              for la, lo, v in cells(grid)]
+    feats += [{"type": "Feature", "geometry": {"type": "Point", "coordinates": [lo, la]},
+               "properties": {"kind": "sst_cell", "sst_c": v, "cell_deg": grid.get("fine_step", FINE_STEP),
+                              "layer": "coastal"}}
+              for la, lo, v in grid.get("fine") or []]
     for lev, segs in sorted(iso.items()):
         feats.append({"type": "Feature",
                       "geometry": {"type": "MultiLineString", "coordinates": [[list(p) for p in s] for s in segs]},
                       "properties": {"kind": "isotherm", "sst_c": lev}})
     return {"type": "FeatureCollection", "features": feats,
             "properties": {"valid_time_nz": grid.get("valid_time_nz"), "attribution": ATTRIBUTION,
-                           "bbox": grid["bbox"], "step_deg": grid["step"]}}
+                           "bbox": grid["bbox"], "step_deg": grid["step"],
+                           "fine_step_deg": grid.get("fine_step") if grid.get("fine") else None}}
 
 
 def render_png(grid, path: str, land=None, title: Optional[str] = None, spots=None) -> str:
@@ -368,8 +453,27 @@ def render_png(grid, path: str, land=None, title: Optional[str] = None, spots=No
     fig, ax = plt.subplots(figsize=(8, 9), dpi=110)
     lon_e = np.append(lons - st / 2, lons[-1] + st / 2)
     lat_e = np.append(lats + st / 2, lats[-1] - st / 2)
-    vmin, vmax = math.floor(float(z.min())), math.ceil(float(z.max()))
+    fine = grid.get("fine") or []
+    allv = [float(z.min()), float(z.max())] + [c[2] for c in fine]
+    vmin, vmax = math.floor(min(allv)), math.ceil(max(allv))
     mesh = ax.pcolormesh(lon_e, lat_e, z, cmap="RdYlBu_r", vmin=vmin, vmax=vmax, shading="flat")
+    if fine:   # 0.25 deg coastal layer on top (coarse cells next to it filled in at 0.25 deg too)
+        fs = grid.get("fine_step", FINE_STEP)
+        flats, flons = grid_axes(grid["bbox"], fs)
+        fi = {v: i for i, v in enumerate(flats)}
+        fj = {v: j for j, v in enumerate(flons)}
+        fz = np.full((len(flats), len(flons)), np.nan)
+        for la, lo, v in fine:
+            fz[fi[round(la, 4)], fj[round(lo, 4)]] = v
+        for la, lo, v in cells(grid):
+            i, j = fi.get(round(la, 4)), fj.get(round(lo, 4))
+            if i is not None and j is not None and not np.all(np.isnan(
+                    fz[max(0, i - 1):i + 2, max(0, j - 1):j + 2])):
+                fz[i, j] = v
+        flon_e = np.append(np.array(flons) - fs / 2, flons[-1] + fs / 2)
+        flat_e = np.append(np.array(flats) + fs / 2, flats[-1] - fs / 2)
+        ax.pcolormesh(flon_e, flat_e, np.ma.masked_invalid(fz), cmap="RdYlBu_r", vmin=vmin, vmax=vmax,
+                      shading="flat", zorder=2)
     iso = isotherms(grid)
     for lev, segs in iso.items():
         for s in segs:
@@ -395,7 +499,8 @@ def render_png(grid, path: str, land=None, title: Optional[str] = None, spots=No
     ax.set_xlabel("Longitude (°E)")
     ax.set_ylabel("Latitude (°)")
     ax.set_title(title or f"NZ sea surface temperature, {nice_time(grid.get('valid_time_nz'))}", fontsize=10)
-    fig.text(0.01, 0.005, ATTRIBUTION + f" Grid {st}°; 1° isotherms.", fontsize=6)
+    fig.text(0.01, 0.005, ATTRIBUTION + f" Grid {st}°" + (f" + {grid.get('fine_step')}° within "
+             f"{FINE_MAX_KM:.0f} km of the coast" if fine else "") + f"; 1° isotherms ({st}° grid).", fontsize=6)
     fig.tight_layout()
     os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
     fig.savefig(path)
@@ -403,8 +508,9 @@ def render_png(grid, path: str, land=None, title: Optional[str] = None, spots=No
     return path
 
 
-def build(out_dir: str, cache: Optional[Cache] = None, step: float = STEP, stamp: Optional[str] = None):
-    grid = fetch_grid(cache=cache, step=step)
+def build(out_dir: str, cache: Optional[Cache] = None, step: float = STEP, stamp: Optional[str] = None,
+          layout: str = "coastal"):
+    grid = fetch_grid(cache=cache, step=step, layout=layout)
     stamp = stamp or datetime.now().strftime("%Y-%m-%d")
     os.makedirs(out_dir, exist_ok=True)
     png = render_png(grid, os.path.join(out_dir, f"sst_{stamp}.png"))
@@ -415,12 +521,17 @@ def build(out_dir: str, cache: Optional[Cache] = None, step: float = STEP, stamp
     txt = os.path.join(out_dir, f"sst_notes_{stamp}.md")
     with open(txt, "w", encoding="utf-8") as f:
         f.write(f"# SST notes — valid {nice_time(grid.get('valid_time_nz'))}\n\n")
-        f.write(f"Grid {step}°, {sum(1 for _ in cells(grid))} sea cells with data; "
+        pts = grid.get("points", {})
+        f.write(f"Layout `{layout}`: {pts.get('coarse')} cells at {step}°"
+                + (f" (within {COARSE_MAX_KM:.0f} km of the coast) + {pts.get('fine')} points at "
+                   f"{FINE_STEP}° within {FINE_MAX_KM:.0f} km of the coast ({pts.get('fine_kept')} kept after "
+                   f"dropping nulls and duplicate model cells)" if layout != "full" else "") + ". ")
+        f.write(f"{sum(1 for _ in cells(grid))} {step}° cells with data; "
                 f"{grid['requests']} HTTP request(s), {grid['api_calls_counted']} Open-Meteo calls counted; "
                 f"cache: {[m['cache'] for m in grid['cache']]}.\n\n")
         for n in ns:
             f.write(f"- {n}\n")
-        f.write("\n## SST at each coastal spot (nearest grid cell)\n\n| Spot | SST °C | cell | km |\n|---|---|---|---|\n")
+        f.write("\n## SST at each coastal spot (nearest cell, either layer)\n\n| Spot | SST °C | cell | km |\n|---|---|---|---|\n")
         for r in spot_sst(grid):
             f.write(f"| {r['name']} | {r['sst_c'] if r['sst_c'] is not None else '-'} | "
                     f"{r['cell'][0]}, {r['cell'][1]} | {r['cell_km']} |\n")
@@ -432,8 +543,9 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description="Build the NZ SST map")
     ap.add_argument("--out", default="docs/sst")
     ap.add_argument("--step", type=float, default=STEP)
+    ap.add_argument("--full", action="store_true", help="v2.1 layout: every 0.5 deg sea cell, no fine layer")
     a = ap.parse_args(argv)
-    r = build(a.out, step=a.step)
+    r = build(a.out, step=a.step, layout="full" if a.full else "coastal")
     for n in r["notes"]:
         print("-", n)
     print(r["png"], r["geojson"], r["notes_md"])

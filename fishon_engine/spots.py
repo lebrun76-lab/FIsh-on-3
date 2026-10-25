@@ -57,6 +57,7 @@ class Spot:
     wx_lat: Optional[float] = None    # weather-model point (on water), see WX_POINTS
     wx_lon: Optional[float] = None
     wx_note: str = ""
+    marine_note: str = ""             # set when MARINE_POINTS overrides the marine point
 
     @property
     def forecast_lat(self) -> float:
@@ -108,7 +109,7 @@ _EXTRA: Dict[str, Tuple[Optional[float], Optional[str], str, str]] = {
 # along the shore bearing +/-60 deg) with DEM elevation 0 AND outside the
 # Natural Earth land polygon; far_north, taranaki and fiordland were moved
 # further out because the nearest water cell was still a land-influenced model
-# cell (see docs/COORDS.md for the before/after table and wind checks).
+# cell (see docs/WEATHER_POINTS.md for the before/after table and wind checks).
 # Shore bearings (facing) are NOT changed. The spot's display lat/lon (and the
 # tide-port match) stay on the region centre.
 WX_POINTS: Dict[str, Tuple[float, float]] = {
@@ -128,6 +129,40 @@ WX_POINTS: Dict[str, Tuple[float, float]] = {
     "kaikoura": (-42.4, 173.717),
     "moeraki": (-45.36, 170.886),
     "stewart_island": (-46.914, 168.147),
+}
+
+
+# Marine-model point (waves, swell, SST, modelled sea level) for coastal spots
+# whose old marine request point was on land (Natural Earth 1:10m) or whose
+# Open-Meteo cell failed a check: cell centre on land, cell <50 % sea, or the
+# reported cell lacking wave/swell/SST data with cell_selection=nearest (i.e.
+# Open-Meteo was mixing cells from different models). Each value is the centre
+# of the nearest valid 1/12-deg MeteoFrance cell to the spot's weather point,
+# verified live on 2026-10-26 by tools/marine_points.py; see
+# docs/MARINE_POINTS.md and docs/marine/marine_points_2026-10-26.json.
+# east_cape, hawkes_bay, taranaki and moeraki keep the same cell - only the
+# request point moves off land. Display coords and facings do NOT change.
+MARINE_POINTS: Dict[str, Tuple[float, float]] = {
+    "east_cape": (-37.708, 178.625),
+    "far_north": (-34.708, 173.208),
+    "hauraki_gulf": (-36.708, 175.042),
+    "hawkes_bay": (-39.458, 176.958),
+    "taranaki": (-39.042, 174.042),
+    "wellington": (-41.375, 174.792),
+    "catlins": (-46.625, 169.542),
+    "dunedin": (-45.958, 170.542),
+    "kaikoura": (-42.458, 173.708),
+    "marlborough_sounds": (-41.375, 174.208),
+    "moeraki": (-45.375, 170.958),
+    "stewart_island": (-46.792, 168.292),
+}
+
+# Extra caveat where the nearest valid marine cell is far from the fishing water.
+_MARINE_CAVEAT = {
+    "marlborough_sounds": " The Sounds are not resolved by the 8 km marine grid; this is open "
+                          "Cook Strait water 26 km away, so waves/swell overstate conditions inside the Sounds.",
+    "stewart_island": " Nearest valid cell is 17 km NE in Foveaux Strait.",
+    "bay_of_islands": " The bay is not resolved by the 8 km marine grid; cell is 16 km out to sea.",
 }
 
 
@@ -158,8 +193,12 @@ def _build() -> Dict[str, Spot]:
             id=c.id, name=c.name, region=c.region, island=c.island,
             lat=c.lat, lon=c.lon, species=tuple(c.species), notes=c.notes,
             tags=tuple(c.tags),
-            marine_lat=c.marine_lat if c.marine_lat is not None else c.lat,
-            marine_lon=c.marine_lon if c.marine_lon is not None else c.lon,
+            marine_lat=(MARINE_POINTS[c.id][0] if c.id in MARINE_POINTS
+                        else c.marine_lat if c.marine_lat is not None else c.lat),
+            marine_lon=(MARINE_POINTS[c.id][1] if c.id in MARINE_POINTS
+                        else c.marine_lon if c.marine_lon is not None else c.lon),
+            marine_note=(("Marine data (waves, SST) taken from a sea point %.3f, %.3f." % MARINE_POINTS[c.id]
+                          if c.id in MARINE_POINTS else "") + _MARINE_CAVEAT.get(c.id, "")).strip(),
             facing=facing, facing_note=fnote,
             tide_port=match.port.name if match else None,
             tide_port_id=match.port.id if match else None,
