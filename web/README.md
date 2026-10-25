@@ -69,6 +69,7 @@ No Stripe account exists yet. With `STRIPE_SECRET_KEY` unset, `src/lib/stripe.ts
 - `POST /api/billing/resume`: clears `pause_collection`
 - `POST /api/stripe/webhook`: verifies `Stripe-Signature`, then `customer.subscription.updated/.deleted` set `subscriptions.paused_until` and `profiles.paused_until` (service role; migration `20261026140000_pause.sql`)
 - While paused: no alerts (`planUserAlerts` in `src/lib/alerts.ts`, view `alert_recipients`) and the site treats the user as Free (`effectivePlan` in `src/lib/pause.ts`).
+- Reminder email 7 NZ days before a pause ends, once per pause (`src/lib/reminders.ts`, `pause_reminders_sent`, migration `20261026150000_pause_reminders.sql`); under 7 days left when first seen: sent at the next run. None for no-end-date pauses or after an early resume. Sent with `src/lib/mailer.ts` (Resend; mock outbox when `RESEND_API_KEY` is unset). Preview: `ONLY=pause-reminder npx tsx scripts/render-emails.ts <dir> && python3 scripts/render-emails.py <dir>`
 - Checks: `npx tsx scripts/check-pause.ts [ISO time ...]`
 
 ## Voice and visuals

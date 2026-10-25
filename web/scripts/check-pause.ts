@@ -7,11 +7,14 @@ import { planAlerts, planUserAlerts, sentRows, type AlertAccount } from "../src/
 import { DEFAULT_FISH_TIMES, type FishTime } from "../src/lib/fishtimes";
 import { NO_END, PAUSE_MONTHS, effectivePlan, isPauseMonths, isPaused, nzMidnight, pauseEndDate, pauseLabel, resumesAtFor } from "../src/lib/pause";
 import { mockSynced, pauseParams, resumeParams, signPayload, syncFromSubscription, verifySignature, webhookSecret, type StripeSubscription } from "../src/lib/stripe";
+import { REMINDER_DAYS, daysToRestart, dueReminders, reminderFor, restartDate, restartLabel, runPauseReminders, type PausedSub, type ReminderSent } from "../src/lib/reminders";
+import { pauseReminderEmail, wordsBeforeButton } from "../src/lib/emails";
+import { mockOutbox } from "../src/lib/mailer";
 import { POST as pauseRoute } from "../src/app/api/billing/pause/route";
 import { POST as resumeRoute } from "../src/app/api/billing/resume/route";
 import { POST as webhookRoute } from "../src/app/api/stripe/webhook/route";
 
-delete process.env.STRIPE_SECRET_KEY; delete process.env.SUPABASE_URL; delete process.env.STRIPE_WEBHOOK_SECRET; // mock mode only
+delete process.env.STRIPE_SECRET_KEY; delete process.env.SUPABASE_URL; delete process.env.STRIPE_WEBHOOK_SECRET; delete process.env.RESEND_API_KEY; // mock mode only
 const probs: string[] = [];
 const eq = (what: string, got: unknown, want: unknown) => { if (JSON.stringify(got) !== JSON.stringify(want)) probs.push(`${what}: got ${JSON.stringify(got)}, want ${JSON.stringify(want)}`); };
 const nz = (s: string) => Date.parse(s);
@@ -82,6 +85,69 @@ async function routes() {
   eq("webhook rows written", mockSynced.length - before, 2);
 }
 
+// ---- reminder email 7 days before the pause ends
+{
+  const m = pauseReminderEmail("Fri 26 Feb");
+  eq("reminder subject", m.subject, "Your Salt Supply sub restarts on Fri 26 Feb");
+  eq("reminder body", m.body, ["Your sub restarts on Fri 26 Feb. Keep it or pause again."]);
+  eq("reminder button", [m.cta.href, m.unsubscribe.href.includes("unsubscribe"), !!m.footer], ["https://saltsupply.co.nz/account", true, true]);
+  if (m.subject.length > 60 || wordsBeforeButton(m) > 40 || m.preheader.length > 50) probs.push("reminder: too long");
+  if (/—| [-–] |\p{Extended_Pictographic}/u.test([m.subject, m.preheader, ...m.body, m.cta.label].join(" "))) probs.push("reminder: dash or emoji");
+  // longest real date label still fits
+  eq("longest subject fits", pauseReminderEmail("Wed 30 Sep").subject.length <= 60, true);
+}
+const DAY = 864e5, HOUR = 36e5;
+const until = (date: string) => new Date(nzMidnight(date) * 1000).toISOString();
+const ps = (paused_until: string | null, over: Partial<PausedSub> = {}): PausedSub => ({ user_id: "u1", email: "a@example.com", stripe_sub_id: "sub_1", status: "active", paused_until, ...over });
+/** Job every `step` from `from` to `to`; the sub's paused_until may change over time. Returns the sends. */
+async function sim(state: (t: number) => PausedSub, from: number, to: number, step = HOUR) {
+  const log: ReminderSent[] = [];
+  for (let t = from; t <= to; t += step) log.push(...(await runPauseReminders([state(t)], log, t)));
+  return log;
+}
+async function reminders() {
+  // each pause length, made 26 Oct 09:49 NZ, hourly and daily (6pm) runs: exactly one, on restart date - 7
+  for (const mo of PAUSE_MONTHS) {
+    const pu = new Date(resumesAtFor(mo, oct26) * 1000).toISOString(), end = Date.parse(pu) + 2 * DAY;
+    for (const [step, start] of [[HOUR, oct26], [DAY, nz("2026-10-26T18:00:00+13:00")]] as const) {
+      const log = await sim(() => ps(pu), start, end, step);
+      eq(`${mo} months, every ${step / HOUR}h: reminders`, log.length, 1);
+      if (log[0]) eq(`${mo} months: sent 7 NZ days before`, daysToRestart(pu, Date.parse(log[0].sent_at)), REMINDER_DAYS);
+    }
+  }
+  eq("4 months label", restartLabel(until(pauseEndDate(4, oct26))), "Fri 26 Feb");
+  eq("4 months email", reminderFor(ps(until("2027-02-26"))).subject, "Your Salt Supply sub restarts on Fri 26 Feb");
+  // NZ date edges: due from 00:00 NZ seven days before, not a minute earlier (UTC date differs)
+  for (const [date, remind] of [["2027-02-26", "2027-02-19"], ["2027-01-05", "2026-12-29"], ["2027-04-08", "2027-04-01"], ["2027-04-06", "2027-03-30"], ["2027-09-29", "2027-09-22"], ["2027-10-01", "2027-09-24"]]) {
+    const pu = until(date), at = nzMidnight(remind) * 1000;
+    eq(`restart date ${date}`, restartDate(pu), date);
+    eq(`edge ${date}: due at 00:00 NZ ${remind}`, [dueReminders([ps(pu)], [], at - 6e4).length, dueReminders([ps(pu)], [], at).length], [0, 1]);
+  }
+  // under 7 days left when first seen: once, straight away
+  const short = until(pauseEndDate(1, oct26)), seen = Date.parse(short) - 3 * DAY;
+  const sl = await sim(() => ps(short), seen, Date.parse(short) + DAY);
+  eq("short pause: one reminder at first run", [sl.length, sl[0]?.sent_at], [1, new Date(seen).toISOString()]);
+  // no end date, cancelled, ended
+  eq("infinity: none", (await sim(() => ps(NO_END), oct26, oct26 + 200 * DAY, DAY)).length, 0);
+  eq("cancelled: none", (await sim(() => ps(until("2026-11-26"), { status: "canceled" }), oct26, oct26 + 40 * DAY, DAY)).length, 0);
+  eq("after the restart: none", dueReminders([ps(until("2026-11-26"))], [], nzMidnight("2026-11-26") * 1000).length, 0);
+  // resumed early (webhook clears paused_until): none, before or after the reminder date
+  const pu3 = until(pauseEndDate(3, oct26)), r3 = nzMidnight("2027-01-19") * 1000;
+  eq("resumed before the reminder: none", (await sim((t) => ps(t < r3 - 10 * DAY ? pu3 : null), oct26, Date.parse(pu3) + DAY)).length, 0);
+  eq("resumed after the reminder: just the one", (await sim((t) => ps(t < r3 + 2 * DAY ? pu3 : null), oct26, Date.parse(pu3) + DAY)).length, 1);
+  // pause again with a new date: a new pause, its own reminder
+  const pu4 = until("2027-03-26");
+  const again = await sim((t) => ps(t < r3 + 2 * DAY ? pu3 : pu4), oct26, Date.parse(pu4) + DAY, 6 * HOUR);
+  eq("pause again: one per pause", again.map((x) => x.paused_until), [pu3, pu4]);
+  // repeated runs at the same moment, and a lost insert (Resend idempotency key returns the first send)
+  const at = r3 + HOUR, sent: ReminderSent[] = [];
+  for (let i = 0; i < 3; i++) sent.push(...(await runPauseReminders([ps(pu3), ps(pu3, { stripe_sub_id: "sub_2", user_id: "u2" })], sent, at)));
+  eq("repeated runs: one per sub", sent.map((x) => x.stripe_sub_id), ["sub_1", "sub_2"]);
+  const before = mockOutbox.length, lost = await runPauseReminders([ps(pu3)], [], at);
+  eq("lost insert: no second email", [mockOutbox.length - before, lost[0]?.email_id], [0, sent[0].email_id]);
+  eq("same moment different string", dueReminders([ps(pu3)], [{ ...sent[0], paused_until: new Date(Date.parse(pu3)).toISOString().replace(".000Z", "+00:00") }], at).length, 0);
+}
+
 // ---- alerts: paused = 0, resumed = normal
 const TIME_SETS: FishTime[][] = [DEFAULT_FISH_TIMES, ["any"], ["saturday", "sunday"], ["weekday_morning"]];
 function alerts(at: number) {
@@ -112,6 +178,7 @@ function alerts(at: number) {
 
 (async () => {
   await routes();
+  await reminders();
   const times = process.argv.slice(2).map(Date.parse);
   const runs = times.length ? times : [Date.now()];
   const counts = runs.map((at) => `${new Date(at).toISOString()}: ${alerts(at)} alerts unpaused; paused users 0`);

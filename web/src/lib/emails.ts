@@ -9,7 +9,7 @@ import type { Call } from "./call";
 import type { SpotForecast } from "./types";
 
 export interface EmailTemplate {
-  kind: "alert" | "welcome" | "trial";
+  kind: "alert" | "welcome" | "trial" | "pause_reminder";
   from: string; subject: string; preheader: string;
   body: string[];                                  // everything above the button
   cta: { label: string; href: string };
@@ -80,6 +80,19 @@ export function trialEndingEmail(endsOn: string): EmailTemplate {
     preheader: "No card on file, so nothing is charged.",
     body: [`Your ${BRAND.trialDays}-day Pro trial ends on ${endsOn}. We don't have a card for you, so nothing is charged and you drop back to Free.`, `Pro is $${BRAND.proPriceNzd}/month or $${BRAND.proAnnualNzd}/year (proposed pricing).`],
     cta: { label: "Keep Pro", href: `${BRAND.url}/pricing` },
+    footer, unsubscribe,
+  };
+}
+
+/** 7 days before a winter pause ends. `restartsOn` like "Fri 26 Feb" (restartLabel in reminders.ts). */
+export function pauseReminderEmail(restartsOn: string): EmailTemplate {
+  return {
+    kind: "pause_reminder",
+    from: `${BRAND.name} <${BRAND.emails.hello}>`,
+    subject: `Your ${BRAND.shortName} sub restarts on ${restartsOn}`,
+    preheader: "Nothing to do if you want to keep it.",
+    body: [`Your sub restarts on ${restartsOn}. Keep it or pause again.`],
+    cta: { label: "Your account", href: `${BRAND.url}/account` },
     footer, unsubscribe,
   };
 }

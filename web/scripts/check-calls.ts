@@ -11,7 +11,7 @@ import { plain, plainDeep, portNames, tideSourceText } from "../src/lib/plain";
 import type { FishingWindow, SpotForecast } from "../src/lib/types";
 import { ALERT_CAP, ALERT_CAP_DAYS, byBest, planAlerts, sentInCap, sentRows, type SentAlert } from "../src/lib/alerts";
 import { DEFAULT_FISH_TIMES, fitsTimes, normaliseTimes, toggleTime, type FishTime } from "../src/lib/fishtimes";
-import { alertEmail, shortSpot, welcomeEmail, trialEndingEmail, wordsBeforeButton, type EmailTemplate } from "../src/lib/emails";
+import { alertEmail, shortSpot, welcomeEmail, trialEndingEmail, pauseReminderEmail, wordsBeforeButton, type EmailTemplate } from "../src/lib/emails";
 
 const DASH = /—| [-–] /;                       // no em dashes, no spaced dashes
 const HYPE = /\b(unlock|elevate|revolutioni[sz]e|AI[- ]powered|game[- ]chang|supercharge|seamless)/i;
@@ -46,7 +46,7 @@ const emailProbs = (where: string, m: EmailTemplate) => {
 };
 {
   const w = welcomeEmail();
-  fixed.push(...emailProbs("welcome email", w), ...emailProbs("trial email", trialEndingEmail("Sun 8 Nov")));
+  fixed.push(...emailProbs("welcome email", w), ...emailProbs("trial email", trialEndingEmail("Sun 8 Nov")), ...emailProbs("pause reminder email", pauseReminderEmail("Fri 26 Feb")));
   if (w.body.length !== 3) fixed.push(`welcome email: ${w.body.length} lines, want 3`);
   if (w.body.some((l) => l.split(/\s+/).length > 16)) fixed.push("welcome email: a line over 16 words");
 }
