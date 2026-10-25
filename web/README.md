@@ -49,7 +49,7 @@ python3 scripts/screenshots.py /workspace/fish-on-screenshots   # CHROME=/path/t
 | `/catch-log` | Catch log stub | Pro |
 | `/pricing` | NZ$7.99/mo or NZ$49.99/yr, 14-day no-card trial (proposed) | — |
 | `/signin` | Mock magic link and Google sign-in | — |
-| `/account` | Plan/trial status, alert settings, email previews (alert, welcome, trial ending; `src/lib/emails.ts`) | Alerts are Pro |
+| `/account` | Plan/trial status, alert settings, email previews (alert, welcome, trial ending; `src/lib/emails.ts`, built from the engine's alert pick 1 to 2 days ahead; render with `npx tsx scripts/render-emails.ts && python3 scripts/render-emails.py`) | Alerts are Pro |
 | `/about` | Short plain about page | — |
 | `/offline` | Fallback page served by the service worker | — |
 

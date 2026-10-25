@@ -3,15 +3,16 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useAuth, isPaid, type AlertPrefs } from "@/lib/auth";
 import { BRAND } from "@/lib/brand";
-import { alertEmail, welcomeEmail, trialEndingEmail } from "@/lib/emails";
+import type { EmailTemplate } from "@/lib/emails";
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-export function AccountView({ spots }: { spots: { id: string; name: string }[] }) {
+export function AccountView({ spots, alerts: alertMails, welcome, trial }: { spots: { id: string; name: string }[]; alerts: Record<string, EmailTemplate | null>; welcome: EmailTemplate; trial: EmailTemplate }) {
   const { user, plan, trialEnds, setPlan, alerts, setAlerts, favourites, signOut, ready } = useAuth();
   const upgraded = useSearchParams().get("upgraded");
   if (!ready) return null;
   if (!user) return <div className="pt-10 text-center"><Link href="/signin?next=/account" className="rounded-full bg-ocean-900 px-5 py-3 font-semibold text-white">Sign in to manage your account</Link></div>;
   const pro = isPaid(plan);
   const upd = (p: Partial<AlertPrefs>) => setAlerts({ ...alerts, ...p });
+  const previewSpot = favourites.find((id) => id in alertMails) ?? "hauraki_gulf";
   const names = favourites.map((id) => spots.find((s) => s.id === id)?.name).filter(Boolean);
   return (
     <div className="pt-6 space-y-4 max-w-2xl">
@@ -44,13 +45,16 @@ export function AccountView({ spots }: { spots: { id: string; name: string }[] }
           <label className="block text-sm font-semibold">Send at <input type="time" value={alerts.sendAt} onChange={(e) => upd({ sendAt: e.target.value })} className="ml-2 rounded-lg border border-slate-200 px-2 py-1 font-normal" /> <span className="font-normal text-slate-500">NZ time</span></label>
         </fieldset>
         <details className="rounded-xl bg-slate-50 p-3 text-sm"><summary className="cursor-pointer font-semibold">Preview the emails</summary>
-          <div className="mt-2 space-y-3">{[alertEmail(user.name), welcomeEmail(user.name), trialEndingEmail(user.name, "Sun 8 Nov")].map((m) => (
-            <div key={m.subject} className="rounded-lg bg-white p-3 ring-1 ring-slate-200">
+          <div className="mt-2 space-y-3">
+            {!alertMails[previewSpot] && <p className="text-slate-500">No alert would go out for {spots.find((s) => s.id === previewSpot)?.name} right now: no fishable window 1 to 2 days ahead.</p>}
+            {[alertMails[previewSpot], welcome, trial].filter((m): m is EmailTemplate => !!m).map((m) => (
+            <div key={m.kind} className="rounded-lg bg-white p-3 ring-1 ring-slate-200">
               <div className="text-xs text-slate-500">From: {m.from}</div>
               <div><b>Subject:</b> {m.subject}</div>
+              <div className="text-xs text-slate-500">Preview text: {m.preheader}</div>
               {m.body.map((p) => <p key={p} className="mt-1">{p}</p>)}
-              <span className="text-ocean-700 underline">{m.cta.label}</span>
-              <div className="mt-1 text-xs text-slate-400">{m.footer}</div>
+              <span className="mt-2 inline-block rounded-full bg-ocean-900 px-3 py-1 text-xs font-semibold text-white">{m.cta.label}</span>
+              <div className="mt-1 text-xs text-slate-400">{m.footer} <span className="underline">{m.unsubscribe.label}</span></div>
             </div>))}
             <p className="text-xs text-slate-400">Example sender addresses only. Sending isn’t set up in the prototype.</p>
           </div>

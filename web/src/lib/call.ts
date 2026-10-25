@@ -118,10 +118,11 @@ export function whenText(s: string, e: string, today = nzTodayISO(), withDay = t
   return withDay ? `${s.slice(0, 10) === today ? "today" : dayShort(s)} ${t}` : t;
 }
 
-export function bestCall(f: SpotForecast, scope: Scope, now = Date.now()): Call {
-  const dates = scopeDates(f, scope), set = new Set(dates), today = nzTodayISO(), hz = f.verdict.horizon_days ?? 3;
+/** `only` narrows the same rule to some dates and windows (alerts): engine windows only, no hourly fallback. */
+export function bestCall(f: SpotForecast, scope: Scope, now = Date.now(), only?: { dates: string[]; keep?: (w: FishingWindow) => boolean }): Call {
+  const dates = only ? only.dates : scopeDates(f, scope), set = new Set(dates), today = nzTodayISO(), hz = f.verdict.horizon_days ?? 3;
   const whenOf = (s: string, e: string) => whenText(s, e, today);
-  const live = f.windows.filter((w) => Date.parse(w.end) > now && set.has(w.start.slice(0, 10)) && w.score >= FISHABLE);
+  const live = f.windows.filter((w) => Date.parse(w.end) > now && set.has(w.start.slice(0, 10)) && w.score >= FISHABLE && (!only?.keep || only.keep(w)));
   const pick = (scope === "horizon" && live.find((w) => w.start === f.verdict.window?.start))
     || live.slice().sort((a, b) => b.score - a.score || a.start.localeCompare(b.start))[0];
   const also = pick ? live.filter((w) => w !== pick && w.start.slice(0, 10) === pick.start.slice(0, 10) && isNearBest(f, w)).sort((a, b) => a.start.localeCompare(b.start)) : [];
@@ -132,10 +133,19 @@ export function bestCall(f: SpotForecast, scope: Scope, now = Date.now()): Call 
     return { kind, source, rating, score, start, end, date: start?.slice(0, 10) ?? dates[0], window, also: window ? also : [], when, headline: headline[0].toUpperCase() + headline.slice(1), dates };
   };
   if (pick) return mk("window", "engine", pick.score, pick.rating, pick.start, pick.end, pick);
+  if (only) return mk("none", null, 0, "poor", null, null, null);
   if (listsAllWindows(f)) return mk("none", null, 0, "poor", null, null, null); // every window >= 4.5 was listed and they've all passed
   const run = hourlyRun(f, set, now); // older output only
   if (run && run.score >= FISHABLE) return mk("window", "hourly", run.score, ratingFor(run.score), run.start, run.end, null);
   return mk("none", null, run?.score ?? 0, "poor", null, null, null);
+}
+
+/** Alerts go out 1 to 2 days ahead: the pick among engine windows (score >= 4.5) dated tomorrow or the
+ *  day after, by the same rule as bestCall. Today's windows are on the site, not in an email. */
+export const ALERT_LEAD_DAYS = [1, 2];
+export function alertCall(f: SpotForecast, now = Date.now()): Call {
+  const today = nzTodayISO();
+  return bestCall(f, "horizon", now, { dates: ALERT_LEAD_DAYS.map((n) => addDays(today, n)) });
 }
 
 /** "Snapper, kingfish" for a sentence, from engine names like "Blue Cod". */

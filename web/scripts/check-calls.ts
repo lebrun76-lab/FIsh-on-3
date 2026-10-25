@@ -5,10 +5,11 @@
 // tide_port_linz_name), so older output keeps working.
 import { allSummaries, regionCalls } from "../src/lib/summaries";
 import { allForecasts } from "../src/lib/forecasts";
-import { bestCall, dayScore, isNearBest, listsAllWindows, ratingFor, todayStale } from "../src/lib/call";
+import { alertCall, bestCall, dayScore, isNearBest, listsAllWindows, ratingFor, todayStale } from "../src/lib/call";
 import { nzTodayISO } from "../src/lib/time";
 import { plain, plainDeep, portNames, tideSourceText } from "../src/lib/plain";
 import type { FishingWindow, SpotForecast } from "../src/lib/types";
+import { alertEmail, shortSpot, welcomeEmail, trialEndingEmail, wordsBeforeButton, type EmailTemplate } from "../src/lib/emails";
 
 const DASH = /—| [-–] /;                       // no em dashes, no spaced dashes
 const HYPE = /\b(unlock|elevate|revolutioni[sz]e|AI[- ]powered|game[- ]chang|supercharge|seamless)/i;
@@ -24,8 +25,31 @@ const legacy = (f: SpotForecast): SpotForecast => ({
   days: f.days.map(({ score_remaining: _a, remaining_from: _b, score_full_day: _c, ...d }) => ({ ...d, best_window: stripW(d.best_window), least_bad_window: stripW(d.least_bad_window) })),
 });
 
-// Port names and brackets: plain() must not touch "Area (Place)"; older "Area - Place" output gets the 2.3 form.
 const fixed: string[] = [];
+// Emails: five-second read. Subject <= 60 chars with the window time and spot; <= 40 words before the
+// button; one button; short preheader; no em dashes, hype or emoji; an unsubscribe link.
+const EMAIL_HYPE = /\b(amazing|epic|incredible|awesome|unmissable|don'?t miss|exclusive|perfect|insane|killer|banger)\b/i;
+const EMOJI = /\p{Extended_Pictographic}/u;
+const emailProbs = (where: string, m: EmailTemplate) => {
+  const out: string[] = [];
+  if (m.preheader.length > 50) out.push(`${where}: preheader over 50 chars "${m.preheader}"`);
+  if (!m.unsubscribe.href.includes("unsubscribe")) out.push(`${where}: no unsubscribe link`);
+  for (const s of [m.subject, m.preheader, ...m.body, m.cta.label, m.footer]) {
+    out.push(...copyProbs(where, s));
+    if (/—/.test(s)) out.push(`${where}: em dash "${s}"`);
+    if (EMAIL_HYPE.test(s)) out.push(`${where}: hype "${s}"`);
+    if (EMOJI.test(s) || /[→←]/.test(s)) out.push(`${where}: emoji or arrow "${s}"`);
+  }
+  return out;
+};
+{
+  const w = welcomeEmail();
+  fixed.push(...emailProbs("welcome email", w), ...emailProbs("trial email", trialEndingEmail("Sun 8 Nov")));
+  if (w.body.length !== 3) fixed.push(`welcome email: ${w.body.length} lines, want 3`);
+  if (w.body.some((l) => l.split(/\s+/).length > 16)) fixed.push("welcome email: a line over 16 words");
+}
+
+// Port names and brackets: plain() must not touch "Area (Place)"; older "Area - Place" output gets the 2.3 form.
 for (const [s, want] of [["Lottin Point (Wakatiri)", "Lottin Point (Wakatiri)"], ["LINZ secondary port Coromandel Harbour (Whanganui Island) (offsets from Auckland)", "LINZ secondary port Coromandel Harbour (Whanganui Island) (offsets from Auckland)"], ["Mon 8–11am looks great", "Mon 8–11am looks great"], ["Mon 10am–1pm is fishable", "Mon 10am–1pm is fishable"], ["Best: Mon 10am-1pm.", "Best: Mon 10am–1pm."], ["Mon 8-11am, HW -21 min, 2026-10-26", "Mon 8–11am, HW -21 min, 2026-10-26"]] as const)
   if (plain(s) !== want) fixed.push(`plain("${s}") gave "${plain(s)}"`);
 {
@@ -54,7 +78,7 @@ for (const t of times.length ? times : [new Date().toISOString()]) {
     if (/!/.test(c.call)) probs.push(`region ${c.region}: punctuation "${c.call}"`);
     probs.push(...copyProbs(`region ${c.region}`, c.call));
   }
-  let fresh = 0, also = 0, until = 0;
+  let fresh = 0, also = 0, until = 0, emails = 0;
   const versions = new Map<string, number>();
   const today = nzTodayISO();
   for (const f0 of allForecasts()) {
@@ -91,9 +115,25 @@ for (const t of times.length ? times : [new Date().toISOString()]) {
     if (d?.remaining_from && todayStale(nv, at).stale !== (Math.floor(at / 36e5) * 36e5 > Date.parse(d.remaining_from))) probs.push(`spot ${f0.spot.id}: stale flag (remaining_from)`);
     if (d?.remaining_from && f0.valid_until && todayStale(nv, at).stale !== todayStale(f0, at).stale) probs.push(`spot ${f0.spot.id}: valid_until and remaining_from disagree`);
     if (d?.remaining_from && f0.valid_until && Date.parse(todayStale(nv, at).until!) !== Date.parse(f0.valid_until)) probs.push(`spot ${f0.spot.id}: fallback 'due at' time differs from valid_until`);
+    // alert email: built from the alert pick (1-2 days ahead, >= 4.5), subject is the answer
+    for (const [tag, f] of [["", f0], [" (legacy)", legacy(f0)]] as const) {
+      const c = alertCall(f), m = alertEmail(f, c), id = `alert ${f.spot.id}${tag}`;
+      const ahead = c.start ? Math.round((Date.parse(c.start.slice(0, 10)) - Date.parse(today)) / 864e5) : 0;
+      if (c.kind === "window" && (!m || c.score < 4.5 || ahead < 1 || ahead > 2 || c.source !== "engine")) probs.push(`${id}: bad pick ${c.start} ${c.score} (${ahead} days ahead)`);
+      if (c.kind === "none" && m) probs.push(`${id}: email with no window`);
+      if (!m) continue;
+      if (!tag) emails++;
+      const time = c.when.split(" ").pop()!;
+      if (m.subject.length > 60) probs.push(`${id}: subject ${m.subject.length} chars "${m.subject}"`);
+      if (!m.subject.includes(time) || !m.subject.includes(shortSpot(f.spot.name))) probs.push(`${id}: subject lacks window time or spot "${m.subject}"`);
+      if (wordsBeforeButton(m) > 40) probs.push(`${id}: ${wordsBeforeButton(m)} words before the button`);
+      if (m.body.length !== 1) probs.push(`${id}: ${m.body.length} body lines, want 1`);
+      if (!m.cta.href.endsWith(`/spots/${f.spot.id}`)) probs.push(`${id}: button goes to ${m.cta.href}`);
+      probs.push(...emailProbs(id, m), ...rangeProbs(id, `${m.subject} ${m.body.join(" ")}`));
+    }
   }
   const rc = regionCalls();
-  console.log(`${t}: ${probs.length} problems; ${rc.length} regions; ${fresh} forecasts with the new window fields; ${until} with valid_until; ${also} 'also worth a look' windows; engine versions ${[...versions].map(([v, n]) => `${v}×${n}`).join(", ")}`);
+  console.log(`${t}: ${probs.length} problems; ${rc.length} regions; ${fresh} forecasts with the new window fields; ${until} with valid_until; ${emails} alert emails; ${also} 'also worth a look' windows; engine versions ${[...versions].map(([v, n]) => `${v}×${n}`).join(", ")}`);
   if (!times.length || process.env.V) rc.forEach((c) => console.log(`  ${c.region}: ${c.rating} ${c.score} [${c.dayLabel}] ${c.call}`));
   probs.forEach((p) => console.log("  !", p)); bad += probs.length;
 }
