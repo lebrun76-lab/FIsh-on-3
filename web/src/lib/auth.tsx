@@ -4,6 +4,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { DEFAULT_FISH_TIMES, normaliseTimes, type FishTime } from "./fishtimes";
 import { effectivePlan, isPaused } from "./pause";
+import { BRAND } from "./brand";
 
 export type Plan = "free" | "trial" | "pro";
 export const isPaid = (p: Plan) => p !== "free";
@@ -14,7 +15,7 @@ interface Ctx extends State {
   billingPlan: Plan; paused: boolean; setPausedUntil: (iso: string | null) => void;
   signIn: (email: string, name?: string, fishingTimes?: FishTime[]) => void; setFishingTimes: (t: FishTime[]) => void; signOut: () => void;
   toggleFav: (id: string) => void; setHome: (id: string) => void;
-  setPlan: (p: Plan) => void; trialEnds: string | null; setAlerts: (a: AlertPrefs) => void; ready: boolean;
+  setPlan: (p: Plan, trialEnds?: string | null) => void; trialEnds: string | null; setAlerts: (a: AlertPrefs) => void; ready: boolean;
 }
 const DEFAULT: State = { trialEnds: null, user: null, plan: "free", favourites: [], home: null, alerts: { enabled: true, sendAt: "18:00" }, fishingTimes: DEFAULT_FISH_TIMES, pausedUntil: null };
 const AuthCtx = createContext<Ctx | null>(null);
@@ -43,7 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       save({ ...s, favourites: [...s.favourites, id], home: s.home ?? id });
     },
     setHome: (id) => save({ ...s, home: id, favourites: s.favourites.includes(id) ? s.favourites : [...s.favourites, id] }),
-    setPlan: (plan) => save({ ...s, plan, pausedUntil: null, trialEnds: plan === "trial" ? new Date(Date.now() + 14 * 864e5).toISOString().slice(0, 10) : null }),
+    setPlan: (plan, trialEnds) => save({ ...s, plan, pausedUntil: null, trialEnds: plan === "trial" ? trialEnds ?? new Date(Date.now() + BRAND.trialDays * 864e5).toISOString().slice(0, 10) : null }),
     setAlerts: (alerts) => save({ ...s, alerts }),
   };
   return <AuthCtx.Provider value={value}>{children}</AuthCtx.Provider>;

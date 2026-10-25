@@ -14,7 +14,7 @@ import { POST as pauseRoute } from "../src/app/api/billing/pause/route";
 import { POST as resumeRoute } from "../src/app/api/billing/resume/route";
 import { POST as webhookRoute } from "../src/app/api/stripe/webhook/route";
 
-delete process.env.STRIPE_SECRET_KEY; delete process.env.SUPABASE_URL; delete process.env.STRIPE_WEBHOOK_SECRET; delete process.env.RESEND_API_KEY; // mock mode only
+delete process.env.STRIPE_SECRET_KEY; delete process.env.STRIPE_TEST_SECRET_KEY; delete process.env.SUPABASE_URL; delete process.env.STRIPE_WEBHOOK_SECRET; delete process.env.RESEND_API_KEY; // mock mode only
 const probs: string[] = [];
 const eq = (what: string, got: unknown, want: unknown) => { if (JSON.stringify(got) !== JSON.stringify(want)) probs.push(`${what}: got ${JSON.stringify(got)}, want ${JSON.stringify(want)}`); };
 const nz = (s: string) => Date.parse(s);
@@ -81,7 +81,7 @@ async function routes() {
   const p2 = await send(null);
   eq("webhook resume", [p2.status, p2.j.paused_until], [200, null]);
   eq("webhook bad signature", (await send(null, undefined, "t=1,v1=00")).status, 400);
-  eq("webhook other event ignored", (await send(null, "invoice.paid")).j.ignored, "invoice.paid");
+  eq("webhook other event ignored", (await send(null, "payment_intent.succeeded")).j.ignored, "payment_intent.succeeded");
   eq("webhook rows written", mockSynced.length - before, 2);
 }
 

@@ -73,16 +73,16 @@ export function welcomeEmail(): EmailTemplate {
   };
 }
 
-export function trialEndingEmail(endsOn: string): EmailTemplate {
-  return {
-    kind: "trial",
-    from: `${BRAND.name} <${BRAND.emails.hello}>`,
-    subject: `Your ${BRAND.shortName} Pro trial ends ${endsOn}`,
-    preheader: "No card on file, so nothing is charged.",
-    body: [`Your ${BRAND.trialDays}-day Pro trial ends on ${endsOn}. We don't have a card for you, so nothing is charged and you drop back to Free.`, `Pro is $${BRAND.proPriceNzd}/month or $${BRAND.proAnnualNzd}/year (proposed pricing).`],
-    cta: { label: "Keep Pro", href: `${BRAND.url}/pricing` },
-    footer, unsubscribe,
-  };
+/**
+ * 3 days before a Pro trial ends (Stripe customer.subscription.trial_will_end). `endsOn` like "Sun 8 Nov".
+ * No card on file: the trial cancels at the end (trial_settings.end_behavior.missing_payment_method
+ * = cancel), so the ask is to add a card. With a card: it rolls onto the paid price.
+ */
+export function trialEndingEmail(endsOn: string, opts: { hasCard?: boolean; yearly?: boolean } = {}): EmailTemplate {
+  const price = opts.yearly ? `$${BRAND.proAnnualNzd} a year` : `$${BRAND.proPriceNzd} a month`;
+  const base = { kind: "trial" as const, from: `${BRAND.name} <${BRAND.emails.hello}>`, subject: `Your ${BRAND.shortName} Pro trial ends ${endsOn}`, footer, unsubscribe };
+  if (opts.hasCard) return { ...base, preheader: `Then it's ${price} on your card.`, body: [`Your Pro trial ends on ${endsOn}. Then it's ${price} on your card. Cancel any time before then.`], cta: { label: "Your account", href: `${BRAND.url}/account` } };
+  return { ...base, preheader: "Add a card to keep Pro.", body: [`Your Pro trial ends in 3 days, on ${endsOn}. Add a card to keep Pro at ${price}. No card, no charge. You just go back to Free.`], cta: { label: "Add a card", href: `${BRAND.url}/account?billing=card` } };
 }
 
 /** 7 days before a winter pause ends. `restartsOn` like "Fri 26 Feb" (restartLabel in reminders.ts). */

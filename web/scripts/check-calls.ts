@@ -46,7 +46,7 @@ const emailProbs = (where: string, m: EmailTemplate) => {
 };
 {
   const w = welcomeEmail();
-  fixed.push(...emailProbs("welcome email", w), ...emailProbs("trial email", trialEndingEmail("Sun 8 Nov")), ...emailProbs("pause reminder email", pauseReminderEmail("Fri 26 Feb")));
+  fixed.push(...emailProbs("welcome email", w), ...emailProbs("trial email", trialEndingEmail("Sun 8 Nov")), ...emailProbs("trial email with card", trialEndingEmail("Sun 8 Nov", { hasCard: true, yearly: true })), ...emailProbs("pause reminder email", pauseReminderEmail("Fri 26 Feb")));
   const fu = { caught: "https://x/c", nothing: "https://x/n", didnt_go: "https://x/d" };
   for (const [name, st, en] of [["Bay of Islands", "2027-10-30T17:00:00+13:00", "2027-10-30T20:00:00+13:00"], ["Hauraki Gulf (Auckland)", "2027-10-30T05:00:00+13:00", "2027-10-30T08:00:00+13:00"], ["Coromandel (east coast)", "2027-10-30T22:00:00+13:00", "2027-10-31T02:00:00+13:00"]]) {
     const h = howdItGoEmail(name, st, en, fu);

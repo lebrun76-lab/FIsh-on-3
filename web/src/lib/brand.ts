@@ -8,8 +8,8 @@ export const BRAND = {
   emails: { hello: "hello@saltsupply.co.nz", alerts: "alerts@saltsupply.co.nz" }, // examples only
   tagline: "Is it worth going out?",
   description: "Fishing forecasts for New Zealand in plain English: whether it's worth going, when, and where. Wind, swell, tides and local rules.",
-  // PROPOSED pricing (market research, not yet approved by Alex)
+  // Pricing chosen by Alex (26 Oct 2026). Stripe test prices: lookup_keys pro_monthly_nzd, pro_yearly_nzd.
   proPriceNzd: 7.99,
   proAnnualNzd: 49.99,
-  trialDays: 14, // proposed 14–30 days, no card needed
+  trialDays: 30, // no card needed; Stripe cancels at trial end if no card was added
 };

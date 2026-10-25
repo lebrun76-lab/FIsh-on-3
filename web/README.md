@@ -47,7 +47,7 @@ python3 scripts/screenshots.py /workspace/fish-on-screenshots   # CHROME=/path/t
 | `/species` | Species guide: sizes, bags, tactics (sample data) | Free |
 | `/saved` | Saved spots plus home spot | Free: 1 spot. Pro: unlimited |
 | `/catch-log` | Catch log stub | Pro |
-| `/pricing` | NZ$7.99/mo or NZ$49.99/yr, 14-day no-card trial (proposed) | — |
+| `/pricing` | NZ$7.99/mo or NZ$49.99/yr, 30-day no-card trial (chosen by Alex). Opens Stripe Checkout in test mode | — |
 | `/signin` | Mock magic link and Google sign-in | — |
 | `/account` | Plan/trial status, Pause for winter (Pro), alert settings, email previews (alert, welcome, trial ending; `src/lib/emails.ts`, built from the engine's alert pick 1 to 2 days ahead inside the user's "When can you fish?" times (`src/lib/fishtimes.ts`, `profiles.fishing_times`), at most 2 per user per rolling 7 days, best scores first, never the same window twice (`src/lib/alerts.ts`, `alerts_sent`); render with `npx tsx scripts/render-emails.ts && python3 scripts/render-emails.py`) | Alerts are Pro |
 | `/howd-it-go/[token]` | "How'd it go?" answer page from the follow-up email (signed token, no sign-in, noindex). GET only shows a confirm button; saving is `POST /api/howd-it-go` | — |
@@ -64,8 +64,22 @@ See `docs/forecast-api.md` (it includes the engine→v1 mapping and the proposed
 - `GET /api/v1/spots/{id}/windows?min_score=4.5` (default 4.5)
 - `GET /api/v1/summaries`
 
-## Billing: Pause for winter (mock Stripe)
-No Stripe account exists yet. With `STRIPE_SECRET_KEY` unset, `src/lib/stripe.ts` answers in memory with Stripe-shaped objects; set an `sk_test_...` key (plus `STRIPE_TEST_SUBSCRIPTION_ID`, `STRIPE_WEBHOOK_SECRET`) to hit Stripe test mode. Live keys are refused.
+## Billing: Pro subscriptions (Stripe TEST MODE only)
+Pricing: NZ$7.99/month or NZ$49.99/year, 30-day free trial, no card. Stripe test objects on Alex's "Salt Supply co" account: product `prod_VVb2iTqWXQ7c2s` "Salt Supply Pro", prices by lookup_key `pro_monthly_nzd` (799 NZD/month) and `pro_yearly_nzd` (4999 NZD/year). The code resolves prices by lookup_key and checks the amount.
+
+Keys (`src/lib/stripe.ts`): `STRIPE_TEST_SECRET_KEY`, then `STRIPE_SECRET_KEY`. Neither set: mock mode, all in memory. `sk_test_`/`rk_test_`: real test-mode calls with the Stripe SDK (API version `2026-09-30.endive`). Any live key (`sk_live_`, `rk_live_`) in either variable is refused, even when a test key is also set; errors name the variable, never the value.
+- Local setup: `npx tsx scripts/stripe-env.ts` writes the Stripe CLI's test-mode key to the gitignored `.env.local` as `STRIPE_TEST_SECRET_KEY` without printing it. `stripe listen --print-secret | npx tsx scripts/stripe-env.ts --webhook-secret-stdin` adds `STRIPE_WEBHOOK_SECRET`. Run the app with `env -u STRIPE_SECRET_KEY npm run dev` if your shell has another key in `STRIPE_SECRET_KEY` (process env beats `.env.local`), then `stripe listen --forward-to localhost:3000/api/stripe/webhook`.
+- `POST /api/billing/checkout {interval: "month"|"year"}`: Checkout Session, `mode: subscription`, NZD, `payment_method_collection: if_required`, `subscription_data.trial_period_days: 30`, `trial_settings.end_behavior.missing_payment_method: cancel`, `metadata.user_id`. One trial per person: a returning user gets Checkout without a trial. No `payment_method_types` (dynamic payment methods) and no `automatic_tax` (no GST registration in Stripe yet).
+- Trial end with no card: **cancel**, not pause. That matches the promise (no card, no charge, back to Free) and keeps Stripe's `paused` status from being confused with Pause for winter. Coming back is a fresh Checkout.
+- `POST /api/billing/portal`: Stripe Customer portal (update card, cancel, invoices), using the portal configuration with `metadata.app = salt-supply-web` (test mode `bpc_1UUZydCuajdRSWMVZP9nqk5S`: update card, cancel at period end with a reason, invoice history, email).
+- `GET /api/billing/session?id=cs_...`: what a finished Checkout started (read only). `GET /api/billing/state`: prototype-only view of what the webhook wrote (404 once `SUPABASE_URL` is set).
+- `POST /api/stripe/webhook` (`src/lib/billing.ts` `handleStripeEvent`): `checkout.session.completed`, `customer.subscription.created/updated/deleted` (re-read from Stripe, then upsert `subscriptions` by user and set `profiles.plan`: trialing to `trial` with `trial_ends_at`, active or past_due to `pro`/`pro_annual`, anything else to `free`), `invoice.paid`/`invoice.payment_failed` (`latest_invoice_status`), `customer.subscription.trial_will_end` (the "trial ends in 3 days, add a card to keep Pro" email, or the "then it's $7.99 a month on your card" one if a card is on file). Migration `20261026170000_stripe_checkout.sql`.
+- Test clocks: set `STRIPE_TEST_CUSTOMER_ID=cus_...` (a customer created on a test clock) and Checkout uses that customer, so the real Checkout page and the clock work together. Test mode only.
+- Tested end to end in test mode on 26 Oct 2026 (`stripe listen`, all 19 webhook deliveries 200): no-card trial through Checkout; test clock `clock_1UUa1WCuajdRSWMVMI0juoy6` +27 days sent the trial email, +31 days the subscription was canceled with a $0 invoice and the profile went to Free; the same person back through Checkout got no second trial and paid with 4242; pause and resume against that subscription; `pm_card_visa` yearly on clock `clock_1UUa4wCuajdRSWMVhFgVKVrQ` renewed at $49.99 after a year; `pm_card_chargeCustomerFail` gave `invoice.payment_failed` and stayed Free.
+- Checks: `npx tsx scripts/check-billing.ts`
+
+## Billing: Pause for winter
+Same keys as above. In test mode the subscription is `STRIPE_TEST_SUBSCRIPTION_ID`, else the newest one the webhook has synced.
 - `POST /api/billing/pause {months: 1..6}`: `pause_collection {behavior: "void", resumes_at}` (00:00 NZ on the same day n months on)
 - `POST /api/billing/resume`: clears `pause_collection`
 - `POST /api/stripe/webhook`: verifies `Stripe-Signature`, then `customer.subscription.updated/.deleted` set `subscriptions.paused_until` and `profiles.paused_until` (service role; migration `20261026140000_pause.sql`)
