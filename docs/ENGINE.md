@@ -23,7 +23,7 @@ All times are timezone-aware Pacific/Auckland. Open-Meteo is called with `timefo
 | Plain-English best window | Best 3–5 h run from 1 h before sunrise to 1 h after sunset. Past hours today are skipped. Days with nothing above 4/10 say "No good window. Least-bad: …" |
 | Wind vs coast | `spots._EXTRA` gives each spot a facing bearing. Wind is classed offshore / cross-offshore / cross-shore / cross-onshore / onshore (`wind.relative_to_coast`) |
 | Swell | Wave height bands, plus penalties for long-period surge (≥13 s with ≥1.5 m) and short steep chop (≤6 s with ≥1 m) |
-| Tides | LINZ standard-port CSV first, with the Open-Meteo `sea_level_height_msl` model as fallback. Run-in to high tide earns a bonus. `compare_tides=True` reports LINZ vs model timing |
+| Tides | Nearest suitable LINZ port (87 daily-prediction sites + LINZ secondary ports with offsets; see docs/TIDE_PORTS.md) first, with the Open-Meteo `sea_level_height_msl` model as fallback. Run-in to high tide earns a bonus. `compare_tides=True` reports LINZ vs model timing |
 | SST | Open-Meteo Marine `sea_surface_temperature`, a daily mean per spot. It drives the snapper "water still cool" note |
 | Seasonal species | `data/species_seasons.json`: every season or closure claim has a source. Anything without a source shows "no seasonal data" and nothing is invented |
 | Sun / moon | Sunrise and sunset from Open-Meteo. Moon phase is computed with the stdlib (mean lunation, ±~1 day). Near new or full moon adds +0.3 (tradition only, weak evidence) |
@@ -44,12 +44,12 @@ Matched highs and lows (model minus LINZ):
 | Bluff | −68.5 | 73.2 | 2.3 | 2.38 |
 | Moeraki (Oamaru) | −61.6 | 71.5 | 1.7 | 1.92 |
 
-How to read this: the model's highs and lows came 30–70 min *earlier* than LINZ at every port. The tidal ranges were close. I checked that LINZ CSV times are NZ clock time, including daylight saving: the times jump by one hour at the 5 Apr and 27 Sep 2026 changes. So the gap is not a timezone bug in this engine. It most likely comes from Open-Meteo's ~8 km grid point being offshore of the port. Open-Meteo itself says coastal accuracy is limited and the data is not for navigation. **Decision: LINZ is the primary source. The model is only used where no port is mapped (currently the Catlins) or if LINZ fails, and it is labelled "modelled".** Other caveats:
+How to read this: the model's highs and lows came 30–70 min *earlier* than LINZ at every port. The tidal ranges were close. I checked that LINZ CSV times are NZ clock time, including daylight saving: the times jump by one hour at the 5 Apr and 27 Sep 2026 changes. So the gap is not a timezone bug in this engine. It most likely comes from Open-Meteo's ~8 km grid point being offshore of the port. Open-Meteo itself says coastal accuracy is limited and the data is not for navigation. **Decision: LINZ is the primary source. The model is only used if LINZ fails (since PR B every coastal spot has a LINZ port), and it is labelled "modelled".** Other caveats:
 
 - LINZ heights are relative to chart datum and the model's are relative to global MSL, so only compare ranges, never absolute heights.
 - LINZ predictions are astronomical only, with no storm surge.
 - LINZ notes these predictions are not official tide tables under Maritime Rules Part 25.
-- Secondary ports (Moeraki, Greymouth, etc.) are currently mapped to a nearby standard port, so times can be out by tens of minutes. The LINZ secondary-port offsets CSV is the next step.
+- Secondary ports (Moeraki, Greymouth, etc.) now use LINZ's published time/height offsets from their standard port; see docs/TIDE_PORTS.md for the method and a validation against LINZ daily predictions.
 
 ## Data sources, licensing, costs (checked 25 Oct 2026 NZDT)
 

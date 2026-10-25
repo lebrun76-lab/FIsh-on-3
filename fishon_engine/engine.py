@@ -5,7 +5,7 @@ import logging
 from datetime import date, datetime, timedelta
 from typing import Dict, List, Optional
 
-from . import astro, openmeteo, scoring, species, tides
+from . import astro, openmeteo, scoring, species, tideports, tides
 from .cache import Cache
 from .spots import get_spot
 from .tz import NZ, day_label, now_nz, today_nz
@@ -58,10 +58,11 @@ def forecast_spot(spot_id: str, start: Optional[date] = None, days: int = 7,
         mt = sorted(marine_rows)
         model_events = tides.extremes_from_series(mt, [marine_rows[t].get("sea_level_height_msl") for t in mt])
     if spot.is_coastal:
-        if spot.tide_port:
+        if spot.tide_port_id:
             try:
-                tide_events = tides.fetch_linz(spot.tide_port, start, end, cache)
-                tide_source = f"LINZ {spot.tide_port}"
+                port = tideports.get_port(spot.tide_port_id)
+                tide_events = tideports.fetch_events(port, start, end, cache)
+                tide_source = port.label
             except Exception as exc:
                 warnings.append(f"LINZ tides for {spot.tide_port} failed ({exc}); using Open-Meteo model.")
         if not tide_events and model_events:
@@ -126,7 +127,8 @@ def forecast_spot(spot_id: str, start: Optional[date] = None, days: int = 7,
     result = {
         "spot": {"id": spot.id, "name": spot.name, "region": spot.region, "facing_deg": spot.facing,
                  "facing_note": spot.facing_note, "coastal": spot.is_coastal,
-                 "tide_port": spot.tide_port},
+                 "tide_port": spot.tide_port, "tide_port_id": spot.tide_port_id,
+                 "tide_port_km": spot.tide_port_km},
         "generated_at": now_nz().isoformat(), "timezone": "Pacific/Auckland",
         "tide_source": tide_source, "days": out_days, "warnings": warnings,
         "attribution": ATTRIBUTION,
