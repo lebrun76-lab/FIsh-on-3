@@ -1,5 +1,6 @@
 import { allSummaries } from "@/lib/summaries";
 import { SpotsBrowser } from "@/components/SpotsBrowser";
+export const metadata = { title: "Spots" };
 export default function SpotsPage() {
   return (
     <div className="pt-6 space-y-3">

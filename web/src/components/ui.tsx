@@ -13,12 +13,20 @@ export function RatingBadge({ rating, score, size = "sm" }: { rating: Rating; sc
     </span>
   );
 }
-export function PlaceholderNote() {
-  return <span className="ml-2 rounded bg-yellow-300 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-yellow-950 align-middle" title="Placeholder brand name">placeholder name</span>;
-}
 export function MockBanner() {
   return <div className="bg-yellow-100 text-yellow-900 text-xs text-center py-1 px-2">Prototype · forecasts from Forecast Brain (fishon_engine, local job run) · mock sign-in · no payments</div>;
 }
 export function MockTag() {
   return <span className="ml-1 rounded bg-yellow-300 px-1.5 py-0.5 text-[10px] font-bold uppercase text-yellow-950" title="Engine output missing for this spot; showing generated mock data">mock fallback</span>;
+}
+
+/** Placeholder for a real photo (no stock or generated images). See docs/photo-shot-list.md. */
+export function PhotoSlot({ id, subject, ratio, className = "" }: { id: string; subject: string; ratio: "16:9" | "3:2" | "4:3" | "3:1" | "1:1"; className?: string }) {
+  const [w, h] = ratio.split(":").map(Number);
+  return (
+    <div role="img" aria-label={`Photo placeholder: ${subject}`} data-photo-id={id} style={{ aspectRatio: `${w} / ${h}` }}
+      className={`flex w-full items-center justify-center rounded-2xl border border-dashed border-slate-400 bg-slate-200 p-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-500 ${className}`}>
+      PHOTO: {subject} ({ratio}) · {id}
+    </div>
+  );
 }

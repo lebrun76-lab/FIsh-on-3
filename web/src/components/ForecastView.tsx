@@ -5,7 +5,7 @@ import type { SstMapData } from "@/lib/sst";
 import { SstMap } from "./SstMap";
 import { DATUM_TEXT, latLon, speciesOf, confidenceText, noWindowText } from "@/lib/view";
 import { useAuth, isPaid } from "@/lib/auth";
-import { RatingBadge, RATING_STYLE } from "./ui";
+import { PhotoSlot, RatingBadge, RATING_STYLE } from "./ui";
 import { FavButton } from "./FavButton";
 import { Locked } from "./Locked";
 import { OfflineButton } from "./Offline";
@@ -14,7 +14,7 @@ import { clock, dateLabel, dayShort, nzTodayISO } from "@/lib/time";
 import { safetyCheck } from "@/lib/safety";
 import { CLOSURES, speciesFor, sizeText } from "@/lib/rules";
 
-const SAFETY = { ok: ["bg-emerald-50 ring-emerald-200 text-emerald-900", "✅ Safe to go"], caution: ["bg-amber-50 ring-amber-200 text-amber-900", "⚠️ Take care"], no: ["bg-rose-50 ring-rose-200 text-rose-900", "⛔ Not safe for small boats"] } as const;
+const SAFETY = { ok: ["bg-emerald-50 ring-emerald-200 text-emerald-900", "Safe to go"], caution: ["bg-amber-50 ring-amber-200 text-amber-900", "Take care"], no: ["bg-rose-50 ring-rose-200 text-rose-900", "Not safe for small boats"] } as const;
 
 const seaText = (wave?: number | null, swell?: number | null, period?: number | null) =>
   wave == null && swell == null ? "" : `${wave ?? swell} m waves${swell != null ? ` (swell ${swell} m${period ? ` @ ${Math.round(period)} s` : ""})` : ""}`;
@@ -23,9 +23,9 @@ function WindowCard({ w, pick }: { w: FishingWindow; pick?: boolean }) {
   return (
     <div className={`rounded-2xl bg-white p-4 ring-1 ${pick ? "ring-2 ring-emerald-400" : "ring-slate-100"}`}>
       <div className="flex items-center justify-between gap-2"><span className="font-semibold">{clock(w.start)}–{clock(w.end)}{pick && <span className="ml-2 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-800">Engine pick</span>}</span><RatingBadge rating={w.rating} score={w.score} /></div>
-      {w.wind_kn != null && <div className="mt-1 text-xs text-slate-500">💨 {w.wind_from} {Math.round(w.wind_kn)} kn, gusts {Math.round(w.gust_max_kn ?? 0)}{w.wind_rel ? ` · ${w.wind_rel}` : ""}{w.wave_m != null || w.swell_m != null ? ` · 🌊 ${seaText(w.wave_m, w.swell_m, w.swell_period_s)}` : ""}</div>}
+      {w.wind_kn != null && <div className="mt-1 text-xs text-slate-500">Wind {w.wind_from} {Math.round(w.wind_kn)} kn, gusts {Math.round(w.gust_max_kn ?? 0)}{w.wind_rel ? ` · ${w.wind_rel}` : ""}{w.wave_m != null || w.swell_m != null ? ` · sea ${seaText(w.wave_m, w.swell_m, w.swell_period_s)}` : ""}</div>}
       <p className="mt-1 text-sm text-slate-600">{w.advice}</p>
-      {w.confidence && <div className="mt-1 text-xs text-slate-500">🎯 {confidenceText(w.confidence, w.confidence_detail)}</div>}
+      {w.confidence && <div className="mt-1 text-xs text-slate-500">{confidenceText(w.confidence, w.confidence_detail)}</div>}
       <div className="mt-2 flex flex-wrap gap-1">{w.reasons.map((r) => <span key={r} className="rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-700">{r}</span>)}</div>
     </div>
   );
@@ -54,7 +54,7 @@ function NoWindowCard({ reason, when, leastBad, withDay }: { reason?: string | n
   return (
     <div className="grid gap-2 md:grid-cols-3">
       <div className="rounded-2xl bg-rose-50 p-4 text-sm text-rose-900 ring-1 ring-rose-100 md:col-span-2">
-        <div className="font-bold">🚫 No fishable window</div>
+        <div className="font-bold">No fishable window</div>
         <p className="mt-1">{t.main}</p>
         {t.conditions && <p className="mt-1">{t.conditions}</p>}
       </div>
@@ -116,14 +116,15 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
         </div>
         <FavButton id={f.spot.id} />
       </div>
+      <PhotoSlot id={`spot-${f.spot.id}`} subject={`${f.spot.name.split(" (")[0]}: shoreline or ramp, wide`} ratio="3:1" className="max-h-56" />
 
       {mock ? (
-        <div className="rounded-2xl bg-yellow-100 p-3 text-sm text-yellow-950 ring-2 ring-yellow-400"><b>⚠️ MOCK FALLBACK — not a real forecast.</b> {f.fallback_reason} Numbers below are generated placeholders.</div>
+        <div className="rounded-2xl bg-yellow-100 p-3 text-sm text-yellow-950 ring-2 ring-yellow-400"><b>MOCK FALLBACK: not a real forecast.</b> {f.fallback_reason} Numbers below are generated placeholders.</div>
       ) : (
         <div className={`rounded-xl px-3 py-2 text-xs ring-1 ${f.stale ? "bg-amber-50 text-amber-900 ring-amber-200" : "bg-white text-slate-500 ring-slate-100"}`}>
-          {f.stale ? "⚠️ Forecast is more than 6 hours old · " : ""}Forecast Brain v{f.engine_version} · generated {dayShort(f.generated_at)} {clock(f.generated_at)} NZ time{f.model_run ? ` · model: ${f.model_run.replace(/ \(.*\)$/, "")}` : ""}
-          {f.spot.forecast_point && <div>📍 Weather for {latLon(f.spot.forecast_point.lat, f.spot.forecast_point.lon)}{f.spot.forecast_point.cell_selection === "sea" ? " (at sea)" : ""}{f.spot.marine_point && f.spot.coastal ? ` · waves & sea temp for ${latLon(f.spot.marine_point.lat, f.spot.marine_point.lon)}` : ""}{f.spot.coastal && f.tide_source ? ` · tides: ${f.tide_source}${f.spot.tide_port_km != null ? ` (${f.spot.tide_port_km} km away)` : ""}` : ""}</div>}
-          {f.warnings?.map((w) => <div key={w}>⚠️ {w}</div>)}
+          {f.stale ? "Old forecast (more than 6 hours) · " : ""}Forecast Brain v{f.engine_version} · generated {dayShort(f.generated_at)} {clock(f.generated_at)} NZ time{f.model_run ? ` · model: ${f.model_run.replace(/ \(.*\)$/, "")}` : ""}
+          {f.spot.forecast_point && <div>Weather for {latLon(f.spot.forecast_point.lat, f.spot.forecast_point.lon)}{f.spot.forecast_point.cell_selection === "sea" ? " (at sea)" : ""}{f.spot.marine_point && f.spot.coastal ? ` · waves & sea temp for ${latLon(f.spot.marine_point.lat, f.spot.marine_point.lon)}` : ""}{f.spot.coastal && f.tide_source ? ` · tides: ${f.tide_source}${f.spot.tide_port_km != null ? ` (${f.spot.tide_port_km} km away)` : ""}` : ""}</div>}
+          {f.warnings?.map((w) => <div key={w}>Note: {w}</div>)}
         </div>
       )}
 
@@ -132,13 +133,13 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
         <div className="flex items-center gap-2"><RatingBadge rating={v.rating} score={v.score} size="lg" /><span className="text-xs text-slate-500">{pro ? `Best in the next ${hz} days` : today === realToday ? "Today" : `Next fishing day · ${dateLabel(today)}`}</span></div>
         <h2 className={`mt-3 text-2xl md:text-3xl font-extrabold ${rs.text}`}>{v.headline}</h2>
         <p className="mt-2 text-lg text-slate-700 leading-snug">{v.advice}</p>
-        {!noWin && <p className="mt-2 text-sm text-slate-600">🎯 {confidenceText(v.confidence, vDetail)}</p>}
+        {!noWin && <p className="mt-2 text-sm text-slate-600">{confidenceText(v.confidence, vDetail)}</p>}
         {noWin && leastBad && <div className="mt-3"><LeastBadCard w={leastBad} withDay={pro} /></div>}
         {pro && later && (laterBetter
-          ? <p className="mt-3 rounded-xl bg-emerald-50 px-3 py-2 text-sm text-emerald-900 ring-1 ring-emerald-100">🔭 <b>Better later:</b> {later.headline} ({later.rating}, {later.score.toFixed(1)}/10). {later.confidence === "low" ? "Low confidence that far out, so check again closer to the day." : later.confidence === "medium" ? "Medium confidence." : "High confidence."}</p>
+          ? <p className="mt-3 rounded-xl bg-emerald-50 px-3 py-2 text-sm text-emerald-900 ring-1 ring-emerald-100"><b>Better later:</b> {later.headline} ({later.rating}, {later.score.toFixed(1)}/10). {later.confidence === "low" ? "Low confidence that far out. Check again closer to the day." : later.confidence === "medium" ? "Medium confidence." : "High confidence."}</p>
           : <p className="mt-2 text-xs text-slate-500">After that: {later.headline} ({later.score.toFixed(1)}/10, {later.confidence} confidence).</p>)}
         <p className="mt-3 rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-700"><b>The call:</b> {call}</p>
-        {!pro && (later ? laterBetter : f.windows[0] && f.windows[0].start.slice(0, 10) !== today) && <p className="mt-2 text-sm text-ocean-900">🔭 A <b>{later?.rating ?? f.windows[0]?.rating}</b> window shows up later this week — <Link href="/pricing" className="underline">see it with Pro</Link>.</p>}
+        {!pro && (later ? laterBetter : f.windows[0] && f.windows[0].start.slice(0, 10) !== today) && <p className="mt-2 text-sm text-ocean-900">A <b>{later?.rating ?? f.windows[0]?.rating}</b> window shows up later this week. <Link href="/pricing" className="underline">see it with Pro</Link>.</p>}
       </section>
 
       {/* 2. Safety check (always free) */}
@@ -165,8 +166,8 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
               </div>
             );
           })}
-          {pro && f.days.length > di + 5 && <p className="text-xs text-slate-500">More windows further out — see the outlook below.</p>}
-          {!pro && todayWins.length > 1 && <p className="text-sm text-ocean-900">{todayWins.length - 1} more window{todayWins.length > 2 ? "s" : ""} {todayWord} — <Link href="/pricing" className="underline">see them with Pro</Link>.</p>}
+          {pro && f.days.length > di + 5 && <p className="text-xs text-slate-500">More windows further out in the outlook below.</p>}
+          {!pro && todayWins.length > 1 && <p className="text-sm text-ocean-900">{todayWins.length - 1} more window{todayWins.length > 2 ? "s" : ""} {todayWord}. <Link href="/pricing" className="underline">see them with Pro</Link>.</p>}
         </div>
       </section>
 
@@ -182,7 +183,7 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
                 <div className="text-sm font-semibold">{d.date === realToday ? "Today" : dateLabel(d.date)}</div>
                 <div className="my-1">{d.score === null ? <span className="text-xs text-slate-400">—</span> : <RatingBadge rating={d.rating} score={d.score} />}</div>
                 <div className="text-xs text-slate-600">{d.summary}</div>
-                {d.score !== null && <div className="mt-1 text-xs text-slate-500">{s.level === "ok" ? "✅" : s.level === "caution" ? "⚠️" : "⛔"} {d.wind_kn_avg} kn{d.wave_m_avg != null ? ` · 🌊 ${d.wave_m_avg} m (swell ${d.swell_m_avg} m)` : d.swell_m_avg !== null ? ` · ${d.swell_m_avg} m` : ""}{d.sst_c_avg !== null ? ` · ${d.sst_c_avg}°C` : ""}</div>}
+                {d.score !== null && <div className="mt-1 text-xs text-slate-500">{s.level === "ok" ? "" : s.level === "caution" ? "Take care · " : "Unsafe · "}{d.wind_kn_avg} kn{d.wave_m_avg != null ? ` · sea ${d.wave_m_avg} m (swell ${d.swell_m_avg} m)` : d.swell_m_avg !== null ? ` · ${d.swell_m_avg} m` : ""}{d.sst_c_avg !== null ? ` · ${d.sst_c_avg}°C` : ""}</div>}
                 {d.score !== null && d.best_window === null && <div className="text-[10px] font-semibold text-rose-700">No fishable window</div>}
                 {pro && d.windows ? <div className="text-[10px] text-slate-500">{d.windows} window{d.windows > 1 ? "s" : ""}</div> : null}
                 {d.confidence && d.score !== null && <div className="text-[10px] uppercase tracking-wide text-slate-400">{d.confidence} confidence</div>}
@@ -191,7 +192,7 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
               <Link href="/pricing" key={d.date} className="snap-start min-w-[8.5rem] rounded-2xl bg-slate-100 p-3 text-slate-500 ring-1 ring-slate-200">
                 <div className="text-sm font-semibold">{dateLabel(d.date)}</div>
                 <div className="my-1 h-5 w-14 rounded-full bg-slate-300/70" />
-                <div className="text-xs">🔒 Pro</div>
+                <div className="text-xs">Pro</div>
               </Link>
             );
           })}
@@ -220,7 +221,7 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
       {engineSpecies.length > 0 && (
         <section className="space-y-2">
           <h2 className="text-lg font-bold">What’s on {todayWord}</h2>
-          {closed.map((c) => <div key={c.name} className="rounded-2xl bg-rose-50 p-3 text-sm text-rose-900 ring-1 ring-rose-100">⛔ <b>{c.name} — closed.</b> {c.notes[0]}</div>)}
+          {closed.map((c) => <div key={c.name} className="rounded-2xl bg-rose-50 p-3 text-sm text-rose-900 ring-1 ring-rose-100"><b>{c.name}: closed.</b> {c.notes[0]}</div>)}
           <div className="grid gap-2 md:grid-cols-2">
             {engineSpecies.filter((x) => x.status !== "closed").slice(0, pro ? 8 : 3).map((x) => (
               <div key={x.name} className="rounded-2xl bg-white p-3 text-sm ring-1 ring-slate-100">
@@ -247,14 +248,14 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
             </div>
           ))}
         </div>
-        {near.map((c) => <div key={c.id} className="rounded-2xl bg-rose-50 p-3 text-sm text-rose-900 ring-1 ring-rose-100">⛔ <b>{c.name}</b> ({c.type}): {c.rule}</div>)}
-        <p className="text-xs text-slate-400">Sizes, bag limits and the closure map above are still SAMPLE data — not verified. Production pulls from MPI / DOC with a “last checked” date.</p>
+        {near.map((c) => <div key={c.id} className="rounded-2xl bg-rose-50 p-3 text-sm text-rose-900 ring-1 ring-rose-100"><b>{c.name}</b> ({c.type}): {c.rule}</div>)}
+        <p className="text-xs text-slate-400">Sizes, bag limits and the closure map above are still SAMPLE data, not verified. Production pulls from MPI / DOC with a “last checked” date.</p>
       </section>
 
       {/* 7. Pro tools */}
       <section className="grid gap-3 md:grid-cols-2">
         <OfflineButton spotId={f.spot.id} pro={pro} />
-        {pro ? <Link href="/catch-log" className="rounded-2xl bg-white p-4 ring-1 ring-slate-100"><div className="font-semibold">📒 Log a catch here</div><div className="text-sm text-slate-600">Species, size, photo — matched to the conditions automatically.</div></Link>
+        {pro ? <Link href="/catch-log" className="rounded-2xl bg-white p-4 ring-1 ring-slate-100"><div className="font-semibold">Log a catch here</div><div className="text-sm text-slate-600">Species, size, photo. We add the wind, sea and tide for you.</div></Link>
           : <Locked compact title="Catch log" body="Log what you caught and see which conditions work at your spots." />}
       </section>
       <p className="text-xs text-slate-400">{f.sources.join(" · ")}</p>

@@ -14,14 +14,15 @@ interface Ctx extends State {
 }
 const DEFAULT: State = { trialEnds: null, user: null, plan: "free", favourites: [], home: null, alerts: { enabled: true, minRating: "good", sendAt: "18:00", days: ["Thu"] } };
 const AuthCtx = createContext<Ctx | null>(null);
-const KEY = "fishcast-mock-state";
+const KEY = "saltsupply-mock-state";
+const LEGACY_KEY = "fishcast-mock-state"; // pre-rename prototype state, read once and migrated
 export const FREE_FAV_LIMIT = 1;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [s, setS] = useState<State>(DEFAULT);
   const [ready, setReady] = useState(false);
   useEffect(() => {
-    try { const raw = localStorage.getItem(KEY); if (raw) setS({ ...DEFAULT, ...JSON.parse(raw) }); } catch {}
+    try { const raw = localStorage.getItem(KEY) ?? localStorage.getItem(LEGACY_KEY); if (raw) setS({ ...DEFAULT, ...JSON.parse(raw) }); } catch {}
     setReady(true);
   }, []);
   const save = (n: State) => { setS(n); localStorage.setItem(KEY, JSON.stringify(n)); };

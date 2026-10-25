@@ -3,7 +3,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BRAND } from "@/lib/brand";
 import { useAuth } from "@/lib/auth";
-import { PlaceholderNote } from "./ui";
 
 const TABS = [
   { href: "/", label: "Home", icon: "⌂" },
@@ -20,7 +19,7 @@ export function TopBar() {
   return (
     <header className="sticky top-0 z-30 bg-ocean-950 text-white">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-        <Link href="/" className="text-lg font-extrabold tracking-tight">🎣 {BRAND.name}<PlaceholderNote /></Link>
+        <Link href="/" className="text-lg font-extrabold tracking-tight">{BRAND.name}</Link>
         <nav className="hidden md:flex items-center gap-5 text-sm">
           {DESKTOP.map((t) => (
             <Link key={t.href} href={t.href} className={path.startsWith(t.href) ? "text-white font-semibold" : "text-ocean-100/80 hover:text-white"}>{t.label}</Link>

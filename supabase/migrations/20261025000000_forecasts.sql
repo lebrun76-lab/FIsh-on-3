@@ -1,5 +1,5 @@
--- FishCast (placeholder name) - future Supabase schema. NOT APPLIED ANYWHERE.
--- Mirrors what jobs/run_forecasts.py writes locally (web/data/fishcast.sqlite
+-- Salt Supply Co. - future Supabase schema. NOT APPLIED ANYWHERE.
+-- Mirrors what jobs/run_forecasts.py writes locally (web/data/saltsupply.sqlite
 -- and web/data/forecasts/latest/*.json). Postgres 15+/Supabase.
 --
 -- Write path: scheduled job (service role key, server-side only) runs

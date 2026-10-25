@@ -3,27 +3,31 @@ import { allSummaries, regionCalls } from "@/lib/summaries";
 import { CallCard } from "@/components/WhereToGo";
 import { SpotCard } from "@/components/SpotCard";
 import { BRAND } from "@/lib/brand";
+import { PhotoSlot } from "@/components/ui";
 
 export default function Home() {
   const top = allSummaries().sort((a, b) => b.score - a.score).slice(0, 4);
   const calls = regionCalls().slice(0, 3);
   return (
     <div className="space-y-8 pt-6">
-      <section className="rounded-3xl bg-gradient-to-br from-ocean-900 to-ocean-700 p-6 md:p-10 text-white">
-        <p className="text-sm uppercase tracking-widest text-ocean-100/80">NZ fishing forecast</p>
-        <h1 className="mt-2 text-3xl md:text-5xl font-extrabold leading-tight">{BRAND.tagline}</h1>
-        <p className="mt-3 max-w-xl text-ocean-100">Wind, swell, tides and sea temperature turned into one simple answer: is it worth going, and when?</p>
-        <div className="mt-6 flex flex-wrap gap-3">
-          <Link href="/spots" className="rounded-full bg-white px-5 py-3 font-semibold text-ocean-950">Check my spot</Link>
-          <Link href="/where-to-go" className="rounded-full px-5 py-3 font-semibold ring-1 ring-white/50">Where to go today</Link>
+      <section className="grid gap-4 md:grid-cols-2 md:items-center">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">NZ fishing forecast</p>
+          <h1 className="mt-2 text-3xl md:text-4xl font-extrabold leading-tight text-ocean-950">{BRAND.tagline}</h1>
+          <p className="mt-3 max-w-xl text-slate-600">Wind, swell, tide and water temp for {allSummaries().length} spots around the country, boiled down to go, maybe, or stay home. And the best few hours to be out there.</p>
+          <div className="mt-5 flex flex-wrap gap-3">
+            <Link href="/spots" className="rounded-full bg-ocean-900 px-5 py-3 font-semibold text-white">Check a spot</Link>
+            <Link href="/where-to-go" className="rounded-full px-5 py-3 font-semibold text-ocean-900 ring-1 ring-ocean-900/30">Where to go</Link>
+          </div>
         </div>
+        <PhotoSlot id="home-hero" subject="small boat heading out from a NZ boat ramp at first light" ratio="3:2" />
       </section>
       <section>
         <div className="mb-3 flex items-end justify-between"><h2 className="text-xl font-bold">Next fishing day’s calls</h2><Link href="/where-to-go" className="text-sm text-ocean-700 font-semibold">All regions →</Link></div>
         <div className="grid gap-3 md:grid-cols-3">{calls.map((c) => <CallCard key={c.region} c={c} />)}</div>
       </section>
       <section className="grid gap-3 md:grid-cols-4 text-sm">
-        {[["✅ Safety check", "Wind + swell combined into one go / careful / stay home."], ["⚑ Rules on a map", "Reserves, closures and legal sizes — always free."], ["📶 Works offline", "Save forecasts for the boat ramp with no signal."], ["🙅 No intrusive ads", `Honest ${BRAND.trialDays}-day Pro trial, no card needed.`]].map(([t, d]) => (
+        {[["Safety check", "Wind and waves together: fine, take care, or stay home."], ["Rules on a map", "Reserves, closures and legal sizes. Always free."], ["Works offline", "Save a forecast before you lose signal at the ramp."], ["No pop-ups", `${BRAND.trialDays}-day Pro trial. No card.`]].map(([t, d]) => (
           <div key={t} className="rounded-2xl bg-white p-4 ring-1 ring-slate-100"><div className="font-semibold">{t}</div><div className="text-slate-600">{d}</div></div>
         ))}
       </section>
@@ -32,7 +36,7 @@ export default function Home() {
         <div className="grid gap-3 md:grid-cols-2">{top.map((s) => <SpotCard key={s.id} s={s} />)}</div>
       </section>
       <section className="grid gap-3 md:grid-cols-3">
-        {[["1. Pick your spots", "Save your home spot and favourites."], ["2. Read the verdict", "Plain-English advice first. Charts if you want the detail."], ["3. Get the nod", "We email you when a good fishing window is coming."]].map(([t, d]) => (
+        {[["1. Save your spot", "Your home spot, plus any others you fish."], ["2. Read the call", "The answer first. Charts underneath if you want them."], ["3. Get an email", "We'll email you when a good window's coming up."]].map(([t, d]) => (
           <div key={t} className="rounded-2xl bg-white p-5 ring-1 ring-slate-100"><div className="font-semibold">{t}</div><div className="text-sm text-slate-600">{d}</div></div>
         ))}
       </section>

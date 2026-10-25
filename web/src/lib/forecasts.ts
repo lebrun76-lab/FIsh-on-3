@@ -12,7 +12,7 @@ import { SPOTS, buildForecast, getSpot } from "./mock";
 import type { SpotForecast } from "./types";
 import { nzTodayISO } from "./time";
 
-const DIR = process.env.FISHCAST_FORECAST_DIR ?? path.join(process.cwd(), "data", "forecasts");
+const DIR = process.env.SALTSUPPLY_FORECAST_DIR ?? process.env.FISHCAST_FORECAST_DIR /* deprecated */ ?? path.join(process.cwd(), "data", "forecasts");
 const STALE_H = 6;
 
 export interface RunManifest { run_id: string; finished_at: string; status: string; engine_version: string; spots_ok: string[]; spots_failed: Record<string, string>; open_meteo_tier: string; contract_problems?: Record<string, string[]>; model_run?: string; sst_map?: { valid_time_nz: string; api_calls_counted: number } | null }

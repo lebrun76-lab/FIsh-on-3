@@ -1,8 +1,8 @@
 {
-  "name": "fishcast-prototype",
+  "name": "saltsupply-web",
   "private": true,
   "version": "0.1.0",
-  "description": "Clickable prototype for the Fish On rebuild. 'FishCast' is a PLACEHOLDER brand name. Mock data only.",
+  "description": "Salt Supply Co. (saltsupply.co.nz) web prototype: NZ fishing forecasts in plain English.",
   "scripts": {
     "dev": "next dev -p 3000",
     "build": "next build",

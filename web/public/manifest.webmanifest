@@ -1,1 +1,1 @@
-{ "name": "FishCast (placeholder name)", "short_name": "FishCast", "start_url": "/", "display": "standalone", "background_color": "#fbf8f2", "theme_color": "#06223a", "icons": [] }
+{ "name": "Salt Supply Co.", "short_name": "Salt Supply", "description": "Plain-English fishing forecasts for New Zealand.", "start_url": "/", "scope": "/", "display": "standalone", "background_color": "#fbf8f2", "theme_color": "#06223a", "icons": [] }

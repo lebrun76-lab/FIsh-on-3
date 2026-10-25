@@ -1,8 +1,8 @@
 // STUB service worker for offline mode. Network-first for pages and API,
 // falling back to cache (explicitly saved forecasts + recently visited pages).
-const CACHE = "fishcast-offline-v1";
+const CACHE = "saltsupply-offline-v1";
 self.addEventListener("install", (e) => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then((c) => c.addAll(["/offline"]))); });
-self.addEventListener("activate", (e) => e.waitUntil(self.clients.claim()));
+self.addEventListener("activate", (e) => e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim())));
 self.addEventListener("fetch", (e) => {
   const req = e.request;
   if (req.method !== "GET" || new URL(req.url).origin !== location.origin) return;

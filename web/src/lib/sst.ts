@@ -21,7 +21,7 @@ export interface SstMapData {
   focus?: { lat: number; lon: number; name: string };
 }
 
-const FILE = process.env.FISHCAST_SST_FILE ?? path.join(process.cwd(), "data", "sst", "latest.json");
+const FILE = process.env.SALTSUPPLY_SST_FILE ?? process.env.FISHCAST_SST_FILE /* deprecated */ ?? path.join(process.cwd(), "data", "sst", "latest.json");
 
 export function loadSst(): SstMapData | null {
   try {

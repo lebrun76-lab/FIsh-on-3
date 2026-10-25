@@ -1,4 +1,4 @@
-"""Headless screenshots of the FishCast (placeholder) prototype.
+"""Headless screenshots of the Salt Supply Co. web prototype.
 Usage: (server running on :3000)  python3 scripts/screenshots.py [out_dir]
 Requires: pip install playwright ; uses system Chrome via CHROME env (default /usr/bin/google-chrome)."""
 import json, os, sys
@@ -28,7 +28,10 @@ SHOTS = [  # (name, path, auth-state or None)
     ("24-spot-bluff-pro-no-window", "/spots/bluff", state("pro")),
     ("25-spot-bluff-free-no-window", "/spots/bluff", state("free")),
     ("26-spot-fiordland-pro-no-window", "/spots/fiordland", state("pro")),
+    ("27-about", "/about", None),
 ]
+if os.environ.get("SET"):  # e.g. SET=01-home,05-spot-pro,13-pricing
+    SHOTS = [x for x in SHOTS if x[0] in os.environ["SET"].split(",")]
 if os.environ.get("ONLY"):  # e.g. ONLY=21-mock-fallback BASE=http://localhost:3001
     SHOTS = [(os.environ["ONLY"], os.environ.get("ONLY_PATH", "/spots/hauraki_gulf"), state(os.environ.get("ONLY_PLAN", "free")))]
 SIZES = {"mobile": dict(viewport={"width": 390, "height": 844}, device_scale_factor=2, is_mobile=True, has_touch=True),
@@ -38,7 +41,7 @@ with sync_playwright() as p:
     for size, opts in SIZES.items():
         for name, path, st in SHOTS:
             ctx = b.new_context(**opts, timezone_id="Pacific/Auckland", locale="en-NZ")
-            if st: ctx.add_init_script(f"localStorage.setItem('fishcast-mock-state', {json.dumps(json.dumps(st))})")
+            if st: ctx.add_init_script(f"localStorage.setItem('saltsupply-mock-state', {json.dumps(json.dumps(st))})")
             pg = ctx.new_page(); pg.goto(BASE + path, wait_until="networkidle"); pg.wait_for_timeout(700)
             if "map" in path:
                 btn = pg.get_by_role("button", name="map")

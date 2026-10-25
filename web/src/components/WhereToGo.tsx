@@ -9,7 +9,7 @@ export function CallCard({ c, rank, tactics }: { c: RegionCall; rank?: number; t
     <Link href={`/spots/${c.spotId}`} className="block rounded-2xl bg-white p-4 ring-1 ring-slate-100">
       <div className="flex items-center justify-between gap-2"><div className="font-semibold">{rank ? `${rank}. ` : ""}{c.region} <span className="text-xs font-normal text-slate-500">· {c.dayLabel}</span>{c.mock && <MockTag />}</div><RatingBadge rating={c.rating} score={c.score} /></div>
       <p className="mt-1 text-slate-800">{c.call}</p>
-      {tactics && c.tactics && <p className="mt-1 text-sm text-slate-600">🎯 {c.tactics}</p>}
+      {tactics && c.tactics && <p className="mt-1 text-sm text-slate-600">Try: {c.tactics}</p>}
     </Link>
   );
 }

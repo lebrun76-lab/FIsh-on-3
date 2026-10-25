@@ -2,6 +2,7 @@ import { regionCalls } from "@/lib/summaries";
 import { WhereToGo } from "@/components/WhereToGo";
 import { SstMap } from "@/components/SstMap";
 import { loadSst, nzCaption } from "@/lib/sst";
+export const metadata = { title: "Where to go" };
 export const revalidate = 1800;
 export default function Page() {
   const sst = loadSst();

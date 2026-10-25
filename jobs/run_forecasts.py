@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""FishCast scheduled forecast job (local prototype runner).
+"""Salt Supply Co. scheduled forecast job (local prototype runner).
 
 Runs Forecast Brain (``fishon_engine``, read-only clone of PR #5 branch
 feat/site-feedback at /workspace/fish-engine-site, installed with
@@ -9,7 +9,7 @@ is still mapped by ``legacy_to_v1``. Output goes to the site's v1 contract
 (web/src/lib/types.ts, web/docs/forecast-api.md) and writes Supabase-shaped
 records to local storage:
 
-  web/data/fishcast.sqlite              rows for the tables in
+  web/data/saltsupply.sqlite            rows for the tables in
                                         supabase/migrations/20261025000000_forecasts.sql
                                         (forecast_runs, spot_forecasts, tide_events)
   web/data/forecasts/latest/<id>.json   v1 SpotForecast payload (= spot_forecasts.payload)
@@ -336,7 +336,7 @@ def main(argv=None):
     out = Path(a.out)
     latest = out / "forecasts" / "latest"
     latest.mkdir(parents=True, exist_ok=True)
-    db = sqlite3.connect(out / "fishcast.sqlite")
+    db = sqlite3.connect(out / "saltsupply.sqlite")
     db.executescript(SQLITE_SCHEMA)
 
     run_id = str(uuid.uuid4())
