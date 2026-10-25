@@ -22,10 +22,12 @@ SHOTS = [  # (name, path, auth-state or None)
     ("15-account-free", "/account", state("free")), ("16-account-trial", "/account?upgraded=1", state("trial")),
     ("17-catch-log-free", "/catch-log", state("free")), ("18-catch-log-pro", "/catch-log", state("pro")),
     ("19-spot-marlborough-pro-closure", "/spots/marlborough_sounds", state("pro")),
-    ("20-spot-catlins-pro-modelled-tides", "/spots/catlins", state("pro")),
+    ("20-spot-catlins-pro-secondary-port", "/spots/catlins", state("pro")),
+    ("22-spot-dunedin-pro-sst-break", "/spots/dunedin", state("pro")),
+    ("23-spot-central-otago-lake-pro", "/spots/central_otago_lakes", state("pro")),
 ]
 if os.environ.get("ONLY"):  # e.g. ONLY=21-mock-fallback BASE=http://localhost:3001
-    SHOTS = [(os.environ["ONLY"], os.environ.get("ONLY_PATH", "/spots/hauraki_gulf"), state("free"))]
+    SHOTS = [(os.environ["ONLY"], os.environ.get("ONLY_PATH", "/spots/hauraki_gulf"), state(os.environ.get("ONLY_PLAN", "free")))]
 SIZES = {"mobile": dict(viewport={"width": 390, "height": 844}, device_scale_factor=2, is_mobile=True, has_touch=True),
          "desktop": dict(viewport={"width": 1440, "height": 900})}
 with sync_playwright() as p:

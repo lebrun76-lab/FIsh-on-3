@@ -45,13 +45,14 @@ export function WindChart({ data }: { data: HourPoint[] }) {
 export function SwellChart({ data }: { data: HourPoint[] }) {
   const c = common(data);
   return (
-    <Frame title="Swell" hint="Under 1 m is easy for small boats and rock fishing.">
+    <Frame title="Waves & swell" hint="Solid = total wave height (chop + swell, what you feel). Dashed = swell only. Under 1 m is easy.">
       <ResponsiveContainer>
         <AreaChart data={data} margin={{ left: 0, right: 8, top: 4 }}>
           {c.grid}<ReferenceArea y1={0} y2={1} fill="#10b981" fillOpacity={0.08} />
           {c.x}<YAxis tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} tickFormatter={num(" m", 2)} width={54} />
           {c.tip("m")}
-          <Area type="monotone" dataKey="swell_m" name="Swell" stroke="#0e7490" fill="#22d3ee" fillOpacity={0.25} strokeWidth={2} />
+          <Area type="monotone" dataKey="wave_m" name="Waves" stroke="#0e7490" fill="#22d3ee" fillOpacity={0.25} strokeWidth={2} />
+          <Area type="monotone" dataKey="swell_m" name="Swell" stroke="#475569" strokeDasharray="4 3" fill="none" strokeWidth={1.5} />
         </AreaChart>
       </ResponsiveContainer>
     </Frame>

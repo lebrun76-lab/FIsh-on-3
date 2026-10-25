@@ -1,4 +1,5 @@
 import { allForecasts, nextDayIndex } from "./forecasts";
+import { speciesOf } from "./view";
 import type { Rating } from "./types";
 import { speciesFor, sizeText } from "./rules";
 import { clock, dateLabel, nzTodayISO } from "./time";
@@ -21,7 +22,7 @@ export function regionCalls(): RegionCall[] {
     const day = f.days[nextDayIndex(f)];
     const w = f.windows.filter((x) => x.start.slice(0, 10) === day.date).sort((a, b) => b.score - a.score)[0];
     const score = w?.score ?? day.score ?? 0;
-    const open = (day.species ?? []).filter((x) => x.status !== "closed").map((x) => x.name);
+    const open = speciesOf(f).filter((x) => x.status !== "closed").map((x) => x.name);
     const targets = (open.length ? open : s.species).slice(0, 2);
     const sp = speciesFor(targets);
     const name = s.name.split(" (")[0];
@@ -30,7 +31,7 @@ export function regionCalls(): RegionCall[] {
       ? `Go, ${clock(w.start)}–${clock(w.end)}, ${name} — ${targets.join("/").toLowerCase()}${sp[0] ? `, ${sp[0].name.toLowerCase()} ${sizeText(sp[0])}` : ""}.`
       : score >= 4.5 ? `Maybe — ${name} is fishable but no standout window ${when}.` : `Give it a miss ${when} at ${name}. ${day.summary}.`;
     const prev = best.get(s.region);
-    if (!prev || score > prev.score) best.set(s.region, { region: s.region, spotId: s.id, spotName: name, rating: w?.rating ?? day.rating, score, call, tactics: day.species?.find((x) => x.status !== "closed")?.how ?? sp[0]?.tactics ?? "", species: targets, dayLabel: day.date === todayISO ? "Today" : dateLabel(day.date), mock: f.data_status === "mock-fallback" });
+    if (!prev || score > prev.score) best.set(s.region, { region: s.region, spotId: s.id, spotName: name, rating: w?.rating ?? day.rating, score, call, tactics: speciesOf(f).find((x) => x.status !== "closed")?.how ?? sp[0]?.tactics ?? "", species: targets, dayLabel: day.date === todayISO ? "Today" : dateLabel(day.date), mock: f.data_status === "mock-fallback" });
   }
   return [...best.values()].sort((a, b) => b.score - a.score);
 }

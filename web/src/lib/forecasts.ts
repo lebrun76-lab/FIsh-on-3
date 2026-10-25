@@ -15,7 +15,7 @@ import { nzTodayISO } from "./time";
 const DIR = process.env.FISHCAST_FORECAST_DIR ?? path.join(process.cwd(), "data", "forecasts");
 const STALE_H = 6;
 
-export interface RunManifest { run_id: string; finished_at: string; status: string; engine_version: string; spots_ok: string[]; spots_failed: Record<string, string>; open_meteo_tier: string }
+export interface RunManifest { run_id: string; finished_at: string; status: string; engine_version: string; spots_ok: string[]; spots_failed: Record<string, string>; open_meteo_tier: string; contract_problems?: Record<string, string[]>; model_run?: string; sst_map?: { valid_time_nz: string; api_calls_counted: number } | null }
 
 export function runManifest(): RunManifest | null {
   try { return JSON.parse(fs.readFileSync(path.join(DIR, "manifest.json"), "utf8")); } catch { return null; }
@@ -55,8 +55,10 @@ export function getForecast(id: string): SpotForecast | null {
     const best = (x: SpotForecast) => x.windows.slice().sort((a, b) => b.score - a.score)[0];
     const t = trim({ ...f, data_status: "engine", stale: ageH > STALE_H });
     const bw = best(t);
-    // Re-derive the headline after dropping past windows.
-    if (bw && bw.start !== f.windows[0]?.start) t.verdict = { ...t.verdict, rating: bw.rating, score: bw.score, headline: (bw.rating === "great" || bw.rating === "good" ? "Go " : "Best chance: ") + bw.advice.split(",")[0], advice: bw.advice, confidence: bw.confidence ?? t.verdict.confidence };
+    // Use the engine's verdict; only re-derive it once its window has passed.
+    const vEnd = f.verdict.window?.end ? Date.parse(f.verdict.window.end) : null;
+    const expired = vEnd !== null ? vEnd <= Date.now() : bw && bw.start !== f.windows.slice().sort((a, b) => b.score - a.score)[0]?.start;
+    if (bw && expired) t.verdict = { ...t.verdict, rating: bw.rating, score: bw.score, headline: (bw.rating === "great" || bw.rating === "good" ? "Go " : "Best chance: ") + bw.advice.split(",")[0], advice: bw.advice, confidence: bw.confidence ?? t.verdict.confidence, window: { start: bw.start, end: bw.end } };
     return t;
   } catch (e) {
     return mockFallback(id, `Engine output unreadable: ${(e as Error).message}`);
@@ -67,3 +69,5 @@ export const allForecasts = () => SPOTS.map((s) => getForecast(s.id)!).filter(Bo
 
 /** First day that still has fishable daylight (engine returns score=null late at night). */
 export const nextDayIndex = (f: SpotForecast) => Math.max(0, f.days.findIndex((d) => d.score !== null));
+
+export { speciesOf } from "./view";

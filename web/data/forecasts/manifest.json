@@ -1,10 +1,10 @@
 {
- "run_id": "22881576-2ea6-4365-b25f-c5b35d10570b",
- "started_at": "2026-10-25T23:49:21+13:00",
- "finished_at": "2026-10-25T23:49:22+13:00",
+ "run_id": "905a3a3b-e653-411c-a2c3-bbcaf63f14dc",
+ "started_at": "2026-10-26T00:24:54+13:00",
+ "finished_at": "2026-10-26T00:26:32+13:00",
  "status": "ok",
- "engine_version": "2.0.0a1",
- "mapper_version": "2026-10-25.1",
+ "engine_version": "2.1.0",
+ "mapper_version": "2026-10-26.1",
  "api_version": "1",
  "days": 10,
  "spots_ok": [
@@ -33,5 +33,18 @@
   "wellington"
  ],
  "spots_failed": {},
+ "contract_problems": {},
+ "model_run": "ECMWF IFS 2026-10-25T00:00Z (latest run ingested by Open-Meteo best_match)",
+ "model_runs": {
+  "ecmwf_ifs": "2026-10-25T00:00Z",
+  "ncep_gfs013": "2026-10-25T06:00Z",
+  "dwd_icon": "2026-10-25T06:00Z",
+  "meteofrance_wave": "2026-10-24T12:00Z",
+  "ecmwf_wam": "2026-10-25T00:00Z"
+ },
+ "sst_map": {
+  "valid_time_nz": "2026-10-26T00:15",
+  "api_calls_counted": 663
+ },
  "open_meteo_tier": "free (non-commercial)"
 }

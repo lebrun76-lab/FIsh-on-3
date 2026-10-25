@@ -6,17 +6,17 @@ Clickable, mobile-first prototype of the rebuilt Fish-on site. **Real forecasts 
 Stack: Next.js 16 (App Router) · TypeScript · Tailwind v4 · Recharts 3. Lives in `web/` so the Python app is untouched.
 
 ## Forecast data (scheduled job, local)
-Forecast Brain lives in a separate working copy (`/workspace/fish-engine`, PR #2). It is imported, never edited.
+Forecast Brain (engine 2.1.0) is a read-only clone of PR #5 (`feat/site-feedback`) at `/workspace/fish-engine-site`, installed editable. It is imported, never edited (`/workspace/fish-engine` is another agent's working copy and is not used).
 ```bash
-# one-off setup (repo root). The engine has no pyproject yet, so a .pth file puts it on the path
-python3 -m venv jobs/.venv && jobs/.venv/bin/pip install "requests>=2.31"
-echo /workspace/fish-engine > "$(jobs/.venv/bin/python -c 'import site;print(site.getsitepackages()[0])')/fishon_engine_local.pth"
-# run the job (cron in production: every 1-3 h). Takes about 50 s cold, under 1 s from the engine's HTTP cache
+# one-off setup (repo root)
+git clone --branch feat/site-feedback https://github.com/lebrun76-lab/FIsh-on-3 /workspace/fish-engine-site
+python3 -m venv jobs/.venv && jobs/.venv/bin/pip install -e "/workspace/fish-engine-site[sstmap]"
+# run the job (cron in production: every 1-3 h). Takes about 100 s cold (incl. the SST map), seconds from the engine's HTTP cache
 PYTHONDONTWRITEBYTECODE=1 jobs/.venv/bin/python jobs/run_forecasts.py            # all 23 spots, 10 days
 PYTHONDONTWRITEBYTECODE=1 jobs/.venv/bin/python jobs/run_forecasts.py --spots hauraki_gulf moeraki
 ```
-- Output: `web/data/forecasts/latest/<spot>.json` (the v1 payload), `web/data/forecasts/manifest.json` (the run row), and `web/data/fishcast.sqlite` (git-ignored; same tables as `supabase/migrations/20261025000000_forecasts.sql`).
-- Env var names only: `FISHON_CACHE_DB` (engine HTTP cache), `OPEN_METEO_API_KEY` (optional; the paid tier is needed for commercial use), `FISHON_ENGINE_PATH`, and `FISHCAST_FORECAST_DIR` (the site reads from here; default `web/data/forecasts`).
+- Output: `web/data/forecasts/latest/<spot>.json` (the engine's v1 payload, validated, `blocks_3h` stripped), `web/data/sst/latest.json` + `web/public/sst/sst_latest.png` (SST map; ~663 Open-Meteo calls per refresh, skip with `--no-sst`), `web/data/forecasts/manifest.json` (the run row), and `web/data/fishcast.sqlite` (git-ignored; same tables as `supabase/migrations/20261025000000_forecasts.sql`).
+- Env var names only: `FISHON_CACHE_DB` (engine HTTP cache), `OPEN_METEO_API_KEY` (optional; the paid tier is needed for commercial use), `FISHON_ENGINE_PATH` (fallback import path, default the clone), `FISHCAST_SST_FILE`, and `FISHCAST_FORECAST_DIR` (the site reads from here; default `web/data/forecasts`).
 - After a job run, `npm run build` (or wait for ISR at 30 min) to refresh static pages. Spot pages read the files on each request.
 
 ## Run

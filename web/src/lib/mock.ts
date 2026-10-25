@@ -73,7 +73,7 @@ export function buildForecast(spot: Spot, days = 10): SpotForecast {
     const tide = spot.coastal ? round(tideAmp * Math.cos((2 * Math.PI * (i - tidePhase)) / 12.42), 2) : null;
     const day = Math.floor(i / 24);
     const rain = day === wetDay || (day === wetDay + 1 && h < 10) ? round(r() * 2.5) : r() > 0.93 ? round(r() * 0.6) : 0;
-    hourly.push({ time, wind_kn: wind, gust_kn: gust, wind_dir_deg: Math.round((200 + synoptic * 90 + 360) % 360), swell_m: swell, swell_period_s: period, sst_c: sst, tide_m: tide, rain_mm: rain, score: hourScore(wind, gust, swell, rain, spot.coastal) });
+    hourly.push({ time, wind_kn: wind, gust_kn: gust, wind_dir_deg: Math.round((200 + synoptic * 90 + 360) % 360), swell_m: swell === null ? null : Math.round(swell * 0.75 * 100) / 100, wave_m: swell, swell_period_s: period, sst_c: sst, tide_m: tide, rain_mm: rain, score: hourScore(wind, gust, swell, rain, spot.coastal) });
   }
 
   // Tides: analytic highs/lows of the semi-diurnal curve

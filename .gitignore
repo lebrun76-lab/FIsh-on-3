@@ -2,3 +2,4 @@ __pycache__/
 jobs/.venv/
 web/data/*.sqlite
 web/data/forecasts/latest/.*.tmp
+jobs/.cache/

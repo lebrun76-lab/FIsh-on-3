@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 """FishCast scheduled forecast job (local prototype runner).
 
-Runs Forecast Brain (``fishon_engine``, read-only working copy, imported - never
-edited) for every spot, maps the engine output to the site's v1 contract
+Runs Forecast Brain (``fishon_engine``, read-only clone of PR #5 branch
+feat/site-feedback at /workspace/fish-engine-site, installed with
+``pip install -e`` - never edited) for every spot. Engine >= 2.1 emits the v1
+contract itself, so this is a pass-through plus validation; engine 2.0 output
+is still mapped by ``legacy_to_v1``. Output goes to the site's v1 contract
 (web/src/lib/types.ts, web/docs/forecast-api.md) and writes Supabase-shaped
 records to local storage:
 
@@ -11,6 +14,8 @@ records to local storage:
                                         (forecast_runs, spot_forecasts, tide_events)
   web/data/forecasts/latest/<id>.json   v1 SpotForecast payload (= spot_forecasts.payload)
   web/data/forecasts/manifest.json      the latest forecast_runs row
+  web/data/sst/latest.json              NZ SST map for the site (= sst_maps.payload)
+  web/public/sst/sst_latest.png         engine-rendered PNG of the same grid
 
 The Next.js site reads the JSON export server-side. In production the same
 mapping runs in a cron job and upserts into Supabase Postgres instead.
@@ -38,7 +43,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_OUT = ROOT / "web" / "data"
-ENGINE_PATH = os.environ.get("FISHON_ENGINE_PATH", "/workspace/fish-engine")
+ENGINE_PATH = os.environ.get("FISHON_ENGINE_PATH", "/workspace/fish-engine-site")
 if ENGINE_PATH not in sys.path and Path(ENGINE_PATH, "fishon_engine").is_dir():
     sys.path.append(ENGINE_PATH)  # fallback if the venv .pth is missing
 
@@ -47,7 +52,11 @@ from fishon_engine import tides as fe_tides  # noqa: E402
 from fishon_engine.tz import NZ  # noqa: E402
 
 API_VERSION = "1"
-MAPPER_VERSION = "2026-10-25.1"
+MAPPER_VERSION = "2026-10-26.1"
+# Engine fields the site does not need (kept out of the public payload; the
+# full engine output still goes to spot_forecasts.engine_payload).
+DROP_TOP = {"cache"}
+DROP_DAY = {"blocks_3h"}   # 3-hourly blocks kept by the engine for the Streamlit app
 
 
 # ---------------------------------------------------------------- helpers
@@ -131,7 +140,18 @@ def tide_series(events, start, end, step_min=30):
 
 
 # ---------------------------------------------------------------- mapping
-def to_v1(fc: dict) -> dict:
+def site_payload(fc: dict) -> tuple[dict, list[str]]:
+    """Engine output -> site payload. Returns (payload, contract problems)."""
+    if fc.get("api_version") == "1":          # engine >= 2.1 emits v1 itself
+        from fishon_engine.contract import validate_v1
+        v1 = {k: v for k, v in fc.items() if k not in DROP_TOP}
+        v1["days"] = [{k: v for k, v in d.items() if k not in DROP_DAY} for d in fc["days"]]
+        v1["mapper_version"] = MAPPER_VERSION
+        return v1, validate_v1(fc)
+    return legacy_to_v1(fc), ["engine < 2.1: mapped by legacy_to_v1"]
+
+
+def legacy_to_v1(fc: dict) -> dict:
     sp = fe.get_spot(fc["spot"]["id"])
     days_in = fc["days"]
     coastal = sp.is_coastal
@@ -234,6 +254,55 @@ def to_v1(fc: dict) -> dict:
     }
 
 
+# ---------------------------------------------------------------- SST map
+def build_sst(out: Path, public: Path):
+    """One batched Open-Meteo POST (~663 location-calls, cached 6 h by the
+    engine) -> compact JSON for the site's SVG map + the engine PNG."""
+    from fishon_engine import sstmap as sm
+    grid = sm.fetch_grid()
+    land = sm.load_land()
+    iso = sm.isotherms(grid)
+    spots = sm.coastal_spots()
+    by_id = {r["spot"]: r for r in sm.spot_sst(grid, spots)}
+    edges = {e["spot"]: e for e in sm.spot_edges(grid, spots)}
+    per_spot = {}
+    for sp in spots:
+        near_iso = sorted({lev for lev, segs in iso.items()
+                           if min(sm.haversine_km(sp.marine_lat, sp.marine_lon, y, x) for seg in segs for x, y in seg) <= 60},
+                          reverse=True)
+        e = edges.get(sp.id)
+        r = by_id.get(sp.id, {})
+        per_spot[sp.id] = {
+            "sst_c": r.get("sst_c"), "cell_km": r.get("cell_km"),
+            "marine_point": [sp.marine_lat, sp.marine_lon],
+            "isotherms_near": near_iso,
+            "edge": None if not e else {
+                "min_c": e["min_c"], "max_c": e["max_c"], "delta_c": e["delta_c"],
+                "warm_km": e["warm_km"], "warm_cell": e["warm_cell"],
+                "warm_dir": sm.compass(sm.bearing_deg(sp.marine_lat, sp.marine_lon, *e["warm_cell"]))}}
+    fronts = [{"text": n} for n in sm.notes(grid) if n.startswith("Temperature front")]
+    payload = {
+        "valid_time_nz": grid.get("valid_time_nz"), "valid_text": sm.nice_time(grid.get("valid_time_nz")),
+        "bbox": grid["bbox"], "step": grid["step"], "lats": grid["lats"], "lons": grid["lons"],
+        "sst": [[None if v is None else round(v, 1) for v in row] for row in grid["sst"]],
+        "isotherms": {str(int(k)): [[[round(x, 2), round(y, 2)] for x, y in seg] for seg in segs] for k, segs in iso.items()},
+        "land": [[[round(x, 3), round(y, 3)] for x, y in ring] for ring in land],
+        "notes": sm.notes(grid), "fronts": fronts, "spots": per_spot,
+        "api_calls_counted": grid.get("api_calls_counted"), "requests": grid.get("requests"),
+        "cache": [m.get("cache") for m in grid.get("cache") or []],
+        "attribution": sm.ATTRIBUTION, "caveats": [
+            "0.5° grid (~55 km): shows regional water masses and fronts, not rips or tide lines.",
+            "Shallow bays can read warmer than the open sea (e.g. Firth of Thames, Tasman Bay)."],
+    }
+    (out / "sst").mkdir(parents=True, exist_ok=True)
+    tmp = out / "sst" / ".latest.json.tmp"
+    tmp.write_text(json.dumps(payload, ensure_ascii=False, separators=(",", ":")))
+    tmp.replace(out / "sst" / "latest.json")
+    public.mkdir(parents=True, exist_ok=True)
+    sm.render_png(grid, str(public / "sst_latest.png"), land=land)
+    return payload
+
+
 # ---------------------------------------------------------------- storage
 SQLITE_SCHEMA = """
 CREATE TABLE IF NOT EXISTS forecast_runs (
@@ -250,6 +319,8 @@ CREATE VIEW IF NOT EXISTS latest_spot_forecasts AS
   SELECT f.* FROM spot_forecasts f JOIN (
     SELECT spot_id, MAX(generated_at) g FROM spot_forecasts WHERE status='ok' GROUP BY spot_id) l
   ON f.spot_id=l.spot_id AND f.generated_at=l.g WHERE f.status='ok';
+CREATE TABLE IF NOT EXISTS sst_maps (
+  run_id TEXT PRIMARY KEY, valid_time TEXT, step_deg REAL, api_calls INTEGER, payload TEXT);
 """
 
 
@@ -258,6 +329,8 @@ def main(argv=None):
     ap.add_argument("--days", type=int, default=10)
     ap.add_argument("--spots", nargs="*", help="spot ids (default: all engine spots)")
     ap.add_argument("--out", default=str(DEFAULT_OUT))
+    ap.add_argument("--public", default=str(ROOT / "web" / "public" / "sst"))
+    ap.add_argument("--no-sst", action="store_true", help="skip the SST map (saves ~663 Open-Meteo calls)")
     a = ap.parse_args(argv)
 
     out = Path(a.out)
@@ -271,11 +344,19 @@ def main(argv=None):
     db.execute("INSERT INTO forecast_runs (id, started_at, engine_version, mapper_version, days, status) VALUES (?,?,?,?,?,?)",
                (run_id, started, fe.__version__, MAPPER_VERSION, a.days, "running"))
     ids = a.spots or sorted(fe.SPOTS)
-    ok, failed = [], {}
+    ok, failed, problems = [], {}, {}
+    kw = {}
+    try:
+        from fishon_engine import openmeteo as fe_om
+        kw["model_runs"] = fe_om.fetch_model_runs()  # 5 small GETs, shared by all spots
+    except Exception:  # engine 2.0 has no model metadata
+        pass
     for sid in ids:
         try:
-            fc = fe.forecast_spot(sid, days=a.days)
-            v1 = to_v1(fc)
+            fc = fe.forecast_spot(sid, days=a.days, **kw)
+            v1, probs = site_payload(fc)
+            if probs:
+                problems[sid] = probs[:20]
             v1["run_id"] = run_id
             tmp = latest / f".{sid}.json.tmp"
             tmp.write_text(json.dumps(v1, ensure_ascii=False, separators=(",", ":")))
@@ -284,26 +365,41 @@ def main(argv=None):
                        (run_id, sid, API_VERSION, v1["generated_at"], v1["days"][0]["date"], v1["days"][-1]["date"],
                         "ok", None, v1["tide_source"], json.dumps(v1), json.dumps(fc, default=str)))
             db.executemany("INSERT OR REPLACE INTO tide_events VALUES (?,?,?,?,?,?,?)",
-                           [(run_id, sid, t["time"], t["type"], t["height_m"], v1["tide_datum"], v1["tide_source"]) for t in v1["tides"]])
+                           [(run_id, sid, t["time"], t["type"], t["height_m"], t.get("datum", v1["tide_datum"]), t.get("source", v1["tide_source"])) for t in v1["tides"]])
             ok.append(sid)
             d1 = v1["days"][1] if len(v1["days"]) > 1 else v1["days"][0]
-            print(f"ok   {sid:22} {v1['tide_source'] or 'freshwater':40.40} best {v1['verdict']['score']:>4} "
-                  f"| {d1['date']} wind {d1['wind_kn_avg']} kn sea {d1['swell_m_avg']} m sst {d1['sst_c_avg']} C")
+            print(f"ok   {sid:22} {v1['tide_source'] or 'freshwater':34.34} best {v1['verdict']['score']:>4} "
+                  f"| {d1['date']} wind {d1['wind_kn_avg']} kn gust {d1['gust_kn_max']} wave {d1.get('wave_m_avg')} m "
+                  f"swell {d1['swell_m_avg']} m sst {d1['sst_c_avg']} C{'  CONTRACT: ' + str(len(probs)) if probs else ''}")
         except Exception as e:  # keep going; site falls back to labelled mock for this spot
             failed[sid] = f"{type(e).__name__}: {e}"
             db.execute("INSERT INTO spot_forecasts (run_id, spot_id, api_version, status, error) VALUES (?,?,?,?,?)",
                        (run_id, sid, API_VERSION, "error", failed[sid]))
             print(f"FAIL {sid}: {failed[sid]}", file=sys.stderr)
             traceback.print_exc(limit=2)
+    sst = None
+    if not a.no_sst:
+        try:
+            sst = build_sst(out, Path(a.public))
+            db.execute("INSERT OR REPLACE INTO sst_maps VALUES (?,?,?,?,?)",
+                       (run_id, sst["valid_time_nz"], sst["step"], sst["api_calls_counted"], json.dumps(sst)))
+            print(f"sst  map valid {sst['valid_text']}: {sum(v is not None for r in sst['sst'] for v in r)} cells, "
+                  f"{sst['api_calls_counted']} Open-Meteo calls counted, cache {sst['cache']}")
+        except Exception as e:  # site hides the map (labelled) if this fails
+            failed["sst_map"] = f"{type(e).__name__}: {e}"
+            print(f"FAIL sst map: {failed['sst_map']}", file=sys.stderr)
     finished = datetime.now(NZ).isoformat(timespec="seconds")
     status = "ok" if not failed else ("partial" if ok else "failed")
+    model_run = next((json.loads(open(latest / f"{s_}.json").read()).get("model_run") for s_ in ok[:1]), None)
     db.execute("UPDATE forecast_runs SET finished_at=?, spots_ok=?, spots_failed=?, status=?, notes=? WHERE id=?",
                (finished, len(ok), len(failed), status, json.dumps(failed) if failed else None, run_id))
     db.commit()
     db.close()
     manifest = {"run_id": run_id, "started_at": started, "finished_at": finished, "status": status,
                 "engine_version": fe.__version__, "mapper_version": MAPPER_VERSION, "api_version": API_VERSION,
-                "days": a.days, "spots_ok": ok, "spots_failed": failed,
+                "days": a.days, "spots_ok": ok, "spots_failed": failed, "contract_problems": problems,
+                "model_run": model_run, "model_runs": kw.get("model_runs"),
+                "sst_map": None if not sst else {"valid_time_nz": sst["valid_time_nz"], "api_calls_counted": sst["api_calls_counted"]},
                 "open_meteo_tier": "customer (API key set)" if os.environ.get("OPEN_METEO_API_KEY") else "free (non-commercial)"}
     (out / "forecasts" / "manifest.json").write_text(json.dumps(manifest, indent=1))
     print(f"\nrun {run_id}: {status} - {len(ok)} ok, {len(failed)} failed -> {latest}")
