@@ -63,16 +63,49 @@ def _get(url: str, params: Dict[str, Any], ttl: float, cache: Optional[Cache]) -
 
 
 def fetch_forecast(lat: float, lon: float, start: date, end: date,
-                   cache: Optional[Cache] = None) -> Dict[str, Any]:
-    return _get(_host("forecast"), _params(lat, lon, start, end,
-                hourly=",".join(FORECAST_HOURLY), daily=",".join(FORECAST_DAILY),
-                wind_speed_unit="kn"), FORECAST_TTL, cache)
+                   cache: Optional[Cache] = None, cell_selection: str = "land") -> Dict[str, Any]:
+    """``cell_selection``: Open-Meteo's grid-cell preference. The API default
+    ``land`` picks a land cell with similar elevation to the 90 m DEM height of
+    the point; coastal spots pass ``sea`` so the model cell is over water
+    (documented at https://open-meteo.com/en/docs, parameter cell_selection)."""
+    extra = {"hourly": ",".join(FORECAST_HOURLY), "daily": ",".join(FORECAST_DAILY),
+             "wind_speed_unit": "kn"}
+    if cell_selection != "land":
+        extra["cell_selection"] = cell_selection
+    return _get(_host("forecast"), _params(lat, lon, start, end, **extra), FORECAST_TTL, cache)
 
 
 def fetch_marine(lat: float, lon: float, start: date, end: date,
                  cache: Optional[Cache] = None) -> Dict[str, Any]:
     return _get(_host("marine"), _params(lat, lon, start, end,
                 hourly=",".join(MARINE_HOURLY)), MARINE_TTL, cache)
+
+
+# Model-run metadata. Open-Meteo publishes, per model, the initialisation time
+# of the latest run it has ingested at /data/<model>/static/meta.json.
+# best_match outside Europe/N. America/Japan uses the global models only
+# (ECMWF IFS, NCEP GFS, DWD ICON; highest resolution wins per variable), so the
+# 9 km ECMWF IFS HRES run is reported as ``model_run`` and the rest are listed.
+FORECAST_MODELS = ["ecmwf_ifs", "ncep_gfs013", "dwd_icon"]
+MARINE_MODELS = ["meteofrance_wave", "ecmwf_wam"]
+META_TTL = 1800
+
+
+def fetch_model_runs(cache: Optional[Cache] = None) -> Dict[str, Optional[str]]:
+    """{model: ISO UTC initialisation time or None}. Never raises."""
+    from datetime import datetime, timezone
+    out: Dict[str, Optional[str]] = {}
+    for kind, models in (("forecast", FORECAST_MODELS), ("marine", MARINE_MODELS)):
+        base = "https://api.open-meteo.com" if kind == "forecast" else "https://marine-api.open-meteo.com"
+        for m in models:
+            try:
+                body, _ = (cache or default_cache()).fetch(f"{base}/data/{m}/static/meta.json", {}, META_TTL,
+                                                           http_get_text)
+                t = json.loads(body)["last_run_initialisation_time"]
+                out[m] = datetime.fromtimestamp(int(t), tz=timezone.utc).strftime("%Y-%m-%dT%H:%MZ")
+            except Exception:
+                out[m] = None
+    return out
 
 
 def hourly_rows(data: Dict[str, Any]) -> List[Dict[str, Any]]:
