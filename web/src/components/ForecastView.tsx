@@ -237,7 +237,7 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
         </div>
         {f.spot.coastal && (pro ? (sst ? <SstMap m={sst.map} compact title={`Sea temperature around ${f.spot.name.split(" (")[0]}`} caption={sst.caption} />
           : <div className="rounded-2xl bg-orange-50 p-3 text-sm text-orange-900 ring-1 ring-orange-100"><b>Sea temp:</b> around {d0.sst_c_avg}°C. Temperature-break map not available for this forecast.</div>)
-          : <Locked title="Sea temperature & warm-water breaks" body="A map of where the warm water and temperature breaks are near this spot, explained in plain English." />)}
+          : <Locked title="Sea temperature & warm-water breaks" body="A map of where the warm water and temperature breaks are near this spot, and what it means for fishing." />)}
         {!f.spot.coastal && <p className="text-sm text-slate-500">Freshwater spot: swell, tide and sea temperature don’t apply.</p>}
       </section>
 

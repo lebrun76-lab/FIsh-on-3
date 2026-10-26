@@ -7,7 +7,7 @@ export const BRAND = {
   url: "https://saltsupply.co.nz",
   emails: { hello: "hello@saltsupply.co.nz", alerts: "alerts@saltsupply.co.nz" }, // examples only
   tagline: "Is it worth going out?",
-  description: "Fishing forecasts for New Zealand in plain English: whether it's worth going, when, and where. Wind, swell, tides and local rules.",
+  description: "Know when to fish. New Zealand fishing forecasts: whether it's worth going, when, and where. Wind, swell, tides and local rules.",
   // Pricing chosen by Alex (26 Oct 2026). Stripe test prices: lookup_keys pro_monthly_nzd, pro_yearly_nzd.
   proPriceNzd: 7.99,
   proAnnualNzd: 49.99,

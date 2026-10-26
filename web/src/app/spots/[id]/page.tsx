@@ -7,7 +7,7 @@ export const revalidate = 1800;
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const s = getSpot(id);
-  return s ? { title: `${s.name.split(" (")[0]} fishing forecast`, description: `When to go fishing at ${s.name.split(" (")[0]}: wind, swell, tides and the call in plain English.`, alternates: { canonical: `/spots/${id}` } } : {};
+  return s ? { title: `${s.name.split(" (")[0]} fishing forecast`, description: `When to go fishing at ${s.name.split(" (")[0]}: wind, swell, tides and whether it's worth going.`, alternates: { canonical: `/spots/${id}` } } : {};
 }
 export default async function SpotPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

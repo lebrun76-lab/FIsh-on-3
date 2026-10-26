@@ -10,7 +10,7 @@ import { SWRegister, OfflineIndicator } from "@/components/Offline";
 export const metadata: Metadata = {
   metadataBase: new URL(BRAND.url),
   applicationName: BRAND.name,
-  title: { default: `${BRAND.name} · NZ fishing forecasts in plain English`, template: `%s · ${BRAND.name}` },
+  title: { default: `${BRAND.name} · Know when to fish`, template: `%s · ${BRAND.name}` },
   description: BRAND.description,
   manifest: "/manifest.webmanifest",
   icons: {
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
   openGraph: {
-    type: "website", siteName: BRAND.name, url: BRAND.url, title: `${BRAND.name} · NZ fishing forecasts in plain English`, description: BRAND.description, locale: "en_NZ",
+    type: "website", siteName: BRAND.name, url: BRAND.url, title: `${BRAND.name} · Know when to fish`, description: BRAND.description, locale: "en_NZ",
     images: [{ url: "/og.png", width: 1200, height: 630, alt: BRAND.name }],
   },
   twitter: { card: "summary_large_image", title: BRAND.name, description: BRAND.description, images: ["/og.png"] },
