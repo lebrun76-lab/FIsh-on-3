@@ -6,7 +6,8 @@ import { SstMap } from "./SstMap";
 import { tideSourceText } from "@/lib/plain";
 import { DATUM_TEXT, latLon, speciesOf, confidenceText, noWindowText } from "@/lib/view";
 import { useAuth, isPaid } from "@/lib/auth";
-import { PhotoSlot, RatingBadge, RATING_STYLE } from "./ui";
+import { Photo, PhotoSlot, RatingBadge, RATING_STYLE } from "./ui";
+import { SPOT_BANNERS } from "@/lib/photos";
 import { bestCall, dayScore, isNearBest, ratingFor, targetList, todayStale, whenText } from "@/lib/call";
 import { FavButton } from "./FavButton";
 import { Locked } from "./Locked";
@@ -127,7 +128,9 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
         </div>
         <FavButton id={f.spot.id} />
       </div>
-      <PhotoSlot id={`spot-${f.spot.id}`} subject={`${f.spot.name.split(" (")[0]}: shoreline or ramp, wide`} ratio="3:1" className="max-h-56" />
+      {SPOT_BANNERS[f.spot.id]
+        ? <Photo p={SPOT_BANNERS[f.spot.id]} ratio="3 / 1" imgClassName="max-h-56" preload sizes="(min-width: 1024px) 992px, 100vw" />
+        : <PhotoSlot id={`spot-${f.spot.id}`} subject={`${f.spot.name.split(" (")[0]}: shoreline or ramp, wide`} ratio="3:1" className="max-h-56" />}
 
       {mock ? (
         <div className="rounded-2xl bg-yellow-100 p-3 text-sm text-yellow-950 ring-2 ring-yellow-400"><b>MOCK FALLBACK: not a real forecast.</b> {f.fallback_reason} Numbers below are generated placeholders.</div>
@@ -233,7 +236,7 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
           {f.spot.coastal && pro && <SstChart data={hourly} />}
         </div>
         {f.spot.coastal && (pro ? (sst ? <SstMap m={sst.map} compact title={`Sea temperature around ${f.spot.name.split(" (")[0]}`} caption={sst.caption} />
-          : <div className="rounded-2xl bg-orange-50 p-3 text-sm text-orange-900 ring-1 ring-orange-100"><b>Sea temp:</b> around {d0.sst_c_avg}°C{mock ? " (mock)" : ""}. Temperature-break map not available for this forecast.</div>)
+          : <div className="rounded-2xl bg-orange-50 p-3 text-sm text-orange-900 ring-1 ring-orange-100"><b>Sea temp:</b> around {d0.sst_c_avg}°C. Temperature-break map not available for this forecast.</div>)
           : <Locked title="Sea temperature & warm-water breaks" body="A map of where the warm water and temperature breaks are near this spot, explained in plain English." />)}
         {!f.spot.coastal && <p className="text-sm text-slate-500">Freshwater spot: swell, tide and sea temperature don’t apply.</p>}
       </section>

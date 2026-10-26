@@ -3,7 +3,8 @@ import { allSummaries, regionCalls } from "@/lib/summaries";
 import { CallCard } from "@/components/WhereToGo";
 import { SpotCard } from "@/components/SpotCard";
 import { BRAND } from "@/lib/brand";
-import { PhotoSlot } from "@/components/ui";
+import { Photo } from "@/components/ui";
+import { HOME_HERO } from "@/lib/photos";
 
 export default function Home() {
   const top = allSummaries().sort((a, b) => b.score - a.score).slice(0, 4);
@@ -20,7 +21,7 @@ export default function Home() {
             <Link href="/where-to-go" className="rounded-full px-5 py-3 font-semibold text-ocean-900 ring-1 ring-ocean-900/30">Where to go</Link>
           </div>
         </div>
-        <PhotoSlot id="home-hero" subject="small boat heading out from a NZ boat ramp at first light" ratio="3:2" />
+        <Photo p={HOME_HERO} ratio="3 / 2" preload sizes="(min-width: 1024px) 496px, (min-width: 768px) 50vw, 100vw" />
       </section>
       <section>
         <div className="mb-3 flex items-end justify-between"><h2 className="text-xl font-bold">Best bets, next 3 days</h2><Link href="/where-to-go" className="text-sm text-ocean-700 font-semibold">All regions →</Link></div>

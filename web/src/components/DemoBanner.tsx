@@ -1,4 +1,4 @@
-// Replaces the prototype's MockBanner (still in ui.tsx, now unused). Server component.
+// Replaces the prototype's MockBanner (removed from ui.tsx). Server component.
 import { paymentMode } from "@/lib/payment-mode";
 import { authMode } from "@/lib/supabase/config";
 import { demoMode } from "@/lib/demo";
