@@ -1,9 +1,11 @@
 /**
  * Server-side forecast loader. Reads the output of the scheduled job
  * (jobs/run_forecasts.py -> web/data/forecasts/latest/<spot>.json, the same
- * rows that will live in Supabase `spot_forecasts.payload`). If a spot has no
- * engine output (job not run, or the engine failed for it) we fall back to the
- * deterministic mock and label it loudly: data_status = "mock-fallback".
+ * rows that live in Supabase `spot_forecasts.payload`). Live pages never fall
+ * back to mock data: a spot whose newest output is unreadable shows its previous
+ * real forecast (older, flagged by generated_at / valid_until), and a spot with no
+ * real output at all returns null (every spot has a committed file, so in practice
+ * there is always a real forecast).
  *
  * Live data: api/refresh_forecasts.py (Python, Vercel) reruns the engine every 3 hours and
  * writes Supabase spot_forecasts. We read latest_spot_forecasts (newest status='ok' row per
@@ -13,7 +15,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import { SPOTS, buildForecast, getSpot } from "./mock";
+import { SPOTS, getSpot } from "./mock";
 import type { SpotForecast } from "./types";
 import { nzTodayISO } from "./time";
 import { bestCall } from "./call";
@@ -45,13 +47,6 @@ function trim(f: SpotForecast): SpotForecast {
   };
 }
 
-function mockFallback(id: string, reason: string): SpotForecast | null {
-  const spot = getSpot(id);
-  if (!spot) return null;
-  const m = buildForecast(spot, 10);
-  return withCurrentVerdict(plainDeep({ ...m, data_status: "mock-fallback" as const, fallback_reason: reason, sources: ["MOCK FALLBACK: not a real forecast", ...m.sources] }));
-}
-
 /** Cache window for the Supabase read. The refresh revalidates the tag right after each run,
  *  so this only bounds how long a missed revalidation could leave a page behind. */
 const DB_REVALIDATE_S = 3 * 3600;
@@ -80,15 +75,16 @@ export const getForecast = cache(async (id: string): Promise<SpotForecast | null
   if (!getSpot(id)) return null;
   const db = await dbPayload(id), file = filePayload(id);
   const candidates = [db, file].filter(usable).sort((a, b) => Date.parse(b.generated_at) - Date.parse(a.generated_at));
-  const f = candidates[0];
-  if (!f) return mockFallback(id, db || file ? "Engine output unreadable: bad payload" : "No engine output for this spot yet (run jobs/run_forecasts.py).");
-  try {
-    const ageH = (Date.now() - Date.parse(f.generated_at)) / 3.6e6;
-    const t = plainDeep(portNames(trim({ ...f, data_status: "engine", stale: ageH > STALE_H })));
-    return withCurrentVerdict(t);
-  } catch (e) {
-    return mockFallback(id, `Engine output unreadable: ${(e as Error).message}`);
+  for (const f of candidates) { // newest first; if it can't be shown, use the next real one, never the mock
+    try {
+      const ageH = (Date.now() - Date.parse(f.generated_at)) / 3.6e6;
+      const t = plainDeep(portNames(trim({ ...f, data_status: "engine", stale: ageH > STALE_H })));
+      return withCurrentVerdict(t);
+    } catch (e) {
+      console.error(`forecast ${id}: payload from ${f.generated_at} unreadable: ${(e as Error).message}`);
+    }
   }
+  return null;
 });
 
 /** Keep verdict.rating/score/window/headline on the same window as bestCall("horizon"),

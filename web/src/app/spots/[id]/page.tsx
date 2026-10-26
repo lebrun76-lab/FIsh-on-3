@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 }
 export default async function SpotPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const f = await getForecast(id); // newest of Supabase (3-hourly refresh) or the committed job output; labelled mock fallback if neither
+  const f = await getForecast(id); // newest real forecast: Supabase (3-hourly refresh) or the committed job output; never mock
   if (!f) notFound();
   const all = f.spot.coastal && f.data_status !== "mock-fallback" ? await loadSst() : null;
   const mp = all?.spots[id]?.marine_point ?? [f.spot.lat, f.spot.lon];

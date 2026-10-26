@@ -18,6 +18,20 @@ def _entries() -> List[dict]:
         return json.load(f)["entries"]
 
 
+@lru_cache(maxsize=1)
+def _species_lists() -> List[dict]:
+    with open(_PATH, encoding="utf-8") as f:
+        return json.load(f).get("species_lists", [])
+
+
+def _listing(name: str, spot_id: str) -> tuple:
+    """(role, source) for why this species is listed at this spot."""
+    for l in _species_lists():
+        if spot_id in l["spot_ids"] and name in l["roles"]:
+            return l["roles"][name], l["source"]
+    return "main", None
+
+
 def _entry_for(name: str, spot_id: str) -> Optional[dict]:
     # spot-specific entries win over "*" entries
     best = None
@@ -62,16 +76,21 @@ def species_for(spot: Spot, d: date, sst_c: Optional[float] = None) -> List[Dict
             rank += 1
         if e.get("note"):
             notes.append(e["note"])
+        role, listed = _listing(name, spot.id)
         out.append({"name": name, "status": status, "how": e.get("how"), "notes": notes,
-                    "sources": e.get("sources", []), "_rank": rank})
-    out.sort(key=lambda x: x["_rank"])
+                    "sources": e.get("sources", []), "role": role,
+                    "species_source": listed, "_rank": rank})
+    # secondary species sort after main species of the same status
+    out.sort(key=lambda x: (x["_rank"], x["role"] == "secondary"))
     for x in out:
         x.pop("_rank")
     return out
 
 
 def pick_target(species: List[Dict]) -> Optional[Dict]:
-    for s in species:
-        if s["status"] != "closed":
+    """First open main species; a secondary species only if no main one is open."""
+    open_ = [s for s in species if s["status"] != "closed"]
+    for s in open_:
+        if s.get("role", "main") != "secondary":
             return s
-    return None
+    return open_[0] if open_ else None

@@ -54,7 +54,8 @@ CENTRES: Dict[str, FishingCentre] = {
         region="Northland",
         island="North",
         lat=-34.80, lon=173.10,
-        species=["Snapper", "Kingfish", "Trevally", "Kahawai", "Tuna (seasonal)"],
+        # Tuna species named by local knowledge: Alex Le Brun, 26 Oct 2026 (SBT and PBF main, albacore secondary)
+        species=["Snapper", "Kingfish", "Trevally", "Kahawai", "Southern Bluefin Tuna", "Pacific Bluefin Tuna", "Albacore"],
         notes="Remote and productive. Great for those willing to travel.",
         tags=["coastal", "boat"]
     ),
@@ -168,7 +169,8 @@ CENTRES: Dict[str, FishingCentre] = {
         region="West Coast",
         island="South",
         lat=-42.45, lon=171.21,
-        species=["Blue Cod", "Tarakihi", "Kahawai", "Groper", "Tuna (seasonal)"],
+        # Tuna species named by local knowledge: Alex Le Brun, 26 Oct 2026 (SBT and PBF main, albacore secondary)
+        species=["Blue Cod", "Tarakihi", "Kahawai", "Groper", "Southern Bluefin Tuna", "Pacific Bluefin Tuna", "Albacore"],
         notes="Main West Coast hub with good facilities.",
         tags=["coastal", "boat", "shore"]
     ),
@@ -190,7 +192,8 @@ CENTRES: Dict[str, FishingCentre] = {
         region="Canterbury",
         island="South",
         lat=-42.40, lon=173.68,
-        species=["Blue Cod", "Tarakihi", "Groper", "Kahawai", "Crayfish", "Tuna"],
+        # Tuna species named by local knowledge: Alex Le Brun, 26 Oct 2026 (SBT and PBF main, albacore secondary)
+        species=["Blue Cod", "Tarakihi", "Groper", "Kahawai", "Crayfish", "Southern Bluefin Tuna", "Pacific Bluefin Tuna", "Albacore"],
         notes="Deep water close to shore. Famous for crayfish and big fish.",
         tags=["coastal", "boat", "shore"]
     ),

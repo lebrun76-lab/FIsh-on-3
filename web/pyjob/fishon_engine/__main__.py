@@ -24,10 +24,10 @@ def main(argv=None):
             continue
         s, v = fc["spot"], fc["verdict"]
         fp = s["forecast_point"]
-        print(f"=== {s['name']} ({s['region']}, {s['island']}) - shore faces {s['facing_deg']} deg")
+        print(f"=== {s['name']} ({s['region']}, {s['island']}), shore faces {s['facing_deg']} deg")
         print(f"  weather point {fp['lat']}, {fp['lon']} (cell {fp['model_cell']}); model run {fc['model_run']}")
         print(f"  tides: {fc['tide_source']} [datum: {fc['tide_datum']}]")
-        print(f"  VERDICT: {v['headline']} - {v['rating']} {v['score']}/10 [{v['confidence']}]")
+        print(f"  VERDICT: {v['headline']} ({v['rating']}, {v['score']}/10) [{v['confidence']}]")
         print(f"    {v['advice']}")
         for d in fc["days"]:
             print(f"  {d['label']}: {'-' if d['score'] is None else d['score']}/10 {d['rating']} "
@@ -47,7 +47,7 @@ def main(argv=None):
         print("  Species: " + ", ".join(sp))
         for x in fc["species"]:
             if x["status"] == "closed":
-                print(f"  CLOSED: {x['name']} - {x['notes'][0]}")
+                print(f"  CLOSED: {x['name']}: {x['notes'][0]}")
         if fc.get("tide_comparison"):
             print(f"  LINZ vs Open-Meteo tide check: {fc['tide_comparison']}")
         for w in fc["warnings"]:

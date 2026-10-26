@@ -24,7 +24,12 @@ ATTRIBUTION = [
     "Weather & marine data: Open-Meteo.com (CC BY 4.0)",
     tides.LINZ_ATTRIBUTION,
 ]
-MAX_WINDOWS_PER_DAY = 3
+# Every separate window scoring >= 4.5 is listed (scoring.windows); no cap.
+# With 3 h windows kept >= 2 h apart a daylight day fits at most 4.
+MAX_WINDOWS_PER_DAY = None
+# A window is flagged near_best when it scores within this many points of the
+# day's best window (the old cut-off for listing extra windows at all).
+NEAR_BEST_POINTS = 1.5
 CONFIDENCE_MARGIN = {"high": 0.0, "medium": 0.5, "low": 1.0}
 # The headline verdict looks at the first HORIZON_DAYS days of the period
 # (start .. start+2), not the best of up to 16 days; a better window later on
@@ -80,6 +85,7 @@ def _spot_out(spot: Spot, wx: Dict, marine: Optional[Dict], cell_sel: str) -> Di
         "tags": list(spot.tags), "coastal": spot.is_coastal,
         "facing_deg": spot.facing, "facing_note": spot.facing_note,
         "tide_port": spot.tide_port, "tide_port_id": spot.tide_port_id, "tide_port_km": spot.tide_port_km,
+        "tide_port_linz_name": spot.tide_port_linz_name,
         "tide_note": spot.tide_note,
         "forecast_point": {"lat": spot.forecast_lat, "lon": spot.forecast_lon, "cell_selection": cell_sel,
                            "model_cell": cell(wx), "note": spot.wx_note or None},
@@ -107,6 +113,13 @@ def _reasons(summ: Dict, why: List[str], coastal: bool) -> List[str]:
     return out + [w[0].upper() + w[1:] for w in why]
 
 
+def window_id(spot_id: str, start: str, end: str) -> str:
+    """Stable window id: ``<spot_id>:<start ISO>/<end ISO>`` (NZ local time
+    with offset). Built only from the spot and the window's times, so the
+    same window gets the same id on every run whatever its score."""
+    return f"{spot_id}:{start}/{end}"
+
+
 def _window_out(win: List[Dict], spot: Spot, target, conf: str) -> Dict:
     summ = scoring.summarise(win, spot.facing, spot.is_coastal)
     rt = rating(summ["score"])
@@ -115,8 +128,10 @@ def _window_out(win: List[Dict], spot: Spot, target, conf: str) -> Dict:
     headline = {"great": f"{when} looks great", "good": f"{when} looks good",
                 "marginal": f"{when} is fishable", "poor": f"{when} is the least-bad option"}[rt]
     why = sorted({w for h in win for w in h["why"]})
+    start, end = summ["start"].isoformat(), summ["end"].isoformat()
     return {
-        "start": summ["start"].isoformat(), "end": summ["end"].isoformat(), "score": summ["score"],
+        "id": window_id(spot.id, start, end),
+        "start": start, "end": end, "score": summ["score"],
         "rating": rt, "headline": headline,
         "advice": text if rt != "poor" else "No good window. Least-bad: " + text,
         "reasons": _reasons(summ, why, spot.is_coastal), "confidence": conf,
@@ -124,7 +139,18 @@ def _window_out(win: List[Dict], spot: Spot, target, conf: str) -> Dict:
         "wind_kn": summ["wind_kn"], "gust_max_kn": summ["gust_max_kn"], "wind_from": summ["wind_from"],
         "wind_rel": summ["wind_rel"], "wave_m": summ["wave_m"], "swell_m": summ["swell_m"],
         "swell_period_s": summ["swell_period_s"], "rain_mm": summ["rain_mm"],
+        # 2.4.0: the species the advice names ("Try snapper"), or null
+        "target_species": target["name"] if target and rt != "poor" else None,
     }
+
+
+def _day_score(top_score: Optional[float], daylight: List[Dict]) -> Optional[float]:
+    """0.6 x best window + 0.4 x mean daylight hour, rounded to 1 dp (rounded
+    first so rating and text agree). None when there are no daylight hours."""
+    dl_mean = _mean([h["score"] for h in daylight])
+    if dl_mean is None:
+        return None
+    return round(0.6 * top_score + 0.4 * dl_mean if top_score is not None else dl_mean, 1)
 
 
 def _pick(windows: List[Dict]) -> Dict:
@@ -144,7 +170,7 @@ def _when(w: Dict) -> str:
 def _brief(w: Optional[Dict]) -> Optional[Dict]:
     if not w:
         return None
-    return {k: w[k] for k in ("start", "end", "date", "score", "rating", "headline", "advice", "confidence")}
+    return {k: w[k] for k in ("id", "start", "end", "date", "score", "rating", "headline", "advice", "confidence")}
 
 
 def _no_window_reason(least: Optional[Dict], span: str) -> str:
@@ -191,7 +217,7 @@ def _verdict(fishable: List[Dict], least_bad: List[Dict], days_out: List[Dict], 
         labels = [next(d["label"] for d in days_out if d["date"] == o) for o in others[:3]]
         advice += ". Also good: " + ", ".join(labels) + "."
     return {"rating": best["rating"], "score": best["score"], "headline": headline, "advice": advice,
-            "confidence": best["confidence"], "window": {"start": best["start"], "end": best["end"]},
+            "confidence": best["confidence"], "window": {"id": best["id"], "start": best["start"], "end": best["end"]},
             "no_window_reason": None, "least_bad": None, **base}
 
 
@@ -331,6 +357,10 @@ def forecast_spot(spot_id: str, start: Optional[date] = None, days: int = 7,
             wo = _window_out(w, spot, target, cd["level"])
             wo["confidence_detail"] = cd
             day_windows.append(wo)
+        if day_windows:
+            day_top = max(w["score"] for w in day_windows)
+            for wo in day_windows:
+                wo["near_best"] = wo["score"] >= round(day_top - NEAR_BEST_POINTS, 1)
         fishable = [w for w in day_windows if w["rating"] != "poor"]
         windows.extend(fishable)
         top = max(day_windows, key=lambda w: w["score"]) if day_windows else None   # for the day score
@@ -344,17 +374,18 @@ def forecast_spot(spot_id: str, start: Optional[date] = None, days: int = 7,
         s = sun.get(d) or {}
         sr, ss = s.get("sunrise"), s.get("sunset")
         daylight = [h for h in hours if h["light"] in ("day", "change of light")] or hours
-        if d == now.date():
-            daylight = [h for h in daylight if h["time"] + timedelta(hours=1) > now]
-        dl_mean = _mean([h["score"] for h in daylight])
-        if top and dl_mean is not None:
-            day_score = 0.6 * top["score"] + 0.4 * dl_mean
-        elif dl_mean is not None:
-            day_score = dl_mean
-        else:  # today, nothing fishable left
-            day_score = None
-        if day_score is not None:
-            day_score = round(day_score, 1)   # round first so rating and text agree
+        is_today = d == now.date()
+        day_score = _day_score(top["score"] if top else None,
+                               [h for h in daylight if h["time"] + timedelta(hours=1) > now] if is_today else daylight)
+        if is_today:
+            # Whole-day score ignoring the clock: the best window and the
+            # daylight mean over every hour of the date, gone or not.
+            full = scoring.windows(hours, sun.get(d))
+            full_top = max((scoring.summarise(w, spot.facing, spot.is_coastal)["score"] for w in full), default=None)
+            score_full_day = _day_score(full_top, daylight)
+            remaining_from = now.replace(minute=0, second=0, microsecond=0).isoformat()
+        else:
+            score_full_day, remaining_from = day_score, None
         # daily aggregates over sunrise..sunset hours (rain: whole day)
         agg = [h for h in hours if sr and ss and h["time"] + timedelta(hours=1) > sr and h["time"] < ss] or hours
         blocks = scoring.blocks_3h(hours, spot.facing, spot.is_coastal)
@@ -384,6 +415,9 @@ def forecast_spot(spot_id: str, start: Optional[date] = None, days: int = 7,
             "best_window": best, "best_window_text": best["advice"] if best else no_win,
             "windows": len(fishable), "no_window_reason": no_win, "least_bad_window": least,
             "moon": moon, "blocks_3h": blocks,
+            # additive: which score to show for today (docs/OUTPUT.md)
+            "score_remaining": day_score if is_today else None,
+            "remaining_from": remaining_from, "score_full_day": score_full_day,
         })
 
     tides_out = [{"time": e.time.isoformat(), "type": e.kind, "height_m": _r(e.height, 2),
@@ -418,6 +452,10 @@ def forecast_spot(spot_id: str, start: Optional[date] = None, days: int = 7,
         "api_version": API_VERSION,
         "spot": _spot_out(spot, wx, marine, cell_sel),
         "generated_at": now.isoformat(),
+        # End of the current hour: after it, today's past-hour cut (score,
+        # score_remaining, windows) is out of date, and the 1 h forecast cache
+        # has refreshed too. Regenerate rather than show it past this time.
+        "valid_until": (now.replace(minute=0, second=0, microsecond=0) + timedelta(hours=1)).isoformat(),
         "model_run": model_run,
         "sources": sources,
         "verdict": _verdict(windows, least_bad_all, out_days, start),

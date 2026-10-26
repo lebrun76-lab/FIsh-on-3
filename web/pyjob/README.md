@@ -1,8 +1,8 @@
 # pyjob: scheduled forecast refresh on Vercel
 
 `fishon_engine/` and `regions.py` are an **unmodified vendored copy** of Forecast Brain at
-`feat/engine-round-d` commit `f0eb16d` (engine 2.2.0), taken with
-`git -C /workspace/fish-engine-site archive f0eb16d fishon_engine regions.py | tar -x -C web/pyjob`
+`feat/window-ids` commit `998fe50` (engine 2.4.0, PR #9, not yet merged), taken with
+`git -C /workspace/fish-engine archive 998fe50 fishon_engine regions.py | tar -x -C web/pyjob`
 (`fishon_engine/spots.py` imports `regions` from the folder above the package).
 Do not edit it here; re-vendor from the engine repo instead.
 
@@ -15,3 +15,8 @@ Trigger: Supabase pg_cron + pg_net every 3 hours (see docs/demo-deploy.md),
 plus a daily Vercel cron as a backup. The site reads `latest_spot_forecasts`
 and the newest `sst_maps` row, falling back to the committed files in
 `web/data/` when Supabase is empty or unreachable.
+
+Each run: restore the engine HTTP cache from Supabase Storage (`engine-cache/fishon-cache.sqlite.gz`),
+check the 5 model run times and skip if nothing changed since the last full run (< `MAX_SKIP_H`, 4.5 h),
+run the spots one at a time (stalest first, 270 s budget), maybe the SST map, then save the cache back.
+A failed spot gets an `error` row and the site keeps its last real payload; nothing falls back to mock data.

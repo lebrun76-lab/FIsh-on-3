@@ -69,6 +69,16 @@ EXCLUDED_FOR_MATCHING: Dict[str, str] = {
 NZ_BOX = (-48.0, -34.0, 166.0, 179.0)
 
 
+def display_name(linz_name: Optional[str]) -> Optional[str]:
+    """LINZ writes some names as 'Area - Place' with a spaced hyphen
+    ('Coromandel Harbour - Whanganui Island'). Shown as 'Area (Place)'.
+    Names without one are returned as they are."""
+    if not linz_name or " - " not in linz_name:
+        return linz_name
+    head, *rest = [p.strip() for p in linz_name.split(" - ")]
+    return head + "".join(f" ({p})" for p in rest)
+
+
 @dataclass(frozen=True)
 class TidePort:
     id: str                 # "daily:<file>" | "sec:<LINZ no.>"
@@ -91,10 +101,15 @@ class TidePort:
         return None not in (self.msl, self.ratio, self.standard_msl)
 
     @property
+    def display(self) -> str:
+        """Name for text; ``name`` stays the raw LINZ name used for lookups."""
+        return display_name(self.name)
+
+    @property
     def label(self) -> str:
         if self.kind == "daily":
-            return f"LINZ {self.name}"
-        s = f"LINZ secondary port {self.name} (offsets from {self.standard})"
+            return f"LINZ {self.display}"
+        s = f"LINZ secondary port {self.display} (offsets from {display_name(self.standard)})"
         return s + (" [LINZ: data approximate]" if self.approximate else "")
 
 
@@ -279,7 +294,7 @@ def apply_offsets(events: List[tides.TideEvent], port: TidePort) -> List[tides.T
     """Standard-port highs/lows -> secondary-port highs/lows (LINZ method)."""
     if port.hw_diff_min is None or port.lw_diff_min is None:
         raise ValueError(f"{port.name}: missing time difference")
-    src = f"LINZ secondary {port.name} (from {port.standard})"
+    src = f"LINZ secondary {port.display} (from {display_name(port.standard)})"
     out = []
     for e in events:
         dt = timedelta(minutes=port.hw_diff_min if e.kind == "high" else port.lw_diff_min)
