@@ -164,7 +164,7 @@ async function main() {
   eq("csv header", exportCsv(rows).split("\n")[0], "spot_id,window_id,window_start,window_end,score,outcome,species,target_species");
 
   // ---- engine 2.4 window.id + target_species (fixture), older output falls back
-  const fc = allForecasts().find((x) => x.windows.some((w) => w.score >= 4.5));
+  const fc = (await allForecasts()).find((x) => x.windows.some((w) => w.score >= 4.5));
   if (!fc) probs.push("no forecast with a window to test window ids");
   else {
     const w = fc.windows.find((x) => x.score >= 4.5)!, nowF = Date.parse(w.start) - 30 * H;

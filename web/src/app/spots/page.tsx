@@ -1,11 +1,11 @@
 import { allSummaries } from "@/lib/summaries";
 import { SpotsBrowser } from "@/components/SpotsBrowser";
 export const metadata = { title: "Spots" };
-export default function SpotsPage() {
+export default async function SpotsPage() {
   return (
     <div className="pt-6 space-y-3">
       <h1 className="text-2xl font-bold">Find a spot</h1>
-      <SpotsBrowser spots={allSummaries()} />
+      <SpotsBrowser spots={await allSummaries()} />
     </div>
   );
 }

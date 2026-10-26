@@ -6,7 +6,7 @@ import { FISHABLE, isNearBest } from "@/lib/call";
 // near_best=1 keeps only windows near the day's best (engine near_best; worked out on older output).
 export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params;
-  const f = getForecast(id);
+  const f = await getForecast(id);
   if (!f) return NextResponse.json({ error: { code: "spot_not_found", message: `No spot '${id}'` } }, { status: 404 });
   const q = new URL(req.url).searchParams;
   const min = Number(q.get("min_score") ?? FISHABLE), near = q.get("near_best") === "1";

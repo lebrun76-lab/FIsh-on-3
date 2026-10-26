@@ -98,18 +98,19 @@ for (const [s, want] of [["Lottin Point (Wakatiri)", "Lottin Point (Wakatiri)"],
   if (t !== "LINZ secondary port Coromandel Harbour (Whanganui Island), offsets from Auckland, 5.8 km away") fixed.push(`tideSourceText gave "${t}"`);
 }
 
+(async () => {
 const real = Date.now;
 const times = process.argv.slice(2);
 let bad = 0;
 for (const t of times.length ? times : [new Date().toISOString()]) {
   const at = Date.parse(t); Date.now = () => at;
   const probs: string[] = [...fixed];
-  for (const s of allSummaries()) {
+  for (const s of await allSummaries()) {
     const none = s.headline.startsWith("No fishable");
     if (none ? s.rating !== "poor" : s.rating !== ratingFor(s.score)) probs.push(`summary ${s.id}: ${s.rating} ${s.score} "${s.headline}"`);
     probs.push(...copyProbs(`summary ${s.id}`, s.headline));
   }
-  for (const c of regionCalls()) {
+  for (const c of await regionCalls()) {
     if (c.fishable ? c.rating !== ratingFor(c.score) || !/^(Go|Best chance)/.test(c.call) : c.rating !== "poor" || !c.call.startsWith("Give")) probs.push(`region ${c.region}: ${c.rating} ${c.score} "${c.call}"`);
     if (/!/.test(c.call)) probs.push(`region ${c.region}: punctuation "${c.call}"`);
     probs.push(...copyProbs(`region ${c.region}`, c.call));
@@ -117,7 +118,7 @@ for (const t of times.length ? times : [new Date().toISOString()]) {
   let fresh = 0, also = 0, until = 0, emails = 0, filtered = 0, capped = 0, capCands = 0;
   const versions = new Map<string, number>();
   const today = nzTodayISO();
-  for (const f0 of allForecasts()) {
+  for (const f0 of await allForecasts()) {
     if (listsAllWindows(f0)) fresh++;
     if (f0.data_status === "engine") versions.set(f0.engine_version ?? "none", (versions.get(f0.engine_version ?? "none") ?? 0) + 1);
     probs.push(...f0.windows.flatMap((w) => rangeProbs(`window ${f0.spot.id} ${w.start}`, `${w.headline} ${w.advice}`)), ...f0.days.flatMap((d) => rangeProbs(`day ${f0.spot.id} ${d.date}`, d.summary)), ...rangeProbs(`verdict ${f0.spot.id}`, `${f0.verdict.headline} ${f0.verdict.advice}`));
@@ -181,7 +182,7 @@ for (const t of times.length ? times : [new Date().toISOString()]) {
   }
   // alert cap across every spot (one user who saved them all)
   for (const times of TIME_SETS) {
-    const all = allForecasts(), id = `cap [${times}]`;
+    const all = await allForecasts(), id = `cap [${times}]`;
     const cands = all.map((f) => ({ spot_id: f.spot.id, call: alertCall(f, times, at) })).filter((p) => p.call.kind === "window");
     const plan = planAlerts(all, times, [], at);
     if (plan.length !== Math.min(ALERT_CAP, cands.length)) probs.push(`${id}: ${plan.length} planned from ${cands.length}`);
@@ -203,10 +204,11 @@ for (const t of times.length ? times : [new Date().toISOString()]) {
     if (again.some((p) => old.some((o) => o.spot_id === p.spot_id && Date.parse(o.window_start) === Date.parse(p.call.start!)))) probs.push(`${id}: same window twice (after 7 days)`);
     if (again.length !== Math.min(ALERT_CAP, all.filter((f) => alertCall(f, times, at, (w) => !old.some((o) => o.spot_id === f.spot.id && Date.parse(o.window_start) === Date.parse(w.start))).kind === "window").length)) probs.push(`${id}: wrong count after dedupe`);
   }
-  const rc = regionCalls();
+  const rc = await regionCalls();
   console.log(`${t}: ${probs.length} problems; ${rc.length} regions; ${fresh} forecasts with the new window fields; ${until} with valid_until; ${emails} alert emails (default times); ${filtered} alerts across ${TIME_SETS.length} time choices; cap: ${capped} planned (max ${capCands} candidates per choice, cap ${ALERT_CAP}); ${also} 'also worth a look' windows; engine versions ${[...versions].map(([v, n]) => `${v}×${n}`).join(", ")}`);
   if (!times.length || process.env.V) rc.forEach((c) => console.log(`  ${c.region}: ${c.rating} ${c.score} [${c.dayLabel}] ${c.call}`));
   probs.forEach((p) => console.log("  !", p)); bad += probs.length;
 }
 Date.now = real;
 process.exit(bad ? 1 : 0);
+})();

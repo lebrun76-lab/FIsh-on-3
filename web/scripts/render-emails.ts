@@ -22,11 +22,13 @@ if (process.env.ONLY === "howd-it-go") { // npx tsx scripts/render-emails.ts /wo
 if (process.env.ONLY === "pause-reminder") { // npx tsx scripts/render-emails.ts /workspace/fish-on-screenshots/pause with ONLY=pause-reminder
   write("reminder", pauseReminderEmail("Fri 26 Feb")); writeFileSync(`${out}/index.json`, JSON.stringify(["reminder-inbox"])); process.exit(0);
 }
+(async () => {
 const wanted = (process.env.SPOTS ?? "bay_of_islands,hauraki_gulf,wellington,central_otago_lakes").split(",");
 const index: string[] = [];
-for (const f of allForecasts().filter((x) => wanted.includes(x.spot.id))) {
+for (const f of (await allForecasts()).filter((x) => wanted.includes(x.spot.id))) {
   const m = alertEmail(f, alertCall(f));
   if (m) { write(`alert-${f.spot.id}`, m); index.push(`alert-${f.spot.id}-inbox`); } else console.log(`${f.spot.id}: no alert (no fishable window 1 to 2 days ahead)`);
 }
 write("welcome", welcomeEmail()); write("trial-ending", trialEndingEmail("Sun 8 Nov")); write("pause-reminder", pauseReminderEmail("Fri 26 Feb")); write("howd-it-go", followupFor(demoAlert(Date.now()), Date.now())); index.push("welcome-inbox", "trial-ending-inbox", "pause-reminder-inbox", "howd-it-go-inbox");
 writeFileSync(`${out}/index.json`, JSON.stringify(index));
+})();

@@ -7,10 +7,10 @@ import { Photo } from "@/components/ui";
 import { HOME_HERO } from "@/lib/photos";
 import { HomeNudge, YourSpots } from "@/components/Onboarding";
 
-export default function Home() {
-  const top = allSummaries().sort((a, b) => b.score - a.score).slice(0, 4);
-  const calls = regionCalls().slice(0, 3);
-  const all = allSummaries();
+export default async function Home() {
+  const [all, rc] = await Promise.all([allSummaries(), regionCalls()]);
+  const top = [...all].sort((a, b) => b.score - a.score).slice(0, 4);
+  const calls = rc.slice(0, 3);
   return (
     <div className="space-y-8 pt-6">
       <YourSpots all={all} />

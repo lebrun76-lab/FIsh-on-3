@@ -3,7 +3,7 @@ import { getForecast } from "@/lib/forecasts";
 // GET /api/v1/spots/{id}/forecast?days=7 — engine output (data_status tells you if it is a mock fallback)
 export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params;
-  const f = getForecast(id);
+  const f = await getForecast(id);
   if (!f) return NextResponse.json({ error: { code: "spot_not_found", message: `No spot '${id}'` } }, { status: 404 });
   const n = Math.min(16, Math.max(1, Number(new URL(req.url).searchParams.get("days") ?? 7)));
   const days = f.days.slice(0, n);

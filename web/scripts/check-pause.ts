@@ -150,9 +150,9 @@ async function reminders() {
 
 // ---- alerts: paused = 0, resumed = normal
 const TIME_SETS: FishTime[][] = [DEFAULT_FISH_TIMES, ["any"], ["saturday", "sunday"], ["weekday_morning"]];
-function alerts(at: number) {
+async function alerts(at: number) {
   let normal = 0;
-  const all = allForecasts();
+  const all = await allForecasts();
   for (const times of TIME_SETS) {
     const base: AlertAccount = { plan: "pro", paused_until: null, alerts_enabled: true, fishing_times: times };
     const want = planAlerts(all, times, [], at);
@@ -181,7 +181,8 @@ function alerts(at: number) {
   await reminders();
   const times = process.argv.slice(2).map(Date.parse);
   const runs = times.length ? times : [Date.now()];
-  const counts = runs.map((at) => `${new Date(at).toISOString()}: ${alerts(at)} alerts unpaused; paused users 0`);
+  const counts: string[] = [];
+  for (const at of runs) counts.push(`${new Date(at).toISOString()}: ${await alerts(at)} alerts unpaused; paused users 0`);
   console.log(`check-pause: ${probs.length} problems`); counts.forEach((c) => console.log("  " + c));
   probs.forEach((p) => console.log("  !", p));
   process.exit(probs.length ? 1 : 0);

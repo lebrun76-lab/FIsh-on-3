@@ -203,9 +203,17 @@ Most changes show up within an hour; GoDaddy allows up to 48 hours. Vercel's dom
 
 Once the domain resolves, sign in on https://saltsupply.co.nz with Google and with an email code, start a trial on Pricing, and check that the account page shows "Pro trial".
 
-## 7. Crons (off for the demo)
+## 7. Forecast refresh (on) and other crons (off)
 
-`vercel.json` has `"crons": []`, so nothing runs. The routes are in place and need `CRON_SECRET`:
+Forecasts refresh in the cloud about every 3 hours, with no redeploy:
+
+- `api/refresh_forecasts.py` is a Vercel Python function (300 s max). It runs Forecast Brain from the vendored copy in `pyjob/` (see `pyjob/README.md`), writes `forecast_runs`, `spot_forecasts` and (at most every 5.5 h) `sst_maps` to Supabase, then calls `/api/cron/revalidate-forecasts` to purge the site's cached reads.
+- The trigger is Supabase `pg_cron` + `pg_net` (`7 */3 * * *` UTC) calling it with `Authorization: Bearer $FORECAST_REFRESH_SECRET`, because Hobby crons run at most once a day. `vercel.json` also has one daily Vercel cron (`15 17 * * *`, 6:15am NZDT) as a backup; it authenticates with `CRON_SECRET`.
+- Pages read the newest ok row from `latest_spot_forecasts` (anon key, Next data cache, tag `forecasts`) and the committed `data/forecasts/latest/*.json` file, and show whichever is newer. A failed or partial run never empties a page.
+- Open-Meteo budget: about 9 calls a spot (~210 a run, ~1,900 a day) plus the SST map (~660 calls, at most ~4-5 a day), well under 10,000 a day. A 45-minute gap guard stops double runs; `?force=1` overrides it.
+- Manual run: `curl -H "Authorization: Bearer $CRON_SECRET" "https://saltsupply.co.nz/api/refresh_forecasts?force=1"`. `?dry=1` just checks the engine imports.
+
+The other cron routes are in place but not scheduled. They need `CRON_SECRET`:
 
 | Route | Job | Logic |
 | --- | --- | --- |

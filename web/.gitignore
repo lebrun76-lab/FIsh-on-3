@@ -8,3 +8,7 @@ next-env.d.ts
 .env*.local
 .env.*
 !.env.example
+
+# python job
+__pycache__/
+*.pyc

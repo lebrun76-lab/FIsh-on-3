@@ -11,9 +11,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 }
 export default async function SpotPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const f = getForecast(id); // engine output from jobs/run_forecasts.py; labelled mock fallback if missing
+  const f = await getForecast(id); // newest of Supabase (3-hourly refresh) or the committed job output; labelled mock fallback if neither
   if (!f) notFound();
-  const all = f.spot.coastal && f.data_status !== "mock-fallback" ? loadSst() : null;
+  const all = f.spot.coastal && f.data_status !== "mock-fallback" ? await loadSst() : null;
   const mp = all?.spots[id]?.marine_point ?? [f.spot.lat, f.spot.lon];
   const sst = all ? { map: cropSst(all, mp[0], mp[1], f.spot.name), caption: spotCaption(all, id, f.spot.name) } : null;
   // Internal notes (engine version, model run, check notes) stay on the server; the page doesn't show them.

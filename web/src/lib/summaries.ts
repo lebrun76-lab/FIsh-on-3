@@ -6,8 +6,8 @@ import { dateLabel, nzTodayISO } from "./time";
 import { bestCall, targetList } from "./call";
 
 export interface SpotSummary { id: string; name: string; region: string; island: string; lat: number; lon: number; coastal: boolean; species: string[]; rating: Rating; score: number; headline: string; mock?: boolean; }
-export function allSummaries(): SpotSummary[] {
-  return allForecasts().map((f) => {
+export async function allSummaries(): Promise<SpotSummary[]> {
+  return (await allForecasts()).map((f) => {
     const s = f.spot;
     return { id: s.id, name: s.name, region: s.region, island: s.island, lat: s.lat, lon: s.lon, coastal: s.coastal, species: s.species, rating: f.verdict.rating, score: f.verdict.score, headline: f.verdict.headline, mock: f.data_status === "mock-fallback" };
   });
@@ -16,10 +16,10 @@ export function allSummaries(): SpotSummary[] {
 /** One call per region: the best spot by the same 3-day call its spot page shows.
  *  Badge score, rating and the sentence all come from that one window (lib/call.ts). */
 export interface RegionCall { region: string; spotId: string; spotName: string; rating: Rating; score: number; call: string; tactics: string; species: string[]; dayLabel: string; mock?: boolean; fishable: boolean; }
-export function regionCalls(): RegionCall[] {
+export async function regionCalls(): Promise<RegionCall[]> {
   const best = new Map<string, RegionCall>();
   const todayISO = nzTodayISO();
-  for (const f of allForecasts()) {
+  for (const f of await allForecasts()) {
     const s = f.spot;
     const c = bestCall(f, "horizon");
     const open = speciesOf(f).filter((x) => x.status !== "closed").map((x) => x.name);
