@@ -55,3 +55,48 @@ Sanity tests (`tests/test_scoring.py`):
 ## Still to do
 
 The weights are judgement, informed by one week of data. Logging user catch reports, plus Alex's local knowledge (facings, which spots handle a south-westerly), is the way to tune them properly.
+
+## Species scoring (2.5.0)
+
+The window score says whether it is worth going. The species score says what to fish for once you are there. It is built on top of the window score and can only take points off:
+
+```
+species score = window score − penalties for sourced conditions the window misses
+clamped to 0 … window score
+```
+
+So a species score is never higher than the window's safety-gated score. A rough day stays rough for every species.
+
+**Which species.** Those that `species_seasons.json` has open on the date (`peak`, `in season`, or `no seasonal data`). Off-peak and closed species are left out. A species is also left out if `fishon_engine/data/species_conditions.json` has no entry for it.
+
+**Factors.** Each factor is applied per hour of the window and averaged, so missing one hour of three costs a third of the penalty. Missing data (no SST, no tide) costs nothing and is noted in `why`. Every factor cites at least one source in `species_conditions.json`. The penalty sizes and the gurnard 1.0 m threshold are engine tuning, not from the sources.
+
+| Species | Factor | Penalty | Source |
+|---|---|---|---|
+| Snapper | Sea under 14.8 C | 0.5 | Parsons et al. 2014, NZ J Marine & Freshwater Research 48(2) (spawning aggregations from about 14.8–16 C); NIWA (spring migration about 16 C) |
+| Snapper | Tide running (slack is within 0.75 h of a turn) | 0.75 | fishing.net.nz, "How to catch snapper" |
+| Snapper | Dawn or dusk change of light | 0.5 | fishing.net.nz, "How to catch snapper" |
+| Kingfish | Sea under 16 C | 0.75 | Mark Draper, "Kingfish from the rocks pt 1", NZ Fishing News 2008; NIWA kingfish growth trials (2014) |
+| Kingfish | Dawn | 0.5 | fishing.net.nz, "Using bite times" |
+| Kahawai | Dawn or dusk | 0.5 | Peter Davy, "Clutha River mouth kahawai", NZ Fishing Magazine 2026 |
+| Gurnard | Sea under 1.0 m (no white water) | 1.0 | Andy Macleod, "Land based gurnard fishing", NZ Fishing News 2018; fishing.net.nz, "Expert tips to catch gurnard" |
+| Gurnard | Dusk | 0.25 | fishing.net.nz, "Expert tips to catch gurnard" |
+| Tarakihi | Tide running | 0.75 | Sam Boothroyd, "Chasing sea turkeys", NZ Fishing News 2021 |
+| Blue cod | Daylight (penalty × share of dark hours) | 1.0 | University of Auckland lateral line research (diurnal predator); fishing.net.nz, "How to catch blue cod from the shore" |
+
+Full citations and URLs are in the JSON.
+
+**Left out, and why.**
+
+- Snapper, moon: mixed evidence, no NZ research found. Snapper, which tide: local.
+- Kingfish, tide: sources only say "some spots".
+- Kahawai, tide: sources disagree. Kahawai, clarity after rain: sourced but not modelled (needs rain history, river mouths only).
+- Gurnard, tide: differs by coast. Gurnard, sea temperature: no range given.
+- Tarakihi, light and sea temperature: no source found.
+- Blue cod, tide and dawn/dusk: a Fisheries NZ pot survey (BCO9701, Marlborough Sounds) found no tide or time-of-day effect.
+- Tuna (southern bluefin, Pacific bluefin, albacore): no usable preference found. Fisheries NZ reports only give season sea temperatures. They are also offshore boat fish that the shore safety gate does not describe.
+- Not scored at all (no conditions entry yet): trevally, john dory, hāpuku/groper, barracouta, trout and salmon.
+
+**Best window per species.** Per day, the window where the species scores highest, if 4.5 or more. Near ties (within the confidence margin) go to the earlier window. The verdict line groups species that share a window: "Kahawai and snapper: Tue 6–9pm. Kingfish: Tue 5–8am."
+
+**Known limits.** The species factors are small next to the differences between windows, so species often share a best window. Species with fewer sourced factors lose points less often and tend to rank higher (blue cod usually tops Dunedin). Catch reports are the way to tune this.

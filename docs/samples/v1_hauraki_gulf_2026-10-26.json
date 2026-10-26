@@ -63,7 +63,7 @@
   "rating": "great",
   "score": 8.2,
   "headline": "Go Monday early morning",
-  "advice": "Mon 5–8am, gentle cross-offshore NW 8 kn, 0.1 m sea @ 3 s, rising tide, high 7:54am, dawn. Try snapper: soft-baits or berleyed baits along reef edges and work-ups. Also good: Wed 28 Oct.",
+  "advice": "Mon 5–8am, gentle cross-offshore NW 8 kn, 0.1 m sea @ 3 s, rising tide, high 7:54am, dawn. Try kingfish: live-baits or jigs around pins and reefs. Also good: Wed 28 Oct.",
   "confidence": "high",
   "window": {
    "id": "hauraki_gulf:2026-10-26T05:00:00+13:00/2026-10-26T08:00:00+13:00",
@@ -82,9 +82,16 @@
    "score": 8.4,
    "rating": "great",
    "headline": "Sun 6–9pm looks great",
-   "advice": "Sun 6–9pm, light cross-offshore NW 5 kn, 0.1 m sea @ 7 s, falling tide, low 6:59pm, dusk. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Sun 6–9pm, light cross-offshore NW 5 kn, 0.1 m sea @ 7 s, falling tide, low 6:59pm, dusk. Try kahawai: lures or soft-baits on surface work-ups",
    "confidence": "low"
-  }
+  },
+  "best_by_species": {
+   "Kingfish": "hauraki_gulf:2026-10-26T05:00:00+13:00/2026-10-26T08:00:00+13:00",
+   "Kahawai": "hauraki_gulf:2026-10-26T05:00:00+13:00/2026-10-26T08:00:00+13:00",
+   "Snapper": "hauraki_gulf:2026-10-26T05:00:00+13:00/2026-10-26T08:00:00+13:00",
+   "Gurnard": "hauraki_gulf:2026-10-26T05:00:00+13:00/2026-10-26T08:00:00+13:00"
+  },
+  "species_text": "Kingfish, kahawai, snapper and gurnard: Mon 5–8am."
  },
  "days": [
   {
@@ -114,7 +121,7 @@
     "score": 8.2,
     "rating": "great",
     "headline": "Mon 5–8am looks great",
-    "advice": "Mon 5–8am, gentle cross-offshore NW 8 kn, 0.1 m sea @ 3 s, rising tide, high 7:54am, dawn. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+    "advice": "Mon 5–8am, gentle cross-offshore NW 8 kn, 0.1 m sea @ 3 s, rising tide, high 7:54am, dawn. Try kingfish: live-baits or jigs around pins and reefs",
     "reasons": [
      "Wind NW 8 kn (cross-offshore)",
      "Gusts to 12 kn",
@@ -134,7 +141,29 @@
     "swell_m": 0.1,
     "swell_period_s": 3.0,
     "rain_mm": 0,
-    "target_species": "Snapper",
+    "target_species": "Kingfish",
+    "species": [
+     {
+      "name": "Kingfish",
+      "score": 8.2,
+      "why": "sea 16.9 C, dawn"
+     },
+     {
+      "name": "Kahawai",
+      "score": 8.2,
+      "why": "dawn"
+     },
+     {
+      "name": "Snapper",
+      "score": 7.9,
+      "why": "sea 16.9 C, slack for 1 of 3 h, dawn"
+     },
+     {
+      "name": "Gurnard",
+      "score": 7.9,
+      "why": "low sea 0.1 m, no dusk"
+     }
+    ],
     "confidence_detail": {
      "level": "high",
      "lead_days": 0,
@@ -156,7 +185,7 @@
     },
     "near_best": true
    },
-   "best_window_text": "Mon 5–8am, gentle cross-offshore NW 8 kn, 0.1 m sea @ 3 s, rising tide, high 7:54am, dawn. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "best_window_text": "Mon 5–8am, gentle cross-offshore NW 8 kn, 0.1 m sea @ 3 s, rising tide, high 7:54am, dawn. Try kingfish: live-baits or jigs around pins and reefs",
    "windows": 3,
    "no_window_reason": null,
    "least_bad_window": null,
@@ -306,7 +335,14 @@
    ],
    "score_remaining": 7.7,
    "remaining_from": "2026-10-26T00:00:00+13:00",
-   "score_full_day": 7.7
+   "score_full_day": 7.7,
+   "best_by_species": {
+    "Kingfish": "hauraki_gulf:2026-10-26T05:00:00+13:00/2026-10-26T08:00:00+13:00",
+    "Kahawai": "hauraki_gulf:2026-10-26T05:00:00+13:00/2026-10-26T08:00:00+13:00",
+    "Snapper": "hauraki_gulf:2026-10-26T05:00:00+13:00/2026-10-26T08:00:00+13:00",
+    "Gurnard": "hauraki_gulf:2026-10-26T05:00:00+13:00/2026-10-26T08:00:00+13:00"
+   },
+   "species_verdict": "Kingfish, kahawai, snapper and gurnard: Mon 5–8am."
   },
   {
    "date": "2026-10-27",
@@ -361,6 +397,7 @@
     "swell_period_s": 5.0,
     "rain_mm": 0,
     "target_species": null,
+    "species": [],
     "confidence_detail": {
      "level": "medium",
      "lead_days": 1,
@@ -531,7 +568,9 @@
    ],
    "score_remaining": null,
    "remaining_from": null,
-   "score_full_day": 3.7
+   "score_full_day": 3.7,
+   "best_by_species": {},
+   "species_verdict": null
   },
   {
    "date": "2026-10-28",
@@ -560,7 +599,7 @@
     "score": 7.4,
     "rating": "good",
     "headline": "Wed 9am–1pm looks good",
-    "advice": "Wed 9am–1pm, gentle offshore SW 9 kn, 0.4 m sea @ 5 s, falling tide. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+    "advice": "Wed 9am–1pm, gentle offshore SW 9 kn, 0.4 m sea @ 5 s, falling tide. Try gurnard: baits on sandy bottom",
     "reasons": [
      "Wind SW 9 kn (offshore)",
      "Gusts to 15 kn",
@@ -578,7 +617,29 @@
     "swell_m": 0.3,
     "swell_period_s": 5.0,
     "rain_mm": 0,
-    "target_species": "Snapper",
+    "target_species": "Gurnard",
+    "species": [
+     {
+      "name": "Gurnard",
+      "score": 7.2,
+      "why": "low sea 0.4 m, no dusk"
+     },
+     {
+      "name": "Kingfish",
+      "score": 6.9,
+      "why": "sea 16.7 C, no dawn"
+     },
+     {
+      "name": "Kahawai",
+      "score": 6.9,
+      "why": "no dawn or dusk"
+     },
+     {
+      "name": "Snapper",
+      "score": 6.7,
+      "why": "sea 16.7 C, slack for 1 of 4 h, no dawn or dusk"
+     }
+    ],
     "confidence_detail": {
      "level": "high",
      "lead_days": 2,
@@ -600,7 +661,7 @@
     },
     "near_best": true
    },
-   "best_window_text": "Wed 9am–1pm, gentle offshore SW 9 kn, 0.4 m sea @ 5 s, falling tide. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "best_window_text": "Wed 9am–1pm, gentle offshore SW 9 kn, 0.4 m sea @ 5 s, falling tide. Try gurnard: baits on sandy bottom",
    "windows": 2,
    "no_window_reason": null,
    "least_bad_window": null,
@@ -750,7 +811,14 @@
    ],
    "score_remaining": null,
    "remaining_from": null,
-   "score_full_day": 6.9
+   "score_full_day": 6.9,
+   "best_by_species": {
+    "Gurnard": "hauraki_gulf:2026-10-28T09:00:00+13:00/2026-10-28T13:00:00+13:00",
+    "Kingfish": "hauraki_gulf:2026-10-28T09:00:00+13:00/2026-10-28T13:00:00+13:00",
+    "Kahawai": "hauraki_gulf:2026-10-28T09:00:00+13:00/2026-10-28T13:00:00+13:00",
+    "Snapper": "hauraki_gulf:2026-10-28T09:00:00+13:00/2026-10-28T13:00:00+13:00"
+   },
+   "species_verdict": "Gurnard, kingfish, kahawai and snapper: Wed 9am–1pm."
   },
   {
    "date": "2026-10-29",
@@ -800,6 +868,28 @@
     "swell_period_s": 5.0,
     "rain_mm": 0.1,
     "target_species": "Snapper",
+    "species": [
+     {
+      "name": "Snapper",
+      "score": 4.8,
+      "why": "sea 16.6 C, tide running, dawn"
+     },
+     {
+      "name": "Kingfish",
+      "score": 4.8,
+      "why": "sea 16.6 C, dawn"
+     },
+     {
+      "name": "Kahawai",
+      "score": 4.8,
+      "why": "dawn"
+     },
+     {
+      "name": "Gurnard",
+      "score": 4.5,
+      "why": "low sea 0.5 m, no dusk"
+     }
+    ],
     "confidence_detail": {
      "level": "low",
      "lead_days": 3,
@@ -973,7 +1063,14 @@
    ],
    "score_remaining": null,
    "remaining_from": null,
-   "score_full_day": 3.6
+   "score_full_day": 3.6,
+   "best_by_species": {
+    "Snapper": "hauraki_gulf:2026-10-29T05:00:00+13:00/2026-10-29T08:00:00+13:00",
+    "Kingfish": "hauraki_gulf:2026-10-29T05:00:00+13:00/2026-10-29T08:00:00+13:00",
+    "Kahawai": "hauraki_gulf:2026-10-29T05:00:00+13:00/2026-10-29T08:00:00+13:00",
+    "Gurnard": "hauraki_gulf:2026-10-29T05:00:00+13:00/2026-10-29T08:00:00+13:00"
+   },
+   "species_verdict": "Snapper, kingfish, kahawai and gurnard: Thu 5–8am."
   },
   {
    "date": "2026-10-30",
@@ -1026,6 +1123,7 @@
     "swell_period_s": 5.0,
     "rain_mm": 0,
     "target_species": null,
+    "species": [],
     "confidence_detail": {
      "level": "low",
      "lead_days": 4,
@@ -1196,7 +1294,9 @@
    ],
    "score_remaining": null,
    "remaining_from": null,
-   "score_full_day": 2.5
+   "score_full_day": 2.5,
+   "best_by_species": {},
+   "species_verdict": null
   },
   {
    "date": "2026-10-31",
@@ -1225,7 +1325,7 @@
     "score": 5.5,
     "rating": "marginal",
     "headline": "Sat 2–5pm is fishable",
-    "advice": "Sat 2–5pm, moderate offshore SW 14 kn, 0.5 m sea @ 6 s, falling tide. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+    "advice": "Sat 2–5pm, moderate offshore SW 14 kn, 0.5 m sea @ 6 s, falling tide. Try gurnard: baits on sandy bottom",
     "reasons": [
      "Wind SW 14 kn (offshore)",
      "Gusts to 21 kn",
@@ -1244,7 +1344,29 @@
     "swell_m": 0.1,
     "swell_period_s": 6.0,
     "rain_mm": 0,
-    "target_species": "Snapper",
+    "target_species": "Gurnard",
+    "species": [
+     {
+      "name": "Gurnard",
+      "score": 5.2,
+      "why": "low sea 0.5 m, no dusk"
+     },
+     {
+      "name": "Snapper",
+      "score": 5.0,
+      "why": "sea 16.9 C, tide running, no dawn or dusk"
+     },
+     {
+      "name": "Kingfish",
+      "score": 5.0,
+      "why": "sea 16.9 C, no dawn"
+     },
+     {
+      "name": "Kahawai",
+      "score": 5.0,
+      "why": "no dawn or dusk"
+     }
+    ],
     "confidence_detail": {
      "level": "low",
      "lead_days": 5,
@@ -1268,7 +1390,7 @@
     },
     "near_best": true
    },
-   "best_window_text": "Sat 2–5pm, moderate offshore SW 14 kn, 0.5 m sea @ 6 s, falling tide. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "best_window_text": "Sat 2–5pm, moderate offshore SW 14 kn, 0.5 m sea @ 6 s, falling tide. Try gurnard: baits on sandy bottom",
    "windows": 1,
    "no_window_reason": null,
    "least_bad_window": null,
@@ -1418,7 +1540,14 @@
    ],
    "score_remaining": null,
    "remaining_from": null,
-   "score_full_day": 5.0
+   "score_full_day": 5.0,
+   "best_by_species": {
+    "Gurnard": "hauraki_gulf:2026-10-31T14:00:00+13:00/2026-10-31T17:00:00+13:00",
+    "Snapper": "hauraki_gulf:2026-10-31T14:00:00+13:00/2026-10-31T17:00:00+13:00",
+    "Kingfish": "hauraki_gulf:2026-10-31T14:00:00+13:00/2026-10-31T17:00:00+13:00",
+    "Kahawai": "hauraki_gulf:2026-10-31T14:00:00+13:00/2026-10-31T17:00:00+13:00"
+   },
+   "species_verdict": "Gurnard, snapper, kingfish and kahawai: Sat 2–5pm."
   },
   {
    "date": "2026-11-01",
@@ -1447,7 +1576,7 @@
     "score": 8.4,
     "rating": "great",
     "headline": "Sun 6–9pm looks great",
-    "advice": "Sun 6–9pm, light cross-offshore NW 5 kn, 0.1 m sea @ 7 s, falling tide, low 6:59pm, dusk. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+    "advice": "Sun 6–9pm, light cross-offshore NW 5 kn, 0.1 m sea @ 7 s, falling tide, low 6:59pm, dusk. Try kahawai: lures or soft-baits on surface work-ups",
     "reasons": [
      "Wind NW 5 kn (cross-offshore)",
      "Gusts to 10 kn",
@@ -1466,7 +1595,29 @@
     "swell_m": 0.0,
     "swell_period_s": 7.0,
     "rain_mm": 0,
-    "target_species": "Snapper",
+    "target_species": "Kahawai",
+    "species": [
+     {
+      "name": "Kahawai",
+      "score": 8.4,
+      "why": "dusk"
+     },
+     {
+      "name": "Gurnard",
+      "score": 8.4,
+      "why": "low sea 0.1 m, dusk"
+     },
+     {
+      "name": "Snapper",
+      "score": 7.9,
+      "why": "sea 17.2 C, slack for 2 of 3 h, dusk"
+     },
+     {
+      "name": "Kingfish",
+      "score": 7.9,
+      "why": "sea 17.2 C, no dawn"
+     }
+    ],
     "confidence_detail": {
      "level": "low",
      "lead_days": 6,
@@ -1490,7 +1641,7 @@
     },
     "near_best": true
    },
-   "best_window_text": "Sun 6–9pm, light cross-offshore NW 5 kn, 0.1 m sea @ 7 s, falling tide, low 6:59pm, dusk. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "best_window_text": "Sun 6–9pm, light cross-offshore NW 5 kn, 0.1 m sea @ 7 s, falling tide, low 6:59pm, dusk. Try kahawai: lures or soft-baits on surface work-ups",
    "windows": 2,
    "no_window_reason": null,
    "least_bad_window": null,
@@ -1640,7 +1791,14 @@
    ],
    "score_remaining": null,
    "remaining_from": null,
-   "score_full_day": 8.1
+   "score_full_day": 8.1,
+   "best_by_species": {
+    "Gurnard": "hauraki_gulf:2026-11-01T18:00:00+13:00/2026-11-01T21:00:00+13:00",
+    "Kahawai": "hauraki_gulf:2026-11-01T18:00:00+13:00/2026-11-01T21:00:00+13:00",
+    "Kingfish": "hauraki_gulf:2026-11-01T18:00:00+13:00/2026-11-01T21:00:00+13:00",
+    "Snapper": "hauraki_gulf:2026-11-01T18:00:00+13:00/2026-11-01T21:00:00+13:00"
+   },
+   "species_verdict": "Gurnard, kahawai, kingfish and snapper: Sun 6–9pm."
   }
  ],
  "windows": [
@@ -1651,7 +1809,7 @@
    "score": 8.2,
    "rating": "great",
    "headline": "Mon 5–8am looks great",
-   "advice": "Mon 5–8am, gentle cross-offshore NW 8 kn, 0.1 m sea @ 3 s, rising tide, high 7:54am, dawn. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Mon 5–8am, gentle cross-offshore NW 8 kn, 0.1 m sea @ 3 s, rising tide, high 7:54am, dawn. Try kingfish: live-baits or jigs around pins and reefs",
    "reasons": [
     "Wind NW 8 kn (cross-offshore)",
     "Gusts to 12 kn",
@@ -1671,7 +1829,29 @@
    "swell_m": 0.1,
    "swell_period_s": 3.0,
    "rain_mm": 0,
-   "target_species": "Snapper",
+   "target_species": "Kingfish",
+   "species": [
+    {
+     "name": "Kingfish",
+     "score": 8.2,
+     "why": "sea 16.9 C, dawn"
+    },
+    {
+     "name": "Kahawai",
+     "score": 8.2,
+     "why": "dawn"
+    },
+    {
+     "name": "Snapper",
+     "score": 7.9,
+     "why": "sea 16.9 C, slack for 1 of 3 h, dawn"
+    },
+    {
+     "name": "Gurnard",
+     "score": 7.9,
+     "why": "low sea 0.1 m, no dusk"
+    }
+   ],
    "confidence_detail": {
     "level": "high",
     "lead_days": 0,
@@ -1700,7 +1880,7 @@
    "score": 7.1,
    "rating": "good",
    "headline": "Mon 10am–1pm looks good",
-   "advice": "Mon 10am–1pm, gentle cross-shore N 8 kn, 0.2 m sea @ 4 s, falling tide, low 1:58pm. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Mon 10am–1pm, gentle cross-shore N 8 kn, 0.2 m sea @ 4 s, falling tide, low 1:58pm. Try gurnard: baits on sandy bottom",
    "reasons": [
     "Wind N 8 kn (cross-shore)",
     "Gusts to 12 kn",
@@ -1718,7 +1898,29 @@
    "swell_m": 0.1,
    "swell_period_s": 4.0,
    "rain_mm": 0,
-   "target_species": "Snapper",
+   "target_species": "Gurnard",
+   "species": [
+    {
+     "name": "Gurnard",
+     "score": 6.8,
+     "why": "low sea 0.2 m, no dusk"
+    },
+    {
+     "name": "Snapper",
+     "score": 6.6,
+     "why": "sea 17.1 C, tide running, no dawn or dusk"
+    },
+    {
+     "name": "Kingfish",
+     "score": 6.6,
+     "why": "sea 17.1 C, no dawn"
+    },
+    {
+     "name": "Kahawai",
+     "score": 6.6,
+     "why": "no dawn or dusk"
+    }
+   ],
    "confidence_detail": {
     "level": "high",
     "lead_days": 0,
@@ -1747,7 +1949,7 @@
    "score": 7.7,
    "rating": "great",
    "headline": "Mon 6–9pm looks great",
-   "advice": "Mon 6–9pm, gentle cross-offshore W 11 kn, 0.4 m sea @ 3 s, rising tide, high 8:09pm, dusk. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Mon 6–9pm, gentle cross-offshore W 11 kn, 0.4 m sea @ 3 s, rising tide, high 8:09pm, dusk. Try kahawai: lures or soft-baits on surface work-ups",
    "reasons": [
     "Wind W 11 kn (cross-offshore)",
     "Gusts to 16 kn",
@@ -1768,7 +1970,29 @@
    "swell_m": 0.3,
    "swell_period_s": 3.0,
    "rain_mm": 0,
-   "target_species": "Snapper",
+   "target_species": "Kahawai",
+   "species": [
+    {
+     "name": "Kahawai",
+     "score": 7.7,
+     "why": "dusk"
+    },
+    {
+     "name": "Gurnard",
+     "score": 7.7,
+     "why": "low sea 0.4 m, dusk"
+    },
+    {
+     "name": "Snapper",
+     "score": 7.2,
+     "why": "sea 17.2 C, slack for 2 of 3 h, dusk"
+    },
+    {
+     "name": "Kingfish",
+     "score": 7.2,
+     "why": "sea 17.2 C, no dawn"
+    }
+   ],
    "confidence_detail": {
     "level": "medium",
     "lead_days": 0,
@@ -1799,7 +2023,7 @@
    "score": 7.4,
    "rating": "good",
    "headline": "Wed 9am–1pm looks good",
-   "advice": "Wed 9am–1pm, gentle offshore SW 9 kn, 0.4 m sea @ 5 s, falling tide. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Wed 9am–1pm, gentle offshore SW 9 kn, 0.4 m sea @ 5 s, falling tide. Try gurnard: baits on sandy bottom",
    "reasons": [
     "Wind SW 9 kn (offshore)",
     "Gusts to 15 kn",
@@ -1817,7 +2041,29 @@
    "swell_m": 0.3,
    "swell_period_s": 5.0,
    "rain_mm": 0,
-   "target_species": "Snapper",
+   "target_species": "Gurnard",
+   "species": [
+    {
+     "name": "Gurnard",
+     "score": 7.2,
+     "why": "low sea 0.4 m, no dusk"
+    },
+    {
+     "name": "Kingfish",
+     "score": 6.9,
+     "why": "sea 16.7 C, no dawn"
+    },
+    {
+     "name": "Kahawai",
+     "score": 6.9,
+     "why": "no dawn or dusk"
+    },
+    {
+     "name": "Snapper",
+     "score": 6.7,
+     "why": "sea 16.7 C, slack for 1 of 4 h, no dawn or dusk"
+    }
+   ],
    "confidence_detail": {
     "level": "high",
     "lead_days": 2,
@@ -1846,7 +2092,7 @@
    "score": 5.7,
    "rating": "marginal",
    "headline": "Wed 3–6pm is fishable",
-   "advice": "Wed 3–6pm, moderate offshore W 15 kn, 0.5 m sea @ 5 s, falling tide, low 3:33pm. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Wed 3–6pm, moderate offshore W 15 kn, 0.5 m sea @ 5 s, falling tide, low 3:33pm. Try gurnard: baits on sandy bottom",
    "reasons": [
     "Wind W 15 kn (offshore)",
     "Gusts to 21 kn",
@@ -1866,7 +2112,29 @@
    "swell_m": 0.3,
    "swell_period_s": 5.0,
    "rain_mm": 0,
-   "target_species": "Snapper",
+   "target_species": "Gurnard",
+   "species": [
+    {
+     "name": "Gurnard",
+     "score": 5.5,
+     "why": "low sea 0.5 m, no dusk"
+    },
+    {
+     "name": "Kingfish",
+     "score": 5.2,
+     "why": "sea 16.9 C, no dawn"
+    },
+    {
+     "name": "Kahawai",
+     "score": 5.2,
+     "why": "no dawn or dusk"
+    },
+    {
+     "name": "Snapper",
+     "score": 5.0,
+     "why": "sea 16.9 C, slack for 1 of 3 h, no dawn or dusk"
+    }
+   ],
    "confidence_detail": {
     "level": "medium",
     "lead_days": 2,
@@ -1918,6 +2186,28 @@
    "swell_period_s": 5.0,
    "rain_mm": 0.1,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 4.8,
+     "why": "sea 16.6 C, tide running, dawn"
+    },
+    {
+     "name": "Kingfish",
+     "score": 4.8,
+     "why": "sea 16.6 C, dawn"
+    },
+    {
+     "name": "Kahawai",
+     "score": 4.8,
+     "why": "dawn"
+    },
+    {
+     "name": "Gurnard",
+     "score": 4.5,
+     "why": "low sea 0.5 m, no dusk"
+    }
+   ],
    "confidence_detail": {
     "level": "low",
     "lead_days": 3,
@@ -1948,7 +2238,7 @@
    "score": 5.5,
    "rating": "marginal",
    "headline": "Sat 2–5pm is fishable",
-   "advice": "Sat 2–5pm, moderate offshore SW 14 kn, 0.5 m sea @ 6 s, falling tide. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Sat 2–5pm, moderate offshore SW 14 kn, 0.5 m sea @ 6 s, falling tide. Try gurnard: baits on sandy bottom",
    "reasons": [
     "Wind SW 14 kn (offshore)",
     "Gusts to 21 kn",
@@ -1967,7 +2257,29 @@
    "swell_m": 0.1,
    "swell_period_s": 6.0,
    "rain_mm": 0,
-   "target_species": "Snapper",
+   "target_species": "Gurnard",
+   "species": [
+    {
+     "name": "Gurnard",
+     "score": 5.2,
+     "why": "low sea 0.5 m, no dusk"
+    },
+    {
+     "name": "Snapper",
+     "score": 5.0,
+     "why": "sea 16.9 C, tide running, no dawn or dusk"
+    },
+    {
+     "name": "Kingfish",
+     "score": 5.0,
+     "why": "sea 16.9 C, no dawn"
+    },
+    {
+     "name": "Kahawai",
+     "score": 5.0,
+     "why": "no dawn or dusk"
+    }
+   ],
    "confidence_detail": {
     "level": "low",
     "lead_days": 5,
@@ -1998,7 +2310,7 @@
    "score": 7.8,
    "rating": "great",
    "headline": "Sun 9am–1pm looks great",
-   "advice": "Sun 9am–1pm, light W 4 kn, 0.1 m sea @ 7 s, rising tide, high 12:42pm. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Sun 9am–1pm, light W 4 kn, 0.1 m sea @ 7 s, rising tide, high 12:42pm. Try gurnard: baits on sandy bottom",
    "reasons": [
     "Wind W 4 kn (offshore)",
     "Gusts to 16 kn",
@@ -2017,7 +2329,29 @@
    "swell_m": 0.0,
    "swell_period_s": 7.0,
    "rain_mm": 0,
-   "target_species": "Snapper",
+   "target_species": "Gurnard",
+   "species": [
+    {
+     "name": "Gurnard",
+     "score": 7.5,
+     "why": "low sea 0.1 m, no dusk"
+    },
+    {
+     "name": "Kingfish",
+     "score": 7.3,
+     "why": "sea 17.0 C, no dawn"
+    },
+    {
+     "name": "Kahawai",
+     "score": 7.3,
+     "why": "no dawn or dusk"
+    },
+    {
+     "name": "Snapper",
+     "score": 7.1,
+     "why": "sea 17.0 C, slack for 1 of 4 h, no dawn or dusk"
+    }
+   ],
    "confidence_detail": {
     "level": "low",
     "lead_days": 6,
@@ -2048,7 +2382,7 @@
    "score": 8.4,
    "rating": "great",
    "headline": "Sun 6–9pm looks great",
-   "advice": "Sun 6–9pm, light cross-offshore NW 5 kn, 0.1 m sea @ 7 s, falling tide, low 6:59pm, dusk. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Sun 6–9pm, light cross-offshore NW 5 kn, 0.1 m sea @ 7 s, falling tide, low 6:59pm, dusk. Try kahawai: lures or soft-baits on surface work-ups",
    "reasons": [
     "Wind NW 5 kn (cross-offshore)",
     "Gusts to 10 kn",
@@ -2067,7 +2401,29 @@
    "swell_m": 0.0,
    "swell_period_s": 7.0,
    "rain_mm": 0,
-   "target_species": "Snapper",
+   "target_species": "Kahawai",
+   "species": [
+    {
+     "name": "Kahawai",
+     "score": 8.4,
+     "why": "dusk"
+    },
+    {
+     "name": "Gurnard",
+     "score": 8.4,
+     "why": "low sea 0.1 m, dusk"
+    },
+    {
+     "name": "Snapper",
+     "score": 7.9,
+     "why": "sea 17.2 C, slack for 2 of 3 h, dusk"
+    },
+    {
+     "name": "Kingfish",
+     "score": 7.9,
+     "why": "sea 17.2 C, no dawn"
+    }
+   ],
    "confidence_detail": {
     "level": "low",
     "lead_days": 6,
@@ -5142,7 +5498,7 @@
   }
  ],
  "data_status": "engine",
- "engine_version": "2.4.0",
+ "engine_version": "2.5.0",
  "hourly_step_h": 1,
  "timezone": "Pacific/Auckland",
  "model_runs": {

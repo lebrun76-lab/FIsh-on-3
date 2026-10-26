@@ -13,7 +13,7 @@ Real samples, regenerated offline from recorded responses with `python tools/mak
 
 | # | Item | Engine 2.1 / 2.2 |
 |---|---|---|
-| 1 | packaging | `pyproject.toml`: `pip install -e /path/to/fish-engine`, version from `fishon_engine.__version__` (2.4.0), extras `[sstmap]`, `[test]`, script `fishon-forecast` |
+| 1 | packaging | `pyproject.toml`: `pip install -e /path/to/fish-engine`, version from `fishon_engine.__version__` (2.5.0), extras `[sstmap]`, `[test]`, script `fishon-forecast` |
 | 2 | SST too warm? | Checked against NOAA satellite SST: real and anomalously warm. See SST_CHECK.md; `warnings[]` carries a note |
 | 3 | scores too optimistic | Recalibrated weights. See SCORING.md |
 | 4 | gusts 2–2.6× mean | Sea cells and sea weather points. See WEATHER_POINTS.md; `spot.forecast_point` |
@@ -44,7 +44,7 @@ Real samples, regenerated offline from recorded responses with `python tools/mak
 - `spot`: `facing_deg`, `facing_note`, `tide_port`, `tide_port_id`, `tide_port_km`, `tide_port_linz_name` (2.3), `tide_note`, `forecast_point`, `marine_point` (2.2: `marine_point.note` when the marine cell is far from the spot; docs/MARINE_POINTS.md).
 - `verdict` (2.2): `no_window_reason`, `least_bad`, `best_later`, `horizon_days`, `horizon_end`.
 - `hourly[]`: `wave_m`, `wind_rel`, `light`, `tide_phase`, `rating`.
-- `windows[]`: `id` and `target_species` (2.4.0, see Window ids), `confidence`, `confidence_detail` (2.2), `date`, `wind_kn`, `gust_max_kn`, `wind_from`, `wind_rel`, `wave_m`, `swell_m`, `swell_period_s`, `rain_mm`.
+- `windows[]`: `id` and `target_species` (2.4.0, see Window ids), `confidence`, `confidence_detail` (2.2), `date`, `wind_kn`, `gust_max_kn`, `wind_from`, `wind_rel`, `wave_m`, `swell_m`, `swell_period_s`, `rain_mm`. `species` (2.5.0, see Species scoring).
 - `days[]`: `label`, `confidence`, `verdict_text`, `best_window` (window object), `best_window_text`, `windows` (count), `moon`, `wave_m_avg`, `wind_kn_max`, `blocks_3h[]`; 2.2: `gust_kn_max_daylight`, `wind_kn_max_daylight`, `no_window_reason`, `least_bad_window`, `lead_confidence` (kept for the Streamlit app).
 - `tides[]`: `datum`, `source`.
 
@@ -154,3 +154,41 @@ Every window object carries a fixed `id`, so a catch report ("How'd it go?") can
 **What to store per catch report.** Window `id`, `spot.id`, window `start` and `end`, window `score`, window `target_species`, and top-level `engine_version`. Storing the score and engine version next to the id lets later scoring checks tell a bad forecast from a quiet day, even after the engine is recalibrated.
 
 **Version.** `engine_version` is `"2.4.0"` (minor bump: two new window fields and a stricter validator, no changed values). It is top level in every output and pyproject reads it from `fishon_engine.__version__`. The samples are regenerated and all report 2.4.0.
+
+## Species scoring (2.5.0)
+
+Says which species is worth a go and when. One line per day first, the detail under it. All fields are additive; a 2.4.0 reader ignores them. How the scores are worked out, and the sources, are in `docs/SCORING.md` (Species scoring).
+
+**`days[].species_verdict`** (string or null). The glance line, for example from `docs/samples/v1_bay_of_islands_2026-10-26_0848.json`:
+
+```
+Tue 27 Oct: "Kahawai and snapper: Tue 6–9pm. Kingfish: Tue 5–8am."
+Wed 28 Oct: "Snapper, kingfish and kahawai: Wed 5–8am."
+```
+
+Species that share a best window are grouped, best species first, at most three windows per line. Null when the day has no fishable window. When a day has fishable windows but no species scores 4.5 or more, it reads "No species scores 4.5 or more."
+
+**`verdict.species_text`** (string or null) and **`verdict.best_by_species`** (object): the same over the verdict horizon, for the headline card.
+
+**`days[].best_by_species`** (object): `{species name: window id}`, the window in `windows[]` where that species scores best that day. Only species scoring 4.5 or more are listed. Near ties (within the engine's confidence margin) go to the earlier window. Ordered best score first. `{}` when none.
+
+**`windows[].species`** (array): `[{name, score, why}]`, best first. Example (Hauraki Gulf, Mon 5–8am, window score 8.2):
+
+```json
+"species": [
+ {"name": "Kingfish", "score": 8.2, "why": "sea 16.9 C, dawn"},
+ {"name": "Kahawai", "score": 8.2, "why": "dawn"},
+ {"name": "Snapper", "score": 7.9, "why": "sea 16.9 C, slack for 1 of 3 h, dawn"},
+ {"name": "Gurnard", "score": 7.9, "why": "low sea 0.1 m, no dusk"}
+]
+```
+
+- Only species open on that date (`peak`, `in season`, or `no seasonal data` in `species_seasons.json`) that also have sourced conditions. Off-peak and closed species never appear.
+- `score` is 0–10 and never above the window's own (safety-gated) `score`.
+- `[]` on poor windows and where no species has sourced conditions (for example the freshwater spots: trout and salmon are not scored yet).
+
+**`target_species`** is now the top entry of `windows[].species` (it was the first open main species). The advice "Try …" line follows it. Null as before when there are no species or the window is poor.
+
+**Validation.** `validate_v1` checks these fields when present: each species entry has name, score and why; scores are 0–10, not above the window score, and sorted best first; `target_species` is the top species; every `best_by_species` id is in `windows[]`; verdict lines have no em dash or spaced dash. Older outputs without the fields still pass.
+
+**Version.** `engine_version` is `"2.5.0"` (minor bump: new fields, and `target_species` can now name a different species). The samples are regenerated and all report 2.5.0.

@@ -49,7 +49,7 @@ def test_id_unique_within_output(samples):
 
 def test_engine_version_top_level(samples):
     for fc in samples:
-        assert fc["engine_version"] == fishon_engine.__version__ == "2.4.0"
+        assert fc["engine_version"] == fishon_engine.__version__ == "2.5.0"
 
 
 def test_id_stable_when_score_changes(patched, monkeypatch):  # noqa: F811
@@ -96,4 +96,9 @@ def test_target_species_matches_advice(samples):
                 assert f"Try {w['target_species'].lower()}" in w["advice"]
             else:
                 assert "Try " not in w["advice"]
-    assert samples[0]["windows"][0]["target_species"] == "Snapper"
+    # 2.5.0: the target is the top species-scored one when there is one
+    for fc in samples:
+        for w in fc["windows"]:
+            if w["species"]:
+                assert w["target_species"] == w["species"][0]["name"]
+    assert samples[0]["windows"][0]["target_species"] == samples[0]["windows"][0]["species"][0]["name"]

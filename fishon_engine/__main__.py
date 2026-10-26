@@ -29,11 +29,15 @@ def main(argv=None):
         print(f"  tides: {fc['tide_source']} [datum: {fc['tide_datum']}]")
         print(f"  VERDICT: {v['headline']} ({v['rating']}, {v['score']}/10) [{v['confidence']}]")
         print(f"    {v['advice']}")
+        if v.get("species_text"):
+            print(f"    By species: {v['species_text']}")
         for d in fc["days"]:
             print(f"  {d['label']}: {'-' if d['score'] is None else d['score']}/10 {d['rating']} "
                   f"[{d['confidence']}] wind avg {d['wind_kn_avg']} kn, gust max {d['gust_kn_max']} kn, "
                   f"wave {d['wave_m_avg']} m, swell {d['swell_m_avg']} m, rain {d['rain_mm']} mm, SST {d['sst_c_avg']} C")
             print(f"    {d['summary']}")
+            if d.get("species_verdict"):
+                print(f"    By species: {d['species_verdict']}")
             for w in [w for w in fc["windows"] if w["date"] == d["date"]]:
                 print(f"    - {w['headline']} ({w['score']}/10): {w['advice']}")
             tl = [t for t in fc["tides"] if t["time"][:10] == d["date"]]

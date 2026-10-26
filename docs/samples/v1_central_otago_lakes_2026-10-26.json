@@ -71,7 +71,9 @@
    "headline": "Sat 5–8am looks good",
    "advice": "Sat 5–8am, light NW 3 kn, dawn. Try brown trout: spin or fly from the shore at first and last light",
    "confidence": "medium"
-  }
+  },
+  "best_by_species": {},
+  "species_text": null
  },
  "days": [
   {
@@ -121,6 +123,7 @@
     "swell_period_s": null,
     "rain_mm": 2.7,
     "target_species": "Brown Trout",
+    "species": [],
     "confidence_detail": {
      "level": "high",
      "lead_days": 0,
@@ -289,7 +292,9 @@
    ],
    "score_remaining": 4.4,
    "remaining_from": "2026-10-26T00:00:00+13:00",
-   "score_full_day": 4.4
+   "score_full_day": 4.4,
+   "best_by_species": {},
+   "species_verdict": null
   },
   {
    "date": "2026-10-27",
@@ -336,6 +341,7 @@
     "swell_period_s": null,
     "rain_mm": 0,
     "target_species": "Brown Trout",
+    "species": [],
     "confidence_detail": {
      "level": "high",
      "lead_days": 1,
@@ -504,7 +510,9 @@
    ],
    "score_remaining": null,
    "remaining_from": null,
-   "score_full_day": 5.7
+   "score_full_day": 5.7,
+   "best_by_species": {},
+   "species_verdict": null
   },
   {
    "date": "2026-10-28",
@@ -552,6 +560,7 @@
     "swell_period_s": null,
     "rain_mm": 0,
     "target_species": "Brown Trout",
+    "species": [],
     "confidence_detail": {
      "level": "high",
      "lead_days": 2,
@@ -720,7 +729,9 @@
    ],
    "score_remaining": null,
    "remaining_from": null,
-   "score_full_day": 6.0
+   "score_full_day": 6.0,
+   "best_by_species": {},
+   "species_verdict": null
   },
   {
    "date": "2026-10-29",
@@ -767,6 +778,7 @@
     "swell_period_s": null,
     "rain_mm": 0.4,
     "target_species": "Brown Trout",
+    "species": [],
     "confidence_detail": {
      "level": "medium",
      "lead_days": 3,
@@ -935,7 +947,9 @@
    ],
    "score_remaining": null,
    "remaining_from": null,
-   "score_full_day": 5.0
+   "score_full_day": 5.0,
+   "best_by_species": {},
+   "species_verdict": null
   },
   {
    "date": "2026-10-30",
@@ -982,6 +996,7 @@
     "swell_period_s": null,
     "rain_mm": 0.3,
     "target_species": "Brown Trout",
+    "species": [],
     "confidence_detail": {
      "level": "medium",
      "lead_days": 4,
@@ -1150,7 +1165,9 @@
    ],
    "score_remaining": null,
    "remaining_from": null,
-   "score_full_day": 5.3
+   "score_full_day": 5.3,
+   "best_by_species": {},
+   "species_verdict": null
   },
   {
    "date": "2026-10-31",
@@ -1197,6 +1214,7 @@
     "swell_period_s": null,
     "rain_mm": 0,
     "target_species": "Brown Trout",
+    "species": [],
     "confidence_detail": {
      "level": "medium",
      "lead_days": 5,
@@ -1365,7 +1383,9 @@
    ],
    "score_remaining": null,
    "remaining_from": null,
-   "score_full_day": 5.8
+   "score_full_day": 5.8,
+   "best_by_species": {},
+   "species_verdict": null
   },
   {
    "date": "2026-11-01",
@@ -1412,6 +1432,7 @@
     "swell_period_s": null,
     "rain_mm": 0,
     "target_species": "Brown Trout",
+    "species": [],
     "confidence_detail": {
      "level": "medium",
      "lead_days": 6,
@@ -1580,7 +1601,9 @@
    ],
    "score_remaining": null,
    "remaining_from": null,
-   "score_full_day": 5.7
+   "score_full_day": 5.7,
+   "best_by_species": {},
+   "species_verdict": null
   }
  ],
  "windows": [
@@ -1611,6 +1634,7 @@
    "swell_period_s": null,
    "rain_mm": 2.7,
    "target_species": "Brown Trout",
+   "species": [],
    "confidence_detail": {
     "level": "high",
     "lead_days": 0,
@@ -1654,6 +1678,7 @@
    "swell_period_s": null,
    "rain_mm": 0,
    "target_species": "Brown Trout",
+   "species": [],
    "confidence_detail": {
     "level": "high",
     "lead_days": 1,
@@ -1696,6 +1721,7 @@
    "swell_period_s": null,
    "rain_mm": 0,
    "target_species": "Brown Trout",
+   "species": [],
    "confidence_detail": {
     "level": "medium",
     "lead_days": 1,
@@ -1742,6 +1768,7 @@
    "swell_period_s": null,
    "rain_mm": 0,
    "target_species": "Brown Trout",
+   "species": [],
    "confidence_detail": {
     "level": "high",
     "lead_days": 1,
@@ -1786,6 +1813,7 @@
    "swell_period_s": null,
    "rain_mm": 0,
    "target_species": "Brown Trout",
+   "species": [],
    "confidence_detail": {
     "level": "high",
     "lead_days": 2,
@@ -1830,6 +1858,7 @@
    "swell_period_s": null,
    "rain_mm": 0.7,
    "target_species": "Brown Trout",
+   "species": [],
    "confidence_detail": {
     "level": "high",
     "lead_days": 2,
@@ -1873,6 +1902,7 @@
    "swell_period_s": null,
    "rain_mm": 0.4,
    "target_species": "Brown Trout",
+   "species": [],
    "confidence_detail": {
     "level": "medium",
     "lead_days": 3,
@@ -1916,6 +1946,7 @@
    "swell_period_s": null,
    "rain_mm": 0.3,
    "target_species": "Brown Trout",
+   "species": [],
    "confidence_detail": {
     "level": "medium",
     "lead_days": 4,
@@ -1960,6 +1991,7 @@
    "swell_period_s": null,
    "rain_mm": 0,
    "target_species": "Brown Trout",
+   "species": [],
    "confidence_detail": {
     "level": "low",
     "lead_days": 4,
@@ -2005,6 +2037,7 @@
    "swell_period_s": null,
    "rain_mm": 0,
    "target_species": "Brown Trout",
+   "species": [],
    "confidence_detail": {
     "level": "medium",
     "lead_days": 5,
@@ -2047,6 +2080,7 @@
    "swell_period_s": null,
    "rain_mm": 0.3,
    "target_species": "Brown Trout",
+   "species": [],
    "confidence_detail": {
     "level": "medium",
     "lead_days": 5,
@@ -2090,6 +2124,7 @@
    "swell_period_s": null,
    "rain_mm": 0,
    "target_species": "Brown Trout",
+   "species": [],
    "confidence_detail": {
     "level": "medium",
     "lead_days": 5,
@@ -2133,6 +2168,7 @@
    "swell_period_s": null,
    "rain_mm": 0,
    "target_species": "Brown Trout",
+   "species": [],
    "confidence_detail": {
     "level": "medium",
     "lead_days": 6,
@@ -2176,6 +2212,7 @@
    "swell_period_s": null,
    "rain_mm": 0,
    "target_species": "Brown Trout",
+   "species": [],
    "confidence_detail": {
     "level": "medium",
     "lead_days": 6,
@@ -2221,6 +2258,7 @@
    "swell_period_s": null,
    "rain_mm": 0,
    "target_species": "Brown Trout",
+   "species": [],
    "confidence_detail": {
     "level": "medium",
     "lead_days": 6,
@@ -5100,7 +5138,7 @@
   }
  ],
  "data_status": "engine",
- "engine_version": "2.4.0",
+ "engine_version": "2.5.0",
  "hourly_step_h": 1,
  "timezone": "Pacific/Auckland",
  "model_runs": {

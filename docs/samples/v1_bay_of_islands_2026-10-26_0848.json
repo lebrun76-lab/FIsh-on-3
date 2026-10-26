@@ -63,7 +63,7 @@
   "rating": "great",
   "score": 7.6,
   "headline": "Go Monday early morning",
-  "advice": "Mon 8–11am, light NE 2 kn, 0.4 m sea @ 8 s, falling tide. Try snapper: soft-baits or berleyed baits along reef edges and work-ups. Also good: Tue 27 Oct, Wed 28 Oct.",
+  "advice": "Mon 8–11am, light NE 2 kn, 0.4 m sea @ 8 s, falling tide. Try kingfish: live-baits or jigs around pins and reefs. Also good: Tue 27 Oct, Wed 28 Oct.",
   "confidence": "high",
   "window": {
    "id": "bay_of_islands:2026-10-26T08:00:00+13:00/2026-10-26T11:00:00+13:00",
@@ -82,9 +82,15 @@
    "score": 8.3,
    "rating": "great",
    "headline": "Sun 5–8am looks great",
-   "advice": "Sun 5–8am, light cross-offshore S 4 kn, 0.3 m sea @ 9 s, falling tide, low 6:51am, dawn. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Sun 5–8am, light cross-offshore S 4 kn, 0.3 m sea @ 9 s, falling tide, low 6:51am, dawn. Try kingfish: live-baits or jigs around pins and reefs",
    "confidence": "medium"
-  }
+  },
+  "best_by_species": {
+   "Kingfish": "bay_of_islands:2026-10-28T05:00:00+13:00/2026-10-28T08:00:00+13:00",
+   "Kahawai": "bay_of_islands:2026-10-28T05:00:00+13:00/2026-10-28T08:00:00+13:00",
+   "Snapper": "bay_of_islands:2026-10-28T05:00:00+13:00/2026-10-28T08:00:00+13:00"
+  },
+  "species_text": "Kingfish, kahawai and snapper: Wed 5–8am."
  },
  "days": [
   {
@@ -114,7 +120,7 @@
     "score": 7.6,
     "rating": "great",
     "headline": "Mon 8–11am looks great",
-    "advice": "Mon 8–11am, light NE 2 kn, 0.4 m sea @ 8 s, falling tide. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+    "advice": "Mon 8–11am, light NE 2 kn, 0.4 m sea @ 8 s, falling tide. Try kingfish: live-baits or jigs around pins and reefs",
     "reasons": [
      "Wind NE 2 kn (onshore)",
      "Gusts to 6 kn",
@@ -131,7 +137,24 @@
     "swell_m": 0.3,
     "swell_period_s": 8.0,
     "rain_mm": 0,
-    "target_species": "Snapper",
+    "target_species": "Kingfish",
+    "species": [
+     {
+      "name": "Kingfish",
+      "score": 7.1,
+      "why": "sea 16.9 C, no dawn"
+     },
+     {
+      "name": "Kahawai",
+      "score": 7.1,
+      "why": "no dawn or dusk"
+     },
+     {
+      "name": "Snapper",
+      "score": 6.8,
+      "why": "sea 16.9 C, slack for 1 of 3 h, no dawn or dusk"
+     }
+    ],
     "confidence_detail": {
      "level": "high",
      "lead_days": 0,
@@ -153,7 +176,7 @@
     },
     "near_best": true
    },
-   "best_window_text": "Mon 8–11am, light NE 2 kn, 0.4 m sea @ 8 s, falling tide. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "best_window_text": "Mon 8–11am, light NE 2 kn, 0.4 m sea @ 8 s, falling tide. Try kingfish: live-baits or jigs around pins and reefs",
    "windows": 3,
    "no_window_reason": null,
    "least_bad_window": null,
@@ -303,7 +326,13 @@
    ],
    "score_remaining": 7.0,
    "remaining_from": "2026-10-26T08:00:00+13:00",
-   "score_full_day": 8.0
+   "score_full_day": 8.0,
+   "best_by_species": {
+    "Kingfish": "bay_of_islands:2026-10-26T08:00:00+13:00/2026-10-26T11:00:00+13:00",
+    "Kahawai": "bay_of_islands:2026-10-26T08:00:00+13:00/2026-10-26T11:00:00+13:00",
+    "Snapper": "bay_of_islands:2026-10-26T08:00:00+13:00/2026-10-26T11:00:00+13:00"
+   },
+   "species_verdict": "Kingfish, kahawai and snapper: Mon 8–11am."
   },
   {
    "date": "2026-10-27",
@@ -332,7 +361,7 @@
     "score": 7.0,
     "rating": "good",
     "headline": "Tue 6–9pm looks good",
-    "advice": "Tue 6–9pm, gentle offshore SW 8 kn, 1.0 m sea @ 5 s, rising tide, high 9:13pm, dusk. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+    "advice": "Tue 6–9pm, gentle offshore SW 8 kn, 1.0 m sea @ 5 s, rising tide, high 9:13pm, dusk. Try kahawai: lures or soft-baits on surface work-ups",
     "reasons": [
      "Wind SW 8 kn (offshore)",
      "Gusts to 13 kn",
@@ -353,7 +382,24 @@
     "swell_m": 0.8,
     "swell_period_s": 5.0,
     "rain_mm": 0.2,
-    "target_species": "Snapper",
+    "target_species": "Kahawai",
+    "species": [
+     {
+      "name": "Kahawai",
+      "score": 7.0,
+      "why": "dusk"
+     },
+     {
+      "name": "Snapper",
+      "score": 6.8,
+      "why": "sea 16.5 C, slack for 1 of 3 h, dusk"
+     },
+     {
+      "name": "Kingfish",
+      "score": 6.5,
+      "why": "sea 16.5 C, no dawn"
+     }
+    ],
     "confidence_detail": {
      "level": "low",
      "lead_days": 1,
@@ -377,7 +423,7 @@
     },
     "near_best": true
    },
-   "best_window_text": "Tue 6–9pm, gentle offshore SW 8 kn, 1.0 m sea @ 5 s, rising tide, high 9:13pm, dusk. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "best_window_text": "Tue 6–9pm, gentle offshore SW 8 kn, 1.0 m sea @ 5 s, rising tide, high 9:13pm, dusk. Try kahawai: lures or soft-baits on surface work-ups",
    "windows": 2,
    "no_window_reason": null,
    "least_bad_window": null,
@@ -527,7 +573,13 @@
    ],
    "score_remaining": null,
    "remaining_from": null,
-   "score_full_day": 6.1
+   "score_full_day": 6.1,
+   "best_by_species": {
+    "Kahawai": "bay_of_islands:2026-10-27T18:00:00+13:00/2026-10-27T21:00:00+13:00",
+    "Snapper": "bay_of_islands:2026-10-27T18:00:00+13:00/2026-10-27T21:00:00+13:00",
+    "Kingfish": "bay_of_islands:2026-10-27T05:00:00+13:00/2026-10-27T08:00:00+13:00"
+   },
+   "species_verdict": "Kahawai and snapper: Tue 6–9pm. Kingfish: Tue 5–8am."
   },
   {
    "date": "2026-10-28",
@@ -576,6 +628,23 @@
     "swell_period_s": 6.0,
     "rain_mm": 0,
     "target_species": "Snapper",
+    "species": [
+     {
+      "name": "Snapper",
+      "score": 7.9,
+      "why": "sea 16.2 C, tide running, dawn"
+     },
+     {
+      "name": "Kingfish",
+      "score": 7.9,
+      "why": "sea 16.2 C, dawn"
+     },
+     {
+      "name": "Kahawai",
+      "score": 7.9,
+      "why": "dawn"
+     }
+    ],
     "confidence_detail": {
      "level": "medium",
      "lead_days": 2,
@@ -749,7 +818,13 @@
    ],
    "score_remaining": null,
    "remaining_from": null,
-   "score_full_day": 7.6
+   "score_full_day": 7.6,
+   "best_by_species": {
+    "Snapper": "bay_of_islands:2026-10-28T05:00:00+13:00/2026-10-28T08:00:00+13:00",
+    "Kingfish": "bay_of_islands:2026-10-28T05:00:00+13:00/2026-10-28T08:00:00+13:00",
+    "Kahawai": "bay_of_islands:2026-10-28T05:00:00+13:00/2026-10-28T08:00:00+13:00"
+   },
+   "species_verdict": "Snapper, kingfish and kahawai: Wed 5–8am."
   },
   {
    "date": "2026-10-29",
@@ -799,6 +874,23 @@
     "swell_period_s": 5.0,
     "rain_mm": 0,
     "target_species": "Snapper",
+    "species": [
+     {
+      "name": "Snapper",
+      "score": 7.8,
+      "why": "sea 16.4 C, tide running, dawn"
+     },
+     {
+      "name": "Kingfish",
+      "score": 7.8,
+      "why": "sea 16.4 C, dawn"
+     },
+     {
+      "name": "Kahawai",
+      "score": 7.8,
+      "why": "dawn"
+     }
+    ],
     "confidence_detail": {
      "level": "low",
      "lead_days": 3,
@@ -972,7 +1064,13 @@
    ],
    "score_remaining": null,
    "remaining_from": null,
-   "score_full_day": 7.2
+   "score_full_day": 7.2,
+   "best_by_species": {
+    "Snapper": "bay_of_islands:2026-10-29T05:00:00+13:00/2026-10-29T08:00:00+13:00",
+    "Kingfish": "bay_of_islands:2026-10-29T05:00:00+13:00/2026-10-29T08:00:00+13:00",
+    "Kahawai": "bay_of_islands:2026-10-29T05:00:00+13:00/2026-10-29T08:00:00+13:00"
+   },
+   "species_verdict": "Snapper, kingfish and kahawai: Thu 5–8am."
   },
   {
    "date": "2026-10-30",
@@ -1021,6 +1119,23 @@
     "swell_period_s": 6.0,
     "rain_mm": 0,
     "target_species": "Snapper",
+    "species": [
+     {
+      "name": "Snapper",
+      "score": 7.9,
+      "why": "sea 16.9 C, tide running, dusk"
+     },
+     {
+      "name": "Kahawai",
+      "score": 7.9,
+      "why": "dusk"
+     },
+     {
+      "name": "Kingfish",
+      "score": 7.4,
+      "why": "sea 16.9 C, no dawn"
+     }
+    ],
     "confidence_detail": {
      "level": "low",
      "lead_days": 4,
@@ -1194,7 +1309,13 @@
    ],
    "score_remaining": null,
    "remaining_from": null,
-   "score_full_day": 7.4
+   "score_full_day": 7.4,
+   "best_by_species": {
+    "Kahawai": "bay_of_islands:2026-10-30T18:00:00+13:00/2026-10-30T21:00:00+13:00",
+    "Snapper": "bay_of_islands:2026-10-30T18:00:00+13:00/2026-10-30T21:00:00+13:00",
+    "Kingfish": "bay_of_islands:2026-10-30T05:00:00+13:00/2026-10-30T09:00:00+13:00"
+   },
+   "species_verdict": "Kahawai and snapper: Fri 6–9pm. Kingfish: Fri 5–9am."
   },
   {
    "date": "2026-10-31",
@@ -1223,7 +1344,7 @@
     "score": 8.0,
     "rating": "great",
     "headline": "Sat 6–9am looks great",
-    "advice": "Sat 6–9am, light offshore SW 4 kn, 0.3 m sea @ 7 s, rising tide, dawn. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+    "advice": "Sat 6–9am, light offshore SW 4 kn, 0.3 m sea @ 7 s, rising tide, dawn. Try kingfish: live-baits or jigs around pins and reefs",
     "reasons": [
      "Wind SW 4 kn (offshore)",
      "Gusts to 9 kn",
@@ -1242,7 +1363,24 @@
     "swell_m": 0.2,
     "swell_period_s": 7.0,
     "rain_mm": 0,
-    "target_species": "Snapper",
+    "target_species": "Kingfish",
+    "species": [
+     {
+      "name": "Kingfish",
+      "score": 8.0,
+      "why": "sea 16.6 C, dawn"
+     },
+     {
+      "name": "Kahawai",
+      "score": 8.0,
+      "why": "dawn"
+     },
+     {
+      "name": "Snapper",
+      "score": 7.8,
+      "why": "sea 16.6 C, slack for 1 of 3 h, dawn"
+     }
+    ],
     "confidence_detail": {
      "level": "low",
      "lead_days": 5,
@@ -1266,7 +1404,7 @@
     },
     "near_best": true
    },
-   "best_window_text": "Sat 6–9am, light offshore SW 4 kn, 0.3 m sea @ 7 s, rising tide, dawn. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "best_window_text": "Sat 6–9am, light offshore SW 4 kn, 0.3 m sea @ 7 s, rising tide, dawn. Try kingfish: live-baits or jigs around pins and reefs",
    "windows": 3,
    "no_window_reason": null,
    "least_bad_window": null,
@@ -1416,7 +1554,13 @@
    ],
    "score_remaining": null,
    "remaining_from": null,
-   "score_full_day": 7.5
+   "score_full_day": 7.5,
+   "best_by_species": {
+    "Kingfish": "bay_of_islands:2026-10-31T06:00:00+13:00/2026-10-31T09:00:00+13:00",
+    "Kahawai": "bay_of_islands:2026-10-31T06:00:00+13:00/2026-10-31T09:00:00+13:00",
+    "Snapper": "bay_of_islands:2026-10-31T06:00:00+13:00/2026-10-31T09:00:00+13:00"
+   },
+   "species_verdict": "Kingfish, kahawai and snapper: Sat 6–9am."
   },
   {
    "date": "2026-11-01",
@@ -1445,7 +1589,7 @@
     "score": 8.3,
     "rating": "great",
     "headline": "Sun 5–8am looks great",
-    "advice": "Sun 5–8am, light cross-offshore S 4 kn, 0.3 m sea @ 9 s, falling tide, low 6:51am, dawn. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+    "advice": "Sun 5–8am, light cross-offshore S 4 kn, 0.3 m sea @ 9 s, falling tide, low 6:51am, dawn. Try kingfish: live-baits or jigs around pins and reefs",
     "reasons": [
      "Wind S 4 kn (cross-offshore)",
      "Gusts to 9 kn",
@@ -1464,7 +1608,24 @@
     "swell_m": 0.2,
     "swell_period_s": 9.0,
     "rain_mm": 0,
-    "target_species": "Snapper",
+    "target_species": "Kingfish",
+    "species": [
+     {
+      "name": "Kingfish",
+      "score": 8.3,
+      "why": "sea 16.8 C, dawn"
+     },
+     {
+      "name": "Kahawai",
+      "score": 8.3,
+      "why": "dawn"
+     },
+     {
+      "name": "Snapper",
+      "score": 7.8,
+      "why": "sea 16.8 C, slack for 2 of 3 h, dawn"
+     }
+    ],
     "confidence_detail": {
      "level": "medium",
      "lead_days": 6,
@@ -1486,7 +1647,7 @@
     },
     "near_best": true
    },
-   "best_window_text": "Sun 5–8am, light cross-offshore S 4 kn, 0.3 m sea @ 9 s, falling tide, low 6:51am, dawn. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "best_window_text": "Sun 5–8am, light cross-offshore S 4 kn, 0.3 m sea @ 9 s, falling tide, low 6:51am, dawn. Try kingfish: live-baits or jigs around pins and reefs",
    "windows": 3,
    "no_window_reason": null,
    "least_bad_window": null,
@@ -1636,7 +1797,13 @@
    ],
    "score_remaining": null,
    "remaining_from": null,
-   "score_full_day": 7.9
+   "score_full_day": 7.9,
+   "best_by_species": {
+    "Kingfish": "bay_of_islands:2026-11-01T05:00:00+13:00/2026-11-01T08:00:00+13:00",
+    "Kahawai": "bay_of_islands:2026-11-01T05:00:00+13:00/2026-11-01T08:00:00+13:00",
+    "Snapper": "bay_of_islands:2026-11-01T05:00:00+13:00/2026-11-01T08:00:00+13:00"
+   },
+   "species_verdict": "Kingfish, kahawai and snapper: Sun 5–8am."
   }
  ],
  "windows": [
@@ -1647,7 +1814,7 @@
    "score": 7.6,
    "rating": "great",
    "headline": "Mon 8–11am looks great",
-   "advice": "Mon 8–11am, light NE 2 kn, 0.4 m sea @ 8 s, falling tide. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Mon 8–11am, light NE 2 kn, 0.4 m sea @ 8 s, falling tide. Try kingfish: live-baits or jigs around pins and reefs",
    "reasons": [
     "Wind NE 2 kn (onshore)",
     "Gusts to 6 kn",
@@ -1664,7 +1831,24 @@
    "swell_m": 0.3,
    "swell_period_s": 8.0,
    "rain_mm": 0,
-   "target_species": "Snapper",
+   "target_species": "Kingfish",
+   "species": [
+    {
+     "name": "Kingfish",
+     "score": 7.1,
+     "why": "sea 16.9 C, no dawn"
+    },
+    {
+     "name": "Kahawai",
+     "score": 7.1,
+     "why": "no dawn or dusk"
+    },
+    {
+     "name": "Snapper",
+     "score": 6.8,
+     "why": "sea 16.9 C, slack for 1 of 3 h, no dawn or dusk"
+    }
+   ],
    "confidence_detail": {
     "level": "high",
     "lead_days": 0,
@@ -1693,7 +1877,7 @@
    "score": 5.2,
    "rating": "marginal",
    "headline": "Mon 1–4pm is fishable",
-   "advice": "Mon 1–4pm, moderate cross-shore NW 13 kn, 0.6 m sea @ 9 s, falling tide, low 2:18pm. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Mon 1–4pm, moderate cross-shore NW 13 kn, 0.6 m sea @ 9 s, falling tide, low 2:18pm. Try kingfish: live-baits or jigs around pins and reefs",
    "reasons": [
     "Wind NW 13 kn (cross-shore)",
     "Gusts to 17 kn",
@@ -1711,7 +1895,24 @@
    "swell_m": 0.2,
    "swell_period_s": 9.0,
    "rain_mm": 0,
-   "target_species": "Snapper",
+   "target_species": "Kingfish",
+   "species": [
+    {
+     "name": "Kingfish",
+     "score": 4.7,
+     "why": "sea 17.1 C, no dawn"
+    },
+    {
+     "name": "Kahawai",
+     "score": 4.7,
+     "why": "no dawn or dusk"
+    },
+    {
+     "name": "Snapper",
+     "score": 4.5,
+     "why": "sea 17.1 C, slack for 1 of 3 h, no dawn or dusk"
+    }
+   ],
    "confidence_detail": {
     "level": "medium",
     "lead_days": 0,
@@ -1742,7 +1943,7 @@
    "score": 6.4,
    "rating": "good",
    "headline": "Mon 6–9pm looks good",
-   "advice": "Mon 6–9pm, moderate cross-shore NW 11 kn, 0.7 m sea @ 7 s, rising tide, high 8:25pm, dusk. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Mon 6–9pm, moderate cross-shore NW 11 kn, 0.7 m sea @ 7 s, rising tide, high 8:25pm, dusk. Try kahawai: lures or soft-baits on surface work-ups",
    "reasons": [
     "Wind NW 11 kn (cross-shore)",
     "Gusts to 16 kn",
@@ -1762,7 +1963,24 @@
    "swell_m": 0.2,
    "swell_period_s": 7.0,
    "rain_mm": 0,
-   "target_species": "Snapper",
+   "target_species": "Kahawai",
+   "species": [
+    {
+     "name": "Kahawai",
+     "score": 6.4,
+     "why": "dusk"
+    },
+    {
+     "name": "Snapper",
+     "score": 6.2,
+     "why": "sea 17.1 C, slack for 1 of 3 h, dusk"
+    },
+    {
+     "name": "Kingfish",
+     "score": 5.9,
+     "why": "sea 17.1 C, no dawn"
+    }
+   ],
    "confidence_detail": {
     "level": "low",
     "lead_days": 0,
@@ -1815,6 +2033,23 @@
    "swell_period_s": 5.0,
    "rain_mm": 0.2,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 6.7,
+     "why": "sea 16.7 C, tide running, dawn"
+    },
+    {
+     "name": "Kingfish",
+     "score": 6.7,
+     "why": "sea 16.7 C, dawn"
+    },
+    {
+     "name": "Kahawai",
+     "score": 6.7,
+     "why": "dawn"
+    }
+   ],
    "confidence_detail": {
     "level": "low",
     "lead_days": 1,
@@ -1845,7 +2080,7 @@
    "score": 7.0,
    "rating": "good",
    "headline": "Tue 6–9pm looks good",
-   "advice": "Tue 6–9pm, gentle offshore SW 8 kn, 1.0 m sea @ 5 s, rising tide, high 9:13pm, dusk. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Tue 6–9pm, gentle offshore SW 8 kn, 1.0 m sea @ 5 s, rising tide, high 9:13pm, dusk. Try kahawai: lures or soft-baits on surface work-ups",
    "reasons": [
     "Wind SW 8 kn (offshore)",
     "Gusts to 13 kn",
@@ -1866,7 +2101,24 @@
    "swell_m": 0.8,
    "swell_period_s": 5.0,
    "rain_mm": 0.2,
-   "target_species": "Snapper",
+   "target_species": "Kahawai",
+   "species": [
+    {
+     "name": "Kahawai",
+     "score": 7.0,
+     "why": "dusk"
+    },
+    {
+     "name": "Snapper",
+     "score": 6.8,
+     "why": "sea 16.5 C, slack for 1 of 3 h, dusk"
+    },
+    {
+     "name": "Kingfish",
+     "score": 6.5,
+     "why": "sea 16.5 C, no dawn"
+    }
+   ],
    "confidence_detail": {
     "level": "low",
     "lead_days": 1,
@@ -1917,6 +2169,23 @@
    "swell_period_s": 6.0,
    "rain_mm": 0,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 7.9,
+     "why": "sea 16.2 C, tide running, dawn"
+    },
+    {
+     "name": "Kingfish",
+     "score": 7.9,
+     "why": "sea 16.2 C, dawn"
+    },
+    {
+     "name": "Kahawai",
+     "score": 7.9,
+     "why": "dawn"
+    }
+   ],
    "confidence_detail": {
     "level": "medium",
     "lead_days": 2,
@@ -1967,6 +2236,23 @@
    "swell_period_s": 6.0,
    "rain_mm": 0,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 6.5,
+     "why": "sea 16.6 C, tide running, no dawn or dusk"
+    },
+    {
+     "name": "Kingfish",
+     "score": 6.5,
+     "why": "sea 16.6 C, no dawn"
+    },
+    {
+     "name": "Kahawai",
+     "score": 6.5,
+     "why": "no dawn or dusk"
+    }
+   ],
    "confidence_detail": {
     "level": "medium",
     "lead_days": 2,
@@ -2018,6 +2304,23 @@
    "swell_period_s": 6.0,
    "rain_mm": 0,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 7.2,
+     "why": "sea 16.7 C, tide running, dusk"
+    },
+    {
+     "name": "Kahawai",
+     "score": 7.2,
+     "why": "dusk"
+    },
+    {
+     "name": "Kingfish",
+     "score": 6.7,
+     "why": "sea 16.7 C, no dawn"
+    }
+   ],
    "confidence_detail": {
     "level": "low",
     "lead_days": 2,
@@ -2069,6 +2372,23 @@
    "swell_period_s": 5.0,
    "rain_mm": 0,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 7.8,
+     "why": "sea 16.4 C, tide running, dawn"
+    },
+    {
+     "name": "Kingfish",
+     "score": 7.8,
+     "why": "sea 16.4 C, dawn"
+    },
+    {
+     "name": "Kahawai",
+     "score": 7.8,
+     "why": "dawn"
+    }
+   ],
    "confidence_detail": {
     "level": "low",
     "lead_days": 3,
@@ -2119,6 +2439,23 @@
    "swell_period_s": 4.0,
    "rain_mm": 0,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 5.3,
+     "why": "sea 16.6 C, tide running, no dawn or dusk"
+    },
+    {
+     "name": "Kingfish",
+     "score": 5.3,
+     "why": "sea 16.6 C, no dawn"
+    },
+    {
+     "name": "Kahawai",
+     "score": 5.3,
+     "why": "no dawn or dusk"
+    }
+   ],
    "confidence_detail": {
     "level": "low",
     "lead_days": 3,
@@ -2169,6 +2506,23 @@
    "swell_period_s": 4.0,
    "rain_mm": 0,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 6.8,
+     "why": "sea 16.7 C, tide running, dusk"
+    },
+    {
+     "name": "Kahawai",
+     "score": 6.8,
+     "why": "dusk"
+    },
+    {
+     "name": "Kingfish",
+     "score": 6.3,
+     "why": "sea 16.7 C, no dawn"
+    }
+   ],
    "confidence_detail": {
     "level": "low",
     "lead_days": 3,
@@ -2199,7 +2553,7 @@
    "score": 7.4,
    "rating": "good",
    "headline": "Fri 5–9am looks good",
-   "advice": "Fri 5–9am, light offshore SW 4 kn, 0.6 m sea @ 4 s, rising tide, dawn. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Fri 5–9am, light offshore SW 4 kn, 0.6 m sea @ 4 s, rising tide, dawn. Try kingfish: live-baits or jigs around pins and reefs",
    "reasons": [
     "Wind SW 4 kn (offshore)",
     "Gusts to 11 kn",
@@ -2218,7 +2572,24 @@
    "swell_m": 0.5,
    "swell_period_s": 4.0,
    "rain_mm": 0,
-   "target_species": "Snapper",
+   "target_species": "Kingfish",
+   "species": [
+    {
+     "name": "Kingfish",
+     "score": 7.4,
+     "why": "sea 16.5 C, dawn"
+    },
+    {
+     "name": "Kahawai",
+     "score": 7.4,
+     "why": "dawn"
+    },
+    {
+     "name": "Snapper",
+     "score": 7.2,
+     "why": "sea 16.5 C, slack for 1 of 4 h, dawn"
+    }
+   ],
    "confidence_detail": {
     "level": "low",
     "lead_days": 4,
@@ -2268,6 +2639,23 @@
    "swell_period_s": 4.0,
    "rain_mm": 0,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 5.5,
+     "why": "sea 16.8 C, tide running, no dawn or dusk"
+    },
+    {
+     "name": "Kingfish",
+     "score": 5.5,
+     "why": "sea 16.8 C, no dawn"
+    },
+    {
+     "name": "Kahawai",
+     "score": 5.5,
+     "why": "no dawn or dusk"
+    }
+   ],
    "confidence_detail": {
     "level": "medium",
     "lead_days": 4,
@@ -2316,6 +2704,23 @@
    "swell_period_s": 6.0,
    "rain_mm": 0,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 7.9,
+     "why": "sea 16.9 C, tide running, dusk"
+    },
+    {
+     "name": "Kahawai",
+     "score": 7.9,
+     "why": "dusk"
+    },
+    {
+     "name": "Kingfish",
+     "score": 7.4,
+     "why": "sea 16.9 C, no dawn"
+    }
+   ],
    "confidence_detail": {
     "level": "low",
     "lead_days": 4,
@@ -2346,7 +2751,7 @@
    "score": 8.0,
    "rating": "great",
    "headline": "Sat 6–9am looks great",
-   "advice": "Sat 6–9am, light offshore SW 4 kn, 0.3 m sea @ 7 s, rising tide, dawn. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Sat 6–9am, light offshore SW 4 kn, 0.3 m sea @ 7 s, rising tide, dawn. Try kingfish: live-baits or jigs around pins and reefs",
    "reasons": [
     "Wind SW 4 kn (offshore)",
     "Gusts to 9 kn",
@@ -2365,7 +2770,24 @@
    "swell_m": 0.2,
    "swell_period_s": 7.0,
    "rain_mm": 0,
-   "target_species": "Snapper",
+   "target_species": "Kingfish",
+   "species": [
+    {
+     "name": "Kingfish",
+     "score": 8.0,
+     "why": "sea 16.6 C, dawn"
+    },
+    {
+     "name": "Kahawai",
+     "score": 8.0,
+     "why": "dawn"
+    },
+    {
+     "name": "Snapper",
+     "score": 7.8,
+     "why": "sea 16.6 C, slack for 1 of 3 h, dawn"
+    }
+   ],
    "confidence_detail": {
     "level": "low",
     "lead_days": 5,
@@ -2396,7 +2818,7 @@
    "score": 6.0,
    "rating": "good",
    "headline": "Sat 11am–4pm looks good",
-   "advice": "Sat 11am–4pm, gentle offshore S 10 kn, 0.3 m sea @ 7 s, rising tide, high 12:18pm. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Sat 11am–4pm, gentle offshore S 10 kn, 0.3 m sea @ 7 s, rising tide, high 12:18pm. Try kingfish: live-baits or jigs around pins and reefs",
    "reasons": [
     "Wind S 10 kn (offshore)",
     "Gusts to 14 kn",
@@ -2415,7 +2837,24 @@
    "swell_m": 0.2,
    "swell_period_s": 7.0,
    "rain_mm": 0,
-   "target_species": "Snapper",
+   "target_species": "Kingfish",
+   "species": [
+    {
+     "name": "Kingfish",
+     "score": 5.5,
+     "why": "sea 17.0 C, no dawn"
+    },
+    {
+     "name": "Kahawai",
+     "score": 5.5,
+     "why": "no dawn or dusk"
+    },
+    {
+     "name": "Snapper",
+     "score": 5.3,
+     "why": "sea 17.0 C, slack for 1 of 5 h, no dawn or dusk"
+    }
+   ],
    "confidence_detail": {
     "level": "low",
     "lead_days": 5,
@@ -2446,7 +2885,7 @@
    "score": 7.3,
    "rating": "good",
    "headline": "Sat 6–9pm looks good",
-   "advice": "Sat 6–9pm, gentle cross-offshore S 10 kn, 0.3 m sea @ 7 s, falling tide, low 6:33pm, dusk. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Sat 6–9pm, gentle cross-offshore S 10 kn, 0.3 m sea @ 7 s, falling tide, low 6:33pm, dusk. Try kahawai: lures or soft-baits on surface work-ups",
    "reasons": [
     "Wind S 10 kn (cross-offshore)",
     "Gusts to 15 kn",
@@ -2465,7 +2904,24 @@
    "swell_m": 0.2,
    "swell_period_s": 7.0,
    "rain_mm": 0,
-   "target_species": "Snapper",
+   "target_species": "Kahawai",
+   "species": [
+    {
+     "name": "Kahawai",
+     "score": 7.3,
+     "why": "dusk"
+    },
+    {
+     "name": "Snapper",
+     "score": 7.0,
+     "why": "sea 17.5 C, slack for 1 of 3 h, dusk"
+    },
+    {
+     "name": "Kingfish",
+     "score": 6.8,
+     "why": "sea 17.5 C, no dawn"
+    }
+   ],
    "confidence_detail": {
     "level": "low",
     "lead_days": 5,
@@ -2496,7 +2952,7 @@
    "score": 8.3,
    "rating": "great",
    "headline": "Sun 5–8am looks great",
-   "advice": "Sun 5–8am, light cross-offshore S 4 kn, 0.3 m sea @ 9 s, falling tide, low 6:51am, dawn. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Sun 5–8am, light cross-offshore S 4 kn, 0.3 m sea @ 9 s, falling tide, low 6:51am, dawn. Try kingfish: live-baits or jigs around pins and reefs",
    "reasons": [
     "Wind S 4 kn (cross-offshore)",
     "Gusts to 9 kn",
@@ -2515,7 +2971,24 @@
    "swell_m": 0.2,
    "swell_period_s": 9.0,
    "rain_mm": 0,
-   "target_species": "Snapper",
+   "target_species": "Kingfish",
+   "species": [
+    {
+     "name": "Kingfish",
+     "score": 8.3,
+     "why": "sea 16.8 C, dawn"
+    },
+    {
+     "name": "Kahawai",
+     "score": 8.3,
+     "why": "dawn"
+    },
+    {
+     "name": "Snapper",
+     "score": 7.8,
+     "why": "sea 16.8 C, slack for 2 of 3 h, dawn"
+    }
+   ],
    "confidence_detail": {
     "level": "medium",
     "lead_days": 6,
@@ -2544,7 +3017,7 @@
    "score": 7.4,
    "rating": "good",
    "headline": "Sun 10am–1pm looks good",
-   "advice": "Sun 10am–1pm, light onshore NE 4 kn, 0.3 m sea @ 9 s, rising tide, high 1:14pm. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Sun 10am–1pm, light onshore NE 4 kn, 0.3 m sea @ 9 s, rising tide, high 1:14pm. Try kingfish: live-baits or jigs around pins and reefs",
    "reasons": [
     "Wind NE 4 kn (onshore)",
     "Gusts to 9 kn",
@@ -2562,7 +3035,24 @@
    "swell_m": 0.2,
    "swell_period_s": 9.0,
    "rain_mm": 0,
-   "target_species": "Snapper",
+   "target_species": "Kingfish",
+   "species": [
+    {
+     "name": "Kingfish",
+     "score": 6.9,
+     "why": "sea 17.1 C, no dawn"
+    },
+    {
+     "name": "Kahawai",
+     "score": 6.9,
+     "why": "no dawn or dusk"
+    },
+    {
+     "name": "Snapper",
+     "score": 6.7,
+     "why": "sea 17.1 C, slack for 1 of 3 h, no dawn or dusk"
+    }
+   ],
    "confidence_detail": {
     "level": "medium",
     "lead_days": 6,
@@ -2591,7 +3081,7 @@
    "score": 7.7,
    "rating": "great",
    "headline": "Sun 6–9pm looks great",
-   "advice": "Sun 6–9pm, light cross-onshore N 5 kn, 0.3 m sea @ 10 s, falling tide, low 7:32pm, dusk. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Sun 6–9pm, light cross-onshore N 5 kn, 0.3 m sea @ 10 s, falling tide, low 7:32pm, dusk. Try kahawai: lures or soft-baits on surface work-ups",
    "reasons": [
     "Wind N 5 kn (cross-onshore)",
     "Gusts to 10 kn",
@@ -2609,7 +3099,24 @@
    "swell_m": 0.2,
    "swell_period_s": 10.0,
    "rain_mm": 0,
-   "target_species": "Snapper",
+   "target_species": "Kahawai",
+   "species": [
+    {
+     "name": "Kahawai",
+     "score": 7.7,
+     "why": "dusk"
+    },
+    {
+     "name": "Snapper",
+     "score": 7.5,
+     "why": "sea 17.6 C, slack for 1 of 3 h, dusk"
+    },
+    {
+     "name": "Kingfish",
+     "score": 7.2,
+     "why": "sea 17.6 C, no dawn"
+    }
+   ],
    "confidence_detail": {
     "level": "low",
     "lead_days": 6,
@@ -5684,7 +6191,7 @@
   }
  ],
  "data_status": "engine",
- "engine_version": "2.4.0",
+ "engine_version": "2.5.0",
  "hourly_step_h": 1,
  "timezone": "Pacific/Auckland",
  "model_runs": {
