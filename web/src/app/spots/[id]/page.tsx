@@ -3,7 +3,7 @@ import { getForecast } from "@/lib/forecasts";
 import { ForecastView } from "@/components/ForecastView";
 import { cropSst, loadSst, spotCaption } from "@/lib/sst";
 import { getSpot } from "@/lib/mock";
-import { reservesNear } from "@/lib/reserves";
+import { RESERVES_CREDIT, reservesNear } from "@/lib/reserves";
 export const revalidate = 1800;
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -21,5 +21,5 @@ export default async function SpotPage({ params }: { params: Promise<{ id: strin
   const shown = { ...f, engine_version: undefined, model_run: "", warnings: undefined, spot: { ...f.spot, tide_note: undefined } };
   // DOC marine reserves within about 5 km of the spot (6 km allowing for the simplified outlines).
   const reserves = f.spot.coastal ? reservesNear(f.spot.lat, f.spot.lon).map((r) => r.name) : [];
-  return <ForecastView f={shown} sst={sst} reserves={reserves} />;
+  return <ForecastView f={shown} sst={sst} reserves={reserves} reservesCredit={RESERVES_CREDIT} />;
 }
