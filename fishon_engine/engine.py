@@ -11,7 +11,7 @@ import math
 from datetime import date, datetime, timedelta
 from typing import Dict, List, Optional
 
-from . import astro, confidence, openmeteo, scoring, species, tideports, tides
+from . import astro, confidence, openmeteo, scoring, species, species_scoring, tideports, tides, water
 from .cache import Cache
 from .spots import Spot, get_spot
 from .tz import NZ, day_label, fmt_range, now_nz, today_nz
@@ -120,15 +120,27 @@ def window_id(spot_id: str, start: str, end: str) -> str:
     return f"{spot_id}:{start}/{end}"
 
 
-def _window_out(win: List[Dict], spot: Spot, target, conf: str) -> Dict:
+def _window_out(win: List[Dict], spot: Spot, target, conf: str,
+                species_list: Optional[List[Dict]] = None, water_ctx: Optional[Dict] = None) -> Dict:
     summ = scoring.summarise(win, spot.facing, spot.is_coastal)
     rt = rating(summ["score"])
+    # 2.5.0: per-species scores, capped at the window's (safety-gated) score;
+    # only for fishable windows. The top one becomes the target species.
+    sp = species_scoring.score_window(win, summ["score"], species_list or []) if rt != "poor" else []
+    if sp:
+        target = next((s for s in species_list if s["name"] == sp[0]["name"]), target)
     text = scoring.window_text(summ, win, spot.is_coastal, target if rt != "poor" else None)
     when = fmt_range(summ["start"], summ["end"])
     headline = {"great": f"{when} looks great", "good": f"{when} looks good",
                 "marginal": f"{when} is fishable", "poor": f"{when} is the least-bad option"}[rt]
     why = sorted({w for h in win for w in h["why"]})
     start, end = summ["start"].isoformat(), summ["end"].isoformat()
+    wc = water_ctx or {}
+    names = [x["name"] for x in sp] or [x["name"] for x in species_list or []
+                                        if x.get("status") in species_scoring.OPEN_STATUSES]
+    wat = water.window_water(win, wc.get("sst_daily") or {}, names, wc.get("med_rate"),
+                             bool(wc.get("current_ok"))) if spot.is_coastal else \
+        {"water_temp_note": None, "current_note": None, "water_note": None, "water": None}
     return {
         "id": window_id(spot.id, start, end),
         "start": start, "end": end, "score": summ["score"],
@@ -139,8 +151,12 @@ def _window_out(win: List[Dict], spot: Spot, target, conf: str) -> Dict:
         "wind_kn": summ["wind_kn"], "gust_max_kn": summ["gust_max_kn"], "wind_from": summ["wind_from"],
         "wind_rel": summ["wind_rel"], "wave_m": summ["wave_m"], "swell_m": summ["swell_m"],
         "swell_period_s": summ["swell_period_s"], "rain_mm": summ["rain_mm"],
-        # 2.4.0: the species the advice names ("Try snapper"), or null
+        # 2.5.0: the top-scoring species, named in the advice ("Try kingfish"), or null
         "target_species": target["name"] if target and rt != "poor" else None,
+        # 2.5.0: [{name, score, why}] best first; [] when not fishable
+        "species": sp,
+        # 2.6.0: plain-English water lines and their raw numbers (docs/OUTPUT.md)
+        **wat,
     }
 
 
@@ -192,7 +208,11 @@ def _verdict(fishable: List[Dict], least_bad: List[Dict], days_out: List[Dict], 
     later = [w for w in fishable if date.fromisoformat(w["date"]) > h_end]
     n_days = min(HORIZON_DAYS, len(days_out)) or 1
     base = {"horizon_days": n_days, "horizon_end": min(h_end, start + timedelta(days=max(len(days_out), 1) - 1)).isoformat(),
-            "best_later": _brief(_pick(later)) if later else None}
+            "best_later": _brief(_pick(later)) if later else None,
+            # 2.5.0: best window per species over the horizon, and a one-liner
+            "best_by_species": {}, "species_text": None,
+            # 2.6.0: the headline window's water lines, or null
+            "water_temp_note": None, "current_note": None, "water_note": None}
     if not in_h:
         cand = [w for w in least_bad if date.fromisoformat(w["date"]) <= h_end]
         least = max(cand, key=lambda w: w["score"]) if cand else None
@@ -208,6 +228,10 @@ def _verdict(fishable: List[Dict], least_bad: List[Dict], days_out: List[Dict], 
                 "window": None, "no_window_reason": reason,
                 "least_bad": dict(_brief(least), label="least-bad (not recommended)") if least else None, **base}
     best = _pick(in_h)
+    base["best_by_species"] = species_scoring.best_by_species(in_h, CONFIDENCE_MARGIN)
+    base["species_text"] = species_scoring.verdict_line(base["best_by_species"], in_h)
+    for k in ("water_temp_note", "current_note", "water_note"):
+        base[k] = best.get(k)
     when = _when(best)
     headline = f"Go {when}" if best["rating"] in ("great", "good") else f"Best chance: {when}"
     advice = best["advice"]
@@ -310,6 +334,20 @@ def forecast_spot(spot_id: str, start: Optional[date] = None, days: int = 7,
         if spot.tide_note:
             warnings.append(spot.tide_note)
     tide_events_ok = [e for e in tide_events if not math.isnan(e.height)]
+    # --- 2.6.0 water lines: SST trend and LINZ-based current estimate -----
+    water_ctx: Dict = {"sst_daily": {}, "med_rate": None, "current_ok": False}
+    if spot.is_coastal and marine_rows:
+        hist_rows: List[Dict] = []
+        try:
+            hist_rows = openmeteo.hourly_rows(openmeteo.fetch_sst_history(spot.marine_lat, spot.marine_lon,
+                                                                         start, cache))
+        except Exception as exc:
+            warnings.append(f"Sea temperature history unavailable ({exc}); no warming/cooling trend.")
+        water_ctx["sst_daily"] = water.daily_sst(hist_rows + list(marine_rows.values()))
+        is_linz = bool(tide_source and tide_source.startswith("LINZ"))
+        if is_linz and spot.id not in water.NO_CURRENT_SPOTS:
+            water_ctx["med_rate"] = water.median_rate(tide_events_ok)
+            water_ctx["current_ok"] = water_ctx["med_rate"] is not None
 
     # --- per day -----------------------------------------------------------
     out_days, windows, least_bad_all, hourly = [], [], [], []
@@ -347,14 +385,15 @@ def forecast_spot(spot_id: str, start: Optional[date] = None, days: int = 7,
                 "rating": rating(h["score"]),
             })
         sst = scoring._mean([h["sst_c"] for h in hours])
-        target = species.pick_target(species.species_for(spot, d, sst))
+        sp_list = species.species_for(spot, d, sst)
+        target = species.pick_target(sp_list)
         wins = scoring.windows(hours, sun.get(d), not_before=now if d == now.date() else None,
                                max_n=MAX_WINDOWS_PER_DAY)
         day_windows = []
         for w in wins:
             cd = confidence.window_confidence(w, rows_by_time, (d - today).days, rescore, spot.is_coastal,
                                               wind_models, wave_models)
-            wo = _window_out(w, spot, target, cd["level"])
+            wo = _window_out(w, spot, target, cd["level"], sp_list, water_ctx)
             wo["confidence_detail"] = cd
             day_windows.append(wo)
         if day_windows:
@@ -370,6 +409,10 @@ def forecast_spot(spot_id: str, start: Optional[date] = None, days: int = 7,
             least = dict(top, label="least-bad (not recommended)")
             least_bad_all.append(top)
         no_win = None if best else _no_window_reason(top, f"on {day_label(d)}")
+        by_sp = species_scoring.best_by_species(fishable)
+        sp_text = species_scoring.verdict_line(by_sp, fishable)
+        if fishable and not sp_text and any(w["species"] for w in fishable):
+            sp_text = f"No species scores {species_scoring.VERDICT_MIN} or more."
 
         s = sun.get(d) or {}
         sr, ss = s.get("sunrise"), s.get("sunset")
@@ -418,6 +461,8 @@ def forecast_spot(spot_id: str, start: Optional[date] = None, days: int = 7,
             # additive: which score to show for today (docs/OUTPUT.md)
             "score_remaining": day_score if is_today else None,
             "remaining_from": remaining_from, "score_full_day": score_full_day,
+            # 2.5.0: best fishable window id per species, and a one-line verdict
+            "best_by_species": by_sp, "species_verdict": sp_text,
         })
 
     tides_out = [{"time": e.time.isoformat(), "type": e.kind, "height_m": _r(e.height, 2),
@@ -445,6 +490,8 @@ def forecast_spot(spot_id: str, start: Optional[date] = None, days: int = 7,
         sources.append(tides.LINZ_ATTRIBUTION)
     if tide_source:
         sources.append(f"Tides: {tide_source}")
+    if water_ctx["current_ok"]:
+        sources.append("Current: estimated from LINZ tide times and heights, not measured tidal streams")
     if not any("Not for navigation" in x for x in sources):
         sources.append("Not for navigation")
 

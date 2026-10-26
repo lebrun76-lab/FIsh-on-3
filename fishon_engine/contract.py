@@ -1,6 +1,7 @@
 """Minimal validator for the site's v1 SpotForecast contract
 (web/docs/forecast-api.md on branch site-prototype). Checks the v1 fields
-only, plus the engine's windows[].id (2.4.0); additive fields are allowed. ``validate_v1(fc)`` returns a list of
+only, plus the engine's windows[].id (2.4.0) and, when present, the species
+fields (2.5.0); additive fields are allowed. ``validate_v1(fc)`` returns a list of
 problems (empty = valid)."""
 from __future__ import annotations
 
@@ -79,6 +80,8 @@ def validate_v1(fc: Dict) -> List[str]:
     vw = (fc.get("verdict") or {}).get("window")
     if isinstance(vw, dict) and vw.get("id") not in seen:
         errs.append("verdict.window.id: not in windows[]")
+    _check_species(fc, seen, errs)
+    _check_water(fc, errs)
     for i, x in enumerate(fc.get("tides") or []):
         _check(x, TIDE, f"tides[{i}]", errs)
         if x.get("type") not in ("high", "low"):
@@ -86,3 +89,108 @@ def validate_v1(fc: Dict) -> List[str]:
     for i, x in enumerate(fc.get("hourly") or []):
         _check(x, HOUR, f"hourly[{i}]", errs)
     return errs
+
+
+def _bad_dash(t: str) -> bool:
+    return "\u2014" in t or " \u2013 " in t or " - " in t
+
+
+WATER_NOTES = ("water_temp_note", "current_note", "water_note")
+SEASONS = ("peak", "in season", "no seasonal data", "off-peak")
+
+
+def _check_water(fc: Dict, errs: List[str]) -> None:
+    """2.6.0 water fields, checked only when present: the three notes are
+    string or null, plain (no em dash, spaced dash or knots), water_note is
+    the other two joined; windows[].water holds the raw numbers."""
+    places = [(f"windows[{i}]", w) for i, w in enumerate(fc.get("windows") or []) if isinstance(w, dict)]
+    if isinstance(fc.get("verdict"), dict):
+        places.append(("verdict", fc["verdict"]))
+    for where, obj in places:
+        if not any(k in obj for k in WATER_NOTES):
+            continue
+        for k in WATER_NOTES:
+            t = obj.get(k)
+            if t is None:
+                continue
+            if not isinstance(t, str) or _bad_dash(t) or "knot" in t.lower() or " kn " in t or "–" in t:
+                errs.append(f"{where}.{k}: not a plain string (dash or knots)")
+        joined = " ".join(x for x in (obj.get("water_temp_note"), obj.get("current_note")) if isinstance(x, str)) or None
+        if obj.get("water_note") != joined:
+            errs.append(f"{where}.water_note: not water_temp_note + current_note")
+        if not where.startswith("windows"):
+            continue
+        wa = obj.get("water")
+        if wa is None:
+            continue
+        if not isinstance(wa, dict):
+            errs.append(f"{where}.water: not an object")
+            continue
+        for k in ("sst_c", "sst_change_3d_c"):
+            if wa.get(k) is not None and (not isinstance(wa[k], NUM) or isinstance(wa[k], bool)):
+                errs.append(f"{where}.water.{k}: not a number or null")
+        if wa.get("sst_trend") not in ("warming", "cooling", "steady", None):
+            errs.append(f"{where}.water.sst_trend")
+        cur = wa.get("current")
+        if cur is not None:
+            if not isinstance(cur, dict):
+                errs.append(f"{where}.water.current: not an object")
+                continue
+            for k in ("flow_index_avg", "flow_index_max", "flow_index_start", "flow_index_end",
+                      "tide_size_ratio", "tide_range_m"):
+                if not isinstance(cur.get(k), NUM) or isinstance(cur.get(k), bool):
+                    errs.append(f"{where}.water.current.{k}: not a number")
+            if cur.get("phase") not in ("rising", "falling"):
+                errs.append(f"{where}.water.current.phase")
+            nt = cur.get("next_turn")
+            if not isinstance(nt, dict) or nt.get("type") not in ("high", "low") or not isinstance(nt.get("time"), str):
+                errs.append(f"{where}.water.current.next_turn")
+        elif obj.get("current_note") is not None:
+            errs.append(f"{where}.current_note: set but water.current is null")
+
+
+def _check_species(fc: Dict, ids: set, errs: List[str]) -> None:
+    """2.5.0 species fields, checked only when present (older outputs pass):
+    windows[].species = [{name, score, why}] best first, each score <= the
+    window score; target_species is the top one; days[].best_by_species and
+    verdict.best_by_species point at windows in windows[]; verdict lines
+    carry no em dash or spaced dash."""
+    for i, w in enumerate(fc.get("windows") or []):
+        if not isinstance(w, dict) or "species" not in w:
+            continue
+        sp = w["species"]
+        if not isinstance(sp, list):
+            errs.append(f"windows[{i}].species: not a list")
+            continue
+        last = None
+        for j, x in enumerate(sp):
+            if not isinstance(x, dict) or not isinstance(x.get("name"), str) or not isinstance(x.get("why"), str) \
+                    or not isinstance(x.get("score"), NUM) or isinstance(x.get("score"), bool):
+                errs.append(f"windows[{i}].species[{j}]: needs name (str), score (number), why (str)")
+                continue
+            if not 0 <= x["score"] <= 10:
+                errs.append(f"windows[{i}].species[{j}].score: out of 0-10")
+            if "season" in x and x["season"] not in SEASONS:
+                errs.append(f"windows[{i}].species[{j}].season: not one of {SEASONS}")
+            if isinstance(w.get("score"), NUM) and x["score"] > w["score"]:
+                errs.append(f"windows[{i}].species[{j}].score: above the window score")
+            if last is not None and x["score"] > last:
+                errs.append(f"windows[{i}].species: not sorted best first")
+            last = x["score"]
+        if sp and isinstance(sp[0], dict) and w.get("target_species") != sp[0].get("name"):
+            errs.append(f"windows[{i}].target_species: not the top species")
+    places = [(f"days[{i}]", d, "species_verdict") for i, d in enumerate(fc.get("days") or []) if isinstance(d, dict)]
+    if isinstance(fc.get("verdict"), dict):
+        places.append(("verdict", fc["verdict"], "species_text"))
+    for where, obj, text_key in places:
+        b = obj.get("best_by_species")
+        if b is not None:
+            if not isinstance(b, dict):
+                errs.append(f"{where}.best_by_species: not an object")
+            else:
+                for k, v in b.items():
+                    if v not in ids:
+                        errs.append(f"{where}.best_by_species.{k}: not a window id in windows[]")
+        t = obj.get(text_key)
+        if t is not None and (not isinstance(t, str) or _bad_dash(t)):
+            errs.append(f"{where}.{text_key}: not a string or has an em dash / spaced dash")

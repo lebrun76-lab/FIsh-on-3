@@ -57,7 +57,8 @@
  "sources": [
   "Open-Meteo (CC BY 4.0)",
   "Tide predictions: Land Information New Zealand (LINZ), CC BY 4.0. Not for navigation.",
-  "Tides: LINZ secondary port Russell (offsets from Marsden Point)"
+  "Tides: LINZ secondary port Russell (offsets from Marsden Point)",
+  "Current: estimated from LINZ tide times and heights, not measured tidal streams"
  ],
  "verdict": {
   "rating": "great",
@@ -82,9 +83,18 @@
    "score": 8.3,
    "rating": "great",
    "headline": "Sun 5–8am looks great",
-   "advice": "Sun 5–8am, light cross-offshore S 4 kn, 0.3 m sea @ 9 s, falling tide, low 6:51am, dawn. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Sun 5–8am, light cross-offshore S 4 kn, 0.3 m sea @ 9 s, falling tide, low 6:51am, dawn. Try kingfish: live-baits or jigs around pins and reefs",
    "confidence": "medium"
-  }
+  },
+  "best_by_species": {
+   "Snapper": "bay_of_islands:2026-10-28T05:00:00+13:00/2026-10-28T08:00:00+13:00",
+   "Kingfish": "bay_of_islands:2026-10-28T05:00:00+13:00/2026-10-28T08:00:00+13:00",
+   "Kahawai": "bay_of_islands:2026-10-28T05:00:00+13:00/2026-10-28T08:00:00+13:00"
+  },
+  "species_text": "Snapper, kingfish and kahawai: Wed 5–8am.",
+  "water_temp_note": "Warm enough for snapper and kingfish, water's 16.9° and steady.",
+  "current_note": "High tide at 8:10am. Easy fishing round the turn, but expect it to go quiet at slack water.",
+  "water_note": "Warm enough for snapper and kingfish, water's 16.9° and steady. High tide at 8:10am. Easy fishing round the turn, but expect it to go quiet at slack water."
  },
  "days": [
   {
@@ -132,6 +142,51 @@
     "swell_period_s": 8.0,
     "rain_mm": 0,
     "target_species": "Snapper",
+    "species": [
+     {
+      "name": "Snapper",
+      "score": 7.0,
+      "why": "sea 16.9 C, slack for 1 of 3 h, no dawn or dusk",
+      "season": "in season"
+     },
+     {
+      "name": "Kingfish",
+      "score": 6.8,
+      "why": "no season on record here, sea 16.9 C, no dawn",
+      "season": "no seasonal data"
+     },
+     {
+      "name": "Kahawai",
+      "score": 5.8,
+      "why": "no season on record here, no dawn or dusk",
+      "season": "no seasonal data"
+     }
+    ],
+    "water_temp_note": "Warm enough for snapper and kingfish, water's 16.9° and steady.",
+    "current_note": "High tide at 8:10am. Easy fishing round the turn, but expect it to go quiet at slack water.",
+    "water_note": "Warm enough for snapper and kingfish, water's 16.9° and steady. High tide at 8:10am. Easy fishing round the turn, but expect it to go quiet at slack water.",
+    "water": {
+     "sst_c": 16.9,
+     "sst_change_3d_c": 0.1,
+     "sst_trend": "steady",
+     "current": {
+      "flow_index_avg": 0.63,
+      "flow_index_max": 1.03,
+      "flow_index_start": 0.18,
+      "flow_index_end": 1.03,
+      "tide_size_ratio": 1.11,
+      "tide_range_m": 1.82,
+      "phase": "falling",
+      "turn": {
+       "time": "2026-10-26T08:11:00+13:00",
+       "type": "high"
+      },
+      "next_turn": {
+       "time": "2026-10-26T14:18:00+13:00",
+       "type": "low"
+      }
+     }
+    },
     "confidence_detail": {
      "level": "high",
      "lead_days": 0,
@@ -303,7 +358,13 @@
    ],
    "score_remaining": 7.0,
    "remaining_from": "2026-10-26T08:00:00+13:00",
-   "score_full_day": 8.0
+   "score_full_day": 8.0,
+   "best_by_species": {
+    "Snapper": "bay_of_islands:2026-10-26T08:00:00+13:00/2026-10-26T11:00:00+13:00",
+    "Kingfish": "bay_of_islands:2026-10-26T08:00:00+13:00/2026-10-26T11:00:00+13:00",
+    "Kahawai": "bay_of_islands:2026-10-26T18:00:00+13:00/2026-10-26T21:00:00+13:00"
+   },
+   "species_verdict": "Snapper and kingfish: Mon 8–11am. Kahawai: Mon 6–9pm."
   },
   {
    "date": "2026-10-27",
@@ -354,6 +415,48 @@
     "swell_period_s": 5.0,
     "rain_mm": 0.2,
     "target_species": "Snapper",
+    "species": [
+     {
+      "name": "Snapper",
+      "score": 6.8,
+      "why": "sea 16.5 C, slack for 1 of 3 h, dusk",
+      "season": "in season"
+     },
+     {
+      "name": "Kahawai",
+      "score": 6.8,
+      "why": "no season on record here, dusk",
+      "season": "no seasonal data"
+     },
+     {
+      "name": "Kingfish",
+      "score": 6.2,
+      "why": "no season on record here, sea 16.5 C, no dawn",
+      "season": "no seasonal data"
+     }
+    ],
+    "water_temp_note": "Warm enough for snapper and kingfish, water's 16.5° and cooling.",
+    "current_note": "Steady run but easing, normal sinkers should hold. Rising till 9:15pm.",
+    "water_note": "Warm enough for snapper and kingfish, water's 16.5° and cooling. Steady run but easing, normal sinkers should hold. Rising till 9:15pm.",
+    "water": {
+     "sst_c": 16.5,
+     "sst_change_3d_c": -0.4,
+     "sst_trend": "cooling",
+     "current": {
+      "flow_index_avg": 0.82,
+      "flow_index_max": 1.14,
+      "flow_index_start": 1.14,
+      "flow_index_end": 0.42,
+      "tide_size_ratio": 1.16,
+      "tide_range_m": 1.91,
+      "phase": "rising",
+      "turn": null,
+      "next_turn": {
+       "time": "2026-10-27T21:13:00+13:00",
+       "type": "high"
+      }
+     }
+    },
     "confidence_detail": {
      "level": "low",
      "lead_days": 1,
@@ -527,7 +630,13 @@
    ],
    "score_remaining": null,
    "remaining_from": null,
-   "score_full_day": 6.1
+   "score_full_day": 6.1,
+   "best_by_species": {
+    "Snapper": "bay_of_islands:2026-10-27T18:00:00+13:00/2026-10-27T21:00:00+13:00",
+    "Kahawai": "bay_of_islands:2026-10-27T18:00:00+13:00/2026-10-27T21:00:00+13:00",
+    "Kingfish": "bay_of_islands:2026-10-27T05:00:00+13:00/2026-10-27T08:00:00+13:00"
+   },
+   "species_verdict": "Snapper and kahawai: Tue 6–9pm. Kingfish: Tue 5–8am."
   },
   {
    "date": "2026-10-28",
@@ -576,6 +685,48 @@
     "swell_period_s": 6.0,
     "rain_mm": 0,
     "target_species": "Snapper",
+    "species": [
+     {
+      "name": "Snapper",
+      "score": 7.9,
+      "why": "sea 16.2 C, tide running, dawn",
+      "season": "in season"
+     },
+     {
+      "name": "Kingfish",
+      "score": 7.7,
+      "why": "no season on record here, sea 16.2 C, dawn",
+      "season": "no seasonal data"
+     },
+     {
+      "name": "Kahawai",
+      "score": 7.7,
+      "why": "no season on record here, dawn",
+      "season": "no seasonal data"
+     }
+    ],
+    "water_temp_note": "Warm enough for snapper and kingfish, water's 16.2° and cooling.",
+    "current_note": "Strong run on a big tide, so you'll want a heavier sinker. Rising till 9:45am.",
+    "water_note": "Warm enough for snapper and kingfish, water's 16.2° and cooling. Strong run on a big tide, so you'll want a heavier sinker. Rising till 9:45am.",
+    "water": {
+     "sst_c": 16.2,
+     "sst_change_3d_c": -0.5,
+     "sst_trend": "cooling",
+     "current": {
+      "flow_index_avg": 1.19,
+      "flow_index_max": 1.29,
+      "flow_index_start": 1.09,
+      "flow_index_end": 1.18,
+      "tide_size_ratio": 1.3,
+      "tide_range_m": 2.18,
+      "phase": "rising",
+      "turn": null,
+      "next_turn": {
+       "time": "2026-10-28T09:46:00+13:00",
+       "type": "high"
+      }
+     }
+    },
     "confidence_detail": {
      "level": "medium",
      "lead_days": 2,
@@ -749,7 +900,13 @@
    ],
    "score_remaining": null,
    "remaining_from": null,
-   "score_full_day": 7.6
+   "score_full_day": 7.6,
+   "best_by_species": {
+    "Snapper": "bay_of_islands:2026-10-28T05:00:00+13:00/2026-10-28T08:00:00+13:00",
+    "Kingfish": "bay_of_islands:2026-10-28T05:00:00+13:00/2026-10-28T08:00:00+13:00",
+    "Kahawai": "bay_of_islands:2026-10-28T05:00:00+13:00/2026-10-28T08:00:00+13:00"
+   },
+   "species_verdict": "Snapper, kingfish and kahawai: Wed 5–8am."
   },
   {
    "date": "2026-10-29",
@@ -799,6 +956,48 @@
     "swell_period_s": 5.0,
     "rain_mm": 0,
     "target_species": "Snapper",
+    "species": [
+     {
+      "name": "Snapper",
+      "score": 7.8,
+      "why": "sea 16.4 C, tide running, dawn",
+      "season": "in season"
+     },
+     {
+      "name": "Kingfish",
+      "score": 7.5,
+      "why": "no season on record here, sea 16.4 C, dawn",
+      "season": "no seasonal data"
+     },
+     {
+      "name": "Kahawai",
+      "score": 7.5,
+      "why": "no season on record here, dawn",
+      "season": "no seasonal data"
+     }
+    ],
+    "water_temp_note": "Warm enough for snapper and kingfish, water's 16.4° and cooling.",
+    "current_note": "Strong run on a big tide and building, so you'll want a heavier sinker. Rising till 10:35am.",
+    "water_note": "Warm enough for snapper and kingfish, water's 16.4° and cooling. Strong run on a big tide and building, so you'll want a heavier sinker. Rising till 10:35am.",
+    "water": {
+     "sst_c": 16.4,
+     "sst_change_3d_c": -0.4,
+     "sst_trend": "cooling",
+     "current": {
+      "flow_index_avg": 1.1,
+      "flow_index_max": 1.35,
+      "flow_index_start": 0.76,
+      "flow_index_end": 1.35,
+      "tide_size_ratio": 1.35,
+      "tide_range_m": 2.27,
+      "phase": "rising",
+      "turn": null,
+      "next_turn": {
+       "time": "2026-10-29T10:35:00+13:00",
+       "type": "high"
+      }
+     }
+    },
     "confidence_detail": {
      "level": "low",
      "lead_days": 3,
@@ -972,7 +1171,13 @@
    ],
    "score_remaining": null,
    "remaining_from": null,
-   "score_full_day": 7.2
+   "score_full_day": 7.2,
+   "best_by_species": {
+    "Snapper": "bay_of_islands:2026-10-29T05:00:00+13:00/2026-10-29T08:00:00+13:00",
+    "Kingfish": "bay_of_islands:2026-10-29T05:00:00+13:00/2026-10-29T08:00:00+13:00",
+    "Kahawai": "bay_of_islands:2026-10-29T05:00:00+13:00/2026-10-29T08:00:00+13:00"
+   },
+   "species_verdict": "Snapper, kingfish and kahawai: Thu 5–8am."
   },
   {
    "date": "2026-10-30",
@@ -1021,6 +1226,48 @@
     "swell_period_s": 6.0,
     "rain_mm": 0,
     "target_species": "Snapper",
+    "species": [
+     {
+      "name": "Snapper",
+      "score": 7.9,
+      "why": "sea 16.9 C, tide running, dusk",
+      "season": "in season"
+     },
+     {
+      "name": "Kahawai",
+      "score": 7.7,
+      "why": "no season on record here, dusk",
+      "season": "no seasonal data"
+     },
+     {
+      "name": "Kingfish",
+      "score": 7.1,
+      "why": "no season on record here, sea 16.9 C, no dawn",
+      "season": "no seasonal data"
+     }
+    ],
+    "water_temp_note": "Warm enough for snapper and kingfish, water's 16.9° and steady.",
+    "current_note": "Steady run and building, normal sinkers should hold. Rising till 11:45pm.",
+    "water_note": "Warm enough for snapper and kingfish, water's 16.9° and steady. Steady run and building, normal sinkers should hold. Rising till 11:45pm.",
+    "water": {
+     "sst_c": 16.9,
+     "sst_change_3d_c": 0.1,
+     "sst_trend": "steady",
+     "current": {
+      "flow_index_avg": 0.83,
+      "flow_index_max": 1.1,
+      "flow_index_start": 0.48,
+      "flow_index_end": 1.1,
+      "tide_size_ratio": 1.11,
+      "tide_range_m": 1.82,
+      "phase": "rising",
+      "turn": null,
+      "next_turn": {
+       "time": "2026-10-30T23:45:00+13:00",
+       "type": "high"
+      }
+     }
+    },
     "confidence_detail": {
      "level": "low",
      "lead_days": 4,
@@ -1194,7 +1441,13 @@
    ],
    "score_remaining": null,
    "remaining_from": null,
-   "score_full_day": 7.4
+   "score_full_day": 7.4,
+   "best_by_species": {
+    "Snapper": "bay_of_islands:2026-10-30T18:00:00+13:00/2026-10-30T21:00:00+13:00",
+    "Kahawai": "bay_of_islands:2026-10-30T18:00:00+13:00/2026-10-30T21:00:00+13:00",
+    "Kingfish": "bay_of_islands:2026-10-30T05:00:00+13:00/2026-10-30T09:00:00+13:00"
+   },
+   "species_verdict": "Snapper and kahawai: Fri 6–9pm. Kingfish: Fri 5–9am."
   },
   {
    "date": "2026-10-31",
@@ -1243,6 +1496,48 @@
     "swell_period_s": 7.0,
     "rain_mm": 0,
     "target_species": "Snapper",
+    "species": [
+     {
+      "name": "Snapper",
+      "score": 7.8,
+      "why": "sea 16.6 C, slack for 1 of 3 h, dawn",
+      "season": "in season"
+     },
+     {
+      "name": "Kingfish",
+      "score": 7.8,
+      "why": "no season on record here, sea 16.6 C, dawn",
+      "season": "no seasonal data"
+     },
+     {
+      "name": "Kahawai",
+      "score": 7.8,
+      "why": "no season on record here, dawn",
+      "season": "no seasonal data"
+     }
+    ],
+    "water_temp_note": "Warm enough for snapper and kingfish, water's 16.6° and warming.",
+    "current_note": "Steady run and building, normal sinkers should hold. Rising till 12:20pm.",
+    "water_note": "Warm enough for snapper and kingfish, water's 16.6° and warming. Steady run and building, normal sinkers should hold. Rising till 12:20pm.",
+    "water": {
+     "sst_c": 16.6,
+     "sst_change_3d_c": 0.5,
+     "sst_trend": "warming",
+     "current": {
+      "flow_index_avg": 0.78,
+      "flow_index_max": 1.17,
+      "flow_index_start": 0.33,
+      "flow_index_end": 1.17,
+      "tide_size_ratio": 1.23,
+      "tide_range_m": 2.09,
+      "phase": "rising",
+      "turn": null,
+      "next_turn": {
+       "time": "2026-10-31T12:18:00+13:00",
+       "type": "high"
+      }
+     }
+    },
     "confidence_detail": {
      "level": "low",
      "lead_days": 5,
@@ -1416,7 +1711,13 @@
    ],
    "score_remaining": null,
    "remaining_from": null,
-   "score_full_day": 7.5
+   "score_full_day": 7.5,
+   "best_by_species": {
+    "Snapper": "bay_of_islands:2026-10-31T06:00:00+13:00/2026-10-31T09:00:00+13:00",
+    "Kingfish": "bay_of_islands:2026-10-31T06:00:00+13:00/2026-10-31T09:00:00+13:00",
+    "Kahawai": "bay_of_islands:2026-10-31T06:00:00+13:00/2026-10-31T09:00:00+13:00"
+   },
+   "species_verdict": "Snapper, kingfish and kahawai: Sat 6–9am."
   },
   {
    "date": "2026-11-01",
@@ -1445,7 +1746,7 @@
     "score": 8.3,
     "rating": "great",
     "headline": "Sun 5–8am looks great",
-    "advice": "Sun 5–8am, light cross-offshore S 4 kn, 0.3 m sea @ 9 s, falling tide, low 6:51am, dawn. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+    "advice": "Sun 5–8am, light cross-offshore S 4 kn, 0.3 m sea @ 9 s, falling tide, low 6:51am, dawn. Try kingfish: live-baits or jigs around pins and reefs",
     "reasons": [
      "Wind S 4 kn (cross-offshore)",
      "Gusts to 9 kn",
@@ -1464,7 +1765,52 @@
     "swell_m": 0.2,
     "swell_period_s": 9.0,
     "rain_mm": 0,
-    "target_species": "Snapper",
+    "target_species": "Kingfish",
+    "species": [
+     {
+      "name": "Kingfish",
+      "score": 8.1,
+      "why": "no season on record here, sea 16.8 C, dawn",
+      "season": "no seasonal data"
+     },
+     {
+      "name": "Kahawai",
+      "score": 8.1,
+      "why": "no season on record here, dawn",
+      "season": "no seasonal data"
+     },
+     {
+      "name": "Snapper",
+      "score": 7.9,
+      "why": "sea 16.8 C, slack for 2 of 3 h, dawn",
+      "season": "peak"
+     }
+    ],
+    "water_temp_note": "Warm enough for kingfish and snapper, water's 16.8° and warming.",
+    "current_note": "Low tide at 6:50am. Easy fishing round the turn, but expect it to go quiet at slack water.",
+    "water_note": "Warm enough for kingfish and snapper, water's 16.8° and warming. Low tide at 6:50am. Easy fishing round the turn, but expect it to go quiet at slack water.",
+    "water": {
+     "sst_c": 16.8,
+     "sst_change_3d_c": 0.6,
+     "sst_trend": "warming",
+     "current": {
+      "flow_index_avg": 0.43,
+      "flow_index_max": 0.73,
+      "flow_index_start": 0.73,
+      "flow_index_end": 0.37,
+      "tide_size_ratio": 1.17,
+      "tide_range_m": 2.0,
+      "phase": "falling",
+      "turn": {
+       "time": "2026-11-01T06:51:00+13:00",
+       "type": "low"
+      },
+      "next_turn": {
+       "time": "2026-11-01T13:14:00+13:00",
+       "type": "high"
+      }
+     }
+    },
     "confidence_detail": {
      "level": "medium",
      "lead_days": 6,
@@ -1486,7 +1832,7 @@
     },
     "near_best": true
    },
-   "best_window_text": "Sun 5–8am, light cross-offshore S 4 kn, 0.3 m sea @ 9 s, falling tide, low 6:51am, dawn. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "best_window_text": "Sun 5–8am, light cross-offshore S 4 kn, 0.3 m sea @ 9 s, falling tide, low 6:51am, dawn. Try kingfish: live-baits or jigs around pins and reefs",
    "windows": 3,
    "no_window_reason": null,
    "least_bad_window": null,
@@ -1636,7 +1982,13 @@
    ],
    "score_remaining": null,
    "remaining_from": null,
-   "score_full_day": 7.9
+   "score_full_day": 7.9,
+   "best_by_species": {
+    "Kingfish": "bay_of_islands:2026-11-01T05:00:00+13:00/2026-11-01T08:00:00+13:00",
+    "Kahawai": "bay_of_islands:2026-11-01T05:00:00+13:00/2026-11-01T08:00:00+13:00",
+    "Snapper": "bay_of_islands:2026-11-01T05:00:00+13:00/2026-11-01T08:00:00+13:00"
+   },
+   "species_verdict": "Kingfish, kahawai and snapper: Sun 5–8am."
   }
  ],
  "windows": [
@@ -1665,6 +2017,51 @@
    "swell_period_s": 8.0,
    "rain_mm": 0,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 7.0,
+     "why": "sea 16.9 C, slack for 1 of 3 h, no dawn or dusk",
+     "season": "in season"
+    },
+    {
+     "name": "Kingfish",
+     "score": 6.8,
+     "why": "no season on record here, sea 16.9 C, no dawn",
+     "season": "no seasonal data"
+    },
+    {
+     "name": "Kahawai",
+     "score": 5.8,
+     "why": "no season on record here, no dawn or dusk",
+     "season": "no seasonal data"
+    }
+   ],
+   "water_temp_note": "Warm enough for snapper and kingfish, water's 16.9° and steady.",
+   "current_note": "High tide at 8:10am. Easy fishing round the turn, but expect it to go quiet at slack water.",
+   "water_note": "Warm enough for snapper and kingfish, water's 16.9° and steady. High tide at 8:10am. Easy fishing round the turn, but expect it to go quiet at slack water.",
+   "water": {
+    "sst_c": 16.9,
+    "sst_change_3d_c": 0.1,
+    "sst_trend": "steady",
+    "current": {
+     "flow_index_avg": 0.63,
+     "flow_index_max": 1.03,
+     "flow_index_start": 0.18,
+     "flow_index_end": 1.03,
+     "tide_size_ratio": 1.11,
+     "tide_range_m": 1.82,
+     "phase": "falling",
+     "turn": {
+      "time": "2026-10-26T08:11:00+13:00",
+      "type": "high"
+     },
+     "next_turn": {
+      "time": "2026-10-26T14:18:00+13:00",
+      "type": "low"
+     }
+    }
+   },
    "confidence_detail": {
     "level": "high",
     "lead_days": 0,
@@ -1712,6 +2109,51 @@
    "swell_period_s": 9.0,
    "rain_mm": 0,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 4.6,
+     "why": "sea 17.1 C, slack for 1 of 3 h, no dawn or dusk",
+     "season": "in season"
+    },
+    {
+     "name": "Kingfish",
+     "score": 4.4,
+     "why": "no season on record here, sea 17.1 C, no dawn",
+     "season": "no seasonal data"
+    },
+    {
+     "name": "Kahawai",
+     "score": 3.5,
+     "why": "no season on record here, no dawn or dusk",
+     "season": "no seasonal data"
+    }
+   ],
+   "water_temp_note": "Warm enough for snapper and kingfish, water's 17° and steady.",
+   "current_note": "Low tide at 2:20pm. Easy fishing round the turn, but expect it to go quiet at slack water.",
+   "water_note": "Warm enough for snapper and kingfish, water's 17° and steady. Low tide at 2:20pm. Easy fishing round the turn, but expect it to go quiet at slack water.",
+   "water": {
+    "sst_c": 17.1,
+    "sst_change_3d_c": 0.1,
+    "sst_trend": "steady",
+    "current": {
+     "flow_index_avg": 0.4,
+     "flow_index_max": 0.64,
+     "flow_index_start": 0.44,
+     "flow_index_end": 0.64,
+     "tide_size_ratio": 1.11,
+     "tide_range_m": 1.82,
+     "phase": "falling",
+     "turn": {
+      "time": "2026-10-26T14:18:00+13:00",
+      "type": "low"
+     },
+     "next_turn": {
+      "time": "2026-10-26T20:25:00+13:00",
+      "type": "high"
+     }
+    }
+   },
    "confidence_detail": {
     "level": "medium",
     "lead_days": 0,
@@ -1763,6 +2205,51 @@
    "swell_period_s": 7.0,
    "rain_mm": 0,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 6.2,
+     "why": "sea 17.1 C, slack for 1 of 3 h, dusk",
+     "season": "in season"
+    },
+    {
+     "name": "Kahawai",
+     "score": 6.2,
+     "why": "no season on record here, dusk",
+     "season": "no seasonal data"
+    },
+    {
+     "name": "Kingfish",
+     "score": 5.6,
+     "why": "no season on record here, sea 17.1 C, no dawn",
+     "season": "no seasonal data"
+    }
+   ],
+   "water_temp_note": "Warm enough for snapper and kingfish, water's 17° and steady.",
+   "current_note": "High tide at 8:25pm. Easy fishing round the turn, but expect it to go quiet at slack water.",
+   "water_note": "Warm enough for snapper and kingfish, water's 17° and steady. High tide at 8:25pm. Easy fishing round the turn, but expect it to go quiet at slack water.",
+   "water": {
+    "sst_c": 17.1,
+    "sst_change_3d_c": 0.1,
+    "sst_trend": "steady",
+    "current": {
+     "flow_index_avg": 0.49,
+     "flow_index_max": 0.92,
+     "flow_index_start": 0.92,
+     "flow_index_end": 0.05,
+     "tide_size_ratio": 1.18,
+     "tide_range_m": 2.0,
+     "phase": "rising",
+     "turn": {
+      "time": "2026-10-26T20:25:00+13:00",
+      "type": "high"
+     },
+     "next_turn": {
+      "time": "2026-10-27T02:44:00+13:00",
+      "type": "low"
+     }
+    }
+   },
    "confidence_detail": {
     "level": "low",
     "lead_days": 0,
@@ -1815,6 +2302,48 @@
    "swell_period_s": 5.0,
    "rain_mm": 0.2,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 6.7,
+     "why": "sea 16.7 C, tide running, dawn",
+     "season": "in season"
+    },
+    {
+     "name": "Kingfish",
+     "score": 6.5,
+     "why": "no season on record here, sea 16.7 C, dawn",
+     "season": "no seasonal data"
+    },
+    {
+     "name": "Kahawai",
+     "score": 6.5,
+     "why": "no season on record here, dawn",
+     "season": "no seasonal data"
+    }
+   ],
+   "water_temp_note": "Warm enough for snapper and kingfish, water's 16.7° and cooling.",
+   "current_note": "Steady run but easing, normal sinkers should hold. Rising till 9am.",
+   "water_note": "Warm enough for snapper and kingfish, water's 16.7° and cooling. Steady run but easing, normal sinkers should hold. Rising till 9am.",
+   "water": {
+    "sst_c": 16.7,
+    "sst_change_3d_c": -0.4,
+    "sst_trend": "cooling",
+    "current": {
+     "flow_index_avg": 1.09,
+     "flow_index_max": 1.23,
+     "flow_index_start": 1.23,
+     "flow_index_end": 0.85,
+     "tide_size_ratio": 1.25,
+     "tide_range_m": 2.09,
+     "phase": "rising",
+     "turn": null,
+     "next_turn": {
+      "time": "2026-10-27T08:59:00+13:00",
+      "type": "high"
+     }
+    }
+   },
    "confidence_detail": {
     "level": "low",
     "lead_days": 1,
@@ -1867,6 +2396,48 @@
    "swell_period_s": 5.0,
    "rain_mm": 0.2,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 6.8,
+     "why": "sea 16.5 C, slack for 1 of 3 h, dusk",
+     "season": "in season"
+    },
+    {
+     "name": "Kahawai",
+     "score": 6.8,
+     "why": "no season on record here, dusk",
+     "season": "no seasonal data"
+    },
+    {
+     "name": "Kingfish",
+     "score": 6.2,
+     "why": "no season on record here, sea 16.5 C, no dawn",
+     "season": "no seasonal data"
+    }
+   ],
+   "water_temp_note": "Warm enough for snapper and kingfish, water's 16.5° and cooling.",
+   "current_note": "Steady run but easing, normal sinkers should hold. Rising till 9:15pm.",
+   "water_note": "Warm enough for snapper and kingfish, water's 16.5° and cooling. Steady run but easing, normal sinkers should hold. Rising till 9:15pm.",
+   "water": {
+    "sst_c": 16.5,
+    "sst_change_3d_c": -0.4,
+    "sst_trend": "cooling",
+    "current": {
+     "flow_index_avg": 0.82,
+     "flow_index_max": 1.14,
+     "flow_index_start": 1.14,
+     "flow_index_end": 0.42,
+     "tide_size_ratio": 1.16,
+     "tide_range_m": 1.91,
+     "phase": "rising",
+     "turn": null,
+     "next_turn": {
+      "time": "2026-10-27T21:13:00+13:00",
+      "type": "high"
+     }
+    }
+   },
    "confidence_detail": {
     "level": "low",
     "lead_days": 1,
@@ -1917,6 +2488,48 @@
    "swell_period_s": 6.0,
    "rain_mm": 0,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 7.9,
+     "why": "sea 16.2 C, tide running, dawn",
+     "season": "in season"
+    },
+    {
+     "name": "Kingfish",
+     "score": 7.7,
+     "why": "no season on record here, sea 16.2 C, dawn",
+     "season": "no seasonal data"
+    },
+    {
+     "name": "Kahawai",
+     "score": 7.7,
+     "why": "no season on record here, dawn",
+     "season": "no seasonal data"
+    }
+   ],
+   "water_temp_note": "Warm enough for snapper and kingfish, water's 16.2° and cooling.",
+   "current_note": "Strong run on a big tide, so you'll want a heavier sinker. Rising till 9:45am.",
+   "water_note": "Warm enough for snapper and kingfish, water's 16.2° and cooling. Strong run on a big tide, so you'll want a heavier sinker. Rising till 9:45am.",
+   "water": {
+    "sst_c": 16.2,
+    "sst_change_3d_c": -0.5,
+    "sst_trend": "cooling",
+    "current": {
+     "flow_index_avg": 1.19,
+     "flow_index_max": 1.29,
+     "flow_index_start": 1.09,
+     "flow_index_end": 1.18,
+     "tide_size_ratio": 1.3,
+     "tide_range_m": 2.18,
+     "phase": "rising",
+     "turn": null,
+     "next_turn": {
+      "time": "2026-10-28T09:46:00+13:00",
+      "type": "high"
+     }
+    }
+   },
    "confidence_detail": {
     "level": "medium",
     "lead_days": 2,
@@ -1967,6 +2580,48 @@
    "swell_period_s": 6.0,
    "rain_mm": 0,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 6.6,
+     "why": "sea 16.6 C, tide running, no dawn or dusk",
+     "season": "in season"
+    },
+    {
+     "name": "Kingfish",
+     "score": 6.2,
+     "why": "no season on record here, sea 16.6 C, no dawn",
+     "season": "no seasonal data"
+    },
+    {
+     "name": "Kahawai",
+     "score": 5.2,
+     "why": "no season on record here, no dawn or dusk",
+     "season": "no seasonal data"
+    }
+   ],
+   "water_temp_note": "Warm enough for snapper and kingfish, water's 16.6° and cooling.",
+   "current_note": "Strong run on a big tide but easing, so you'll want a heavier sinker. Falling till 3:55pm.",
+   "water_note": "Warm enough for snapper and kingfish, water's 16.6° and cooling. Strong run on a big tide but easing, so you'll want a heavier sinker. Falling till 3:55pm.",
+   "water": {
+    "sst_c": 16.6,
+    "sst_change_3d_c": -0.5,
+    "sst_trend": "cooling",
+    "current": {
+     "flow_index_avg": 1.1,
+     "flow_index_max": 1.25,
+     "flow_index_start": 1.25,
+     "flow_index_end": 0.84,
+     "tide_size_ratio": 1.27,
+     "tide_range_m": 2.09,
+     "phase": "falling",
+     "turn": null,
+     "next_turn": {
+      "time": "2026-10-28T15:54:00+13:00",
+      "type": "low"
+     }
+    }
+   },
    "confidence_detail": {
     "level": "medium",
     "lead_days": 2,
@@ -2018,6 +2673,48 @@
    "swell_period_s": 6.0,
    "rain_mm": 0,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 7.2,
+     "why": "sea 16.7 C, tide running, dusk",
+     "season": "in season"
+    },
+    {
+     "name": "Kahawai",
+     "score": 7.0,
+     "why": "no season on record here, dusk",
+     "season": "no seasonal data"
+    },
+    {
+     "name": "Kingfish",
+     "score": 6.4,
+     "why": "no season on record here, sea 16.7 C, no dawn",
+     "season": "no seasonal data"
+    }
+   ],
+   "water_temp_note": "Warm enough for snapper and kingfish, water's 16.7° and cooling.",
+   "current_note": "Steady run but easing, normal sinkers should hold. Rising till 10pm.",
+   "water_note": "Warm enough for snapper and kingfish, water's 16.7° and cooling. Steady run but easing, normal sinkers should hold. Rising till 10pm.",
+   "water": {
+    "sst_c": 16.7,
+    "sst_change_3d_c": -0.5,
+    "sst_trend": "cooling",
+    "current": {
+     "flow_index_avg": 1.07,
+     "flow_index_max": 1.18,
+     "flow_index_start": 1.18,
+     "flow_index_end": 0.86,
+     "tide_size_ratio": 1.22,
+     "tide_range_m": 2.0,
+     "phase": "rising",
+     "turn": null,
+     "next_turn": {
+      "time": "2026-10-28T22:02:00+13:00",
+      "type": "high"
+     }
+    }
+   },
    "confidence_detail": {
     "level": "low",
     "lead_days": 2,
@@ -2069,6 +2766,48 @@
    "swell_period_s": 5.0,
    "rain_mm": 0,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 7.8,
+     "why": "sea 16.4 C, tide running, dawn",
+     "season": "in season"
+    },
+    {
+     "name": "Kingfish",
+     "score": 7.5,
+     "why": "no season on record here, sea 16.4 C, dawn",
+     "season": "no seasonal data"
+    },
+    {
+     "name": "Kahawai",
+     "score": 7.5,
+     "why": "no season on record here, dawn",
+     "season": "no seasonal data"
+    }
+   ],
+   "water_temp_note": "Warm enough for snapper and kingfish, water's 16.4° and cooling.",
+   "current_note": "Strong run on a big tide and building, so you'll want a heavier sinker. Rising till 10:35am.",
+   "water_note": "Warm enough for snapper and kingfish, water's 16.4° and cooling. Strong run on a big tide and building, so you'll want a heavier sinker. Rising till 10:35am.",
+   "water": {
+    "sst_c": 16.4,
+    "sst_change_3d_c": -0.4,
+    "sst_trend": "cooling",
+    "current": {
+     "flow_index_avg": 1.1,
+     "flow_index_max": 1.35,
+     "flow_index_start": 0.76,
+     "flow_index_end": 1.35,
+     "tide_size_ratio": 1.35,
+     "tide_range_m": 2.27,
+     "phase": "rising",
+     "turn": null,
+     "next_turn": {
+      "time": "2026-10-29T10:35:00+13:00",
+      "type": "high"
+     }
+    }
+   },
    "confidence_detail": {
     "level": "low",
     "lead_days": 3,
@@ -2119,6 +2858,48 @@
    "swell_period_s": 4.0,
    "rain_mm": 0,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 5.4,
+     "why": "sea 16.6 C, tide running, no dawn or dusk",
+     "season": "in season"
+    },
+    {
+     "name": "Kingfish",
+     "score": 5.0,
+     "why": "no season on record here, sea 16.6 C, no dawn",
+     "season": "no seasonal data"
+    },
+    {
+     "name": "Kahawai",
+     "score": 4.0,
+     "why": "no season on record here, no dawn or dusk",
+     "season": "no seasonal data"
+    }
+   ],
+   "water_temp_note": "Warm enough for snapper and kingfish, water's 16.6° and cooling.",
+   "current_note": "Strong run on a big tide, so you'll want a heavier sinker. Falling till 4:45pm.",
+   "water_note": "Warm enough for snapper and kingfish, water's 16.6° and cooling. Strong run on a big tide, so you'll want a heavier sinker. Falling till 4:45pm.",
+   "water": {
+    "sst_c": 16.6,
+    "sst_change_3d_c": -0.4,
+    "sst_trend": "cooling",
+    "current": {
+     "flow_index_avg": 1.15,
+     "flow_index_max": 1.26,
+     "flow_index_start": 1.05,
+     "flow_index_end": 1.15,
+     "tide_size_ratio": 1.26,
+     "tide_range_m": 2.09,
+     "phase": "falling",
+     "turn": null,
+     "next_turn": {
+      "time": "2026-10-29T16:45:00+13:00",
+      "type": "low"
+     }
+    }
+   },
    "confidence_detail": {
     "level": "low",
     "lead_days": 3,
@@ -2169,6 +2950,48 @@
    "swell_period_s": 4.0,
    "rain_mm": 0,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 6.8,
+     "why": "sea 16.7 C, tide running, dusk",
+     "season": "in season"
+    },
+    {
+     "name": "Kahawai",
+     "score": 6.5,
+     "why": "no season on record here, dusk",
+     "season": "no seasonal data"
+    },
+    {
+     "name": "Kingfish",
+     "score": 6.0,
+     "why": "no season on record here, sea 16.7 C, no dawn",
+     "season": "no seasonal data"
+    }
+   ],
+   "water_temp_note": "Warm enough for snapper and kingfish, water's 16.7° and cooling.",
+   "current_note": "Strong run on a big tide and building, so you'll want a heavier sinker. Rising till 10:50pm.",
+   "water_note": "Warm enough for snapper and kingfish, water's 16.7° and cooling. Strong run on a big tide and building, so you'll want a heavier sinker. Rising till 10:50pm.",
+   "water": {
+    "sst_c": 16.7,
+    "sst_change_3d_c": -0.4,
+    "sst_trend": "cooling",
+    "current": {
+     "flow_index_avg": 1.1,
+     "flow_index_max": 1.2,
+     "flow_index_start": 0.95,
+     "flow_index_end": 1.14,
+     "tide_size_ratio": 1.22,
+     "tide_range_m": 2.0,
+     "phase": "rising",
+     "turn": null,
+     "next_turn": {
+      "time": "2026-10-29T22:52:00+13:00",
+      "type": "high"
+     }
+    }
+   },
    "confidence_detail": {
     "level": "low",
     "lead_days": 3,
@@ -2219,6 +3042,51 @@
    "swell_period_s": 4.0,
    "rain_mm": 0,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 7.2,
+     "why": "sea 16.5 C, slack for 1 of 4 h, dawn",
+     "season": "in season"
+    },
+    {
+     "name": "Kingfish",
+     "score": 7.2,
+     "why": "no season on record here, sea 16.5 C, dawn",
+     "season": "no seasonal data"
+    },
+    {
+     "name": "Kahawai",
+     "score": 7.2,
+     "why": "no season on record here, dawn",
+     "season": "no seasonal data"
+    }
+   ],
+   "water_temp_note": "Warm enough for snapper and kingfish, water's 16.5° and steady.",
+   "current_note": "Strong run either side of the low tide at 5:05am, so you'll want a heavier sinker. Expect it to go quiet for a bit at the turn.",
+   "water_note": "Warm enough for snapper and kingfish, water's 16.5° and steady. Strong run either side of the low tide at 5:05am, so you'll want a heavier sinker. Expect it to go quiet for a bit at the turn.",
+   "water": {
+    "sst_c": 16.5,
+    "sst_change_3d_c": 0.1,
+    "sst_trend": "steady",
+    "current": {
+     "flow_index_avg": 0.89,
+     "flow_index_max": 1.28,
+     "flow_index_start": 0.25,
+     "flow_index_end": 1.28,
+     "tide_size_ratio": 1.29,
+     "tide_range_m": 2.18,
+     "phase": "rising",
+     "turn": {
+      "time": "2026-10-30T05:07:00+13:00",
+      "type": "low"
+     },
+     "next_turn": {
+      "time": "2026-10-30T11:25:00+13:00",
+      "type": "high"
+     }
+    }
+   },
    "confidence_detail": {
     "level": "low",
     "lead_days": 4,
@@ -2268,6 +3136,48 @@
    "swell_period_s": 4.0,
    "rain_mm": 0,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 5.6,
+     "why": "sea 16.8 C, tide running, no dawn or dusk",
+     "season": "in season"
+    },
+    {
+     "name": "Kingfish",
+     "score": 5.2,
+     "why": "no season on record here, sea 16.8 C, no dawn",
+     "season": "no seasonal data"
+    },
+    {
+     "name": "Kahawai",
+     "score": 4.2,
+     "why": "no season on record here, no dawn or dusk",
+     "season": "no seasonal data"
+    }
+   ],
+   "water_temp_note": "Warm enough for snapper and kingfish, water's 16.8° and steady.",
+   "current_note": "Strong run on a big tide, so you'll want a heavier sinker. Falling till 5:40pm.",
+   "water_note": "Warm enough for snapper and kingfish, water's 16.8° and steady. Strong run on a big tide, so you'll want a heavier sinker. Falling till 5:40pm.",
+   "water": {
+    "sst_c": 16.8,
+    "sst_change_3d_c": 0.1,
+    "sst_trend": "steady",
+    "current": {
+     "flow_index_avg": 1.1,
+     "flow_index_max": 1.2,
+     "flow_index_start": 1.04,
+     "flow_index_end": 1.06,
+     "tide_size_ratio": 1.2,
+     "tide_range_m": 2.0,
+     "phase": "falling",
+     "turn": null,
+     "next_turn": {
+      "time": "2026-10-30T17:38:00+13:00",
+      "type": "low"
+     }
+    }
+   },
    "confidence_detail": {
     "level": "medium",
     "lead_days": 4,
@@ -2316,6 +3226,48 @@
    "swell_period_s": 6.0,
    "rain_mm": 0,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 7.9,
+     "why": "sea 16.9 C, tide running, dusk",
+     "season": "in season"
+    },
+    {
+     "name": "Kahawai",
+     "score": 7.7,
+     "why": "no season on record here, dusk",
+     "season": "no seasonal data"
+    },
+    {
+     "name": "Kingfish",
+     "score": 7.1,
+     "why": "no season on record here, sea 16.9 C, no dawn",
+     "season": "no seasonal data"
+    }
+   ],
+   "water_temp_note": "Warm enough for snapper and kingfish, water's 16.9° and steady.",
+   "current_note": "Steady run and building, normal sinkers should hold. Rising till 11:45pm.",
+   "water_note": "Warm enough for snapper and kingfish, water's 16.9° and steady. Steady run and building, normal sinkers should hold. Rising till 11:45pm.",
+   "water": {
+    "sst_c": 16.9,
+    "sst_change_3d_c": 0.1,
+    "sst_trend": "steady",
+    "current": {
+     "flow_index_avg": 0.83,
+     "flow_index_max": 1.1,
+     "flow_index_start": 0.48,
+     "flow_index_end": 1.1,
+     "tide_size_ratio": 1.11,
+     "tide_range_m": 1.82,
+     "phase": "rising",
+     "turn": null,
+     "next_turn": {
+      "time": "2026-10-30T23:45:00+13:00",
+      "type": "high"
+     }
+    }
+   },
    "confidence_detail": {
     "level": "low",
     "lead_days": 4,
@@ -2366,6 +3318,48 @@
    "swell_period_s": 7.0,
    "rain_mm": 0,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 7.8,
+     "why": "sea 16.6 C, slack for 1 of 3 h, dawn",
+     "season": "in season"
+    },
+    {
+     "name": "Kingfish",
+     "score": 7.8,
+     "why": "no season on record here, sea 16.6 C, dawn",
+     "season": "no seasonal data"
+    },
+    {
+     "name": "Kahawai",
+     "score": 7.8,
+     "why": "no season on record here, dawn",
+     "season": "no seasonal data"
+    }
+   ],
+   "water_temp_note": "Warm enough for snapper and kingfish, water's 16.6° and warming.",
+   "current_note": "Steady run and building, normal sinkers should hold. Rising till 12:20pm.",
+   "water_note": "Warm enough for snapper and kingfish, water's 16.6° and warming. Steady run and building, normal sinkers should hold. Rising till 12:20pm.",
+   "water": {
+    "sst_c": 16.6,
+    "sst_change_3d_c": 0.5,
+    "sst_trend": "warming",
+    "current": {
+     "flow_index_avg": 0.78,
+     "flow_index_max": 1.17,
+     "flow_index_start": 0.33,
+     "flow_index_end": 1.17,
+     "tide_size_ratio": 1.23,
+     "tide_range_m": 2.09,
+     "phase": "rising",
+     "turn": null,
+     "next_turn": {
+      "time": "2026-10-31T12:18:00+13:00",
+      "type": "high"
+     }
+    }
+   },
    "confidence_detail": {
     "level": "low",
     "lead_days": 5,
@@ -2416,6 +3410,51 @@
    "swell_period_s": 7.0,
    "rain_mm": 0,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 5.4,
+     "why": "sea 17.0 C, slack for 1 of 5 h, no dawn or dusk",
+     "season": "in season"
+    },
+    {
+     "name": "Kingfish",
+     "score": 5.2,
+     "why": "no season on record here, sea 17.0 C, no dawn",
+     "season": "no seasonal data"
+    },
+    {
+     "name": "Kahawai",
+     "score": 4.2,
+     "why": "no season on record here, no dawn or dusk",
+     "season": "no seasonal data"
+    }
+   ],
+   "water_temp_note": "Warm enough for snapper and kingfish, water's 17° and warming.",
+   "current_note": "Strong run either side of the high tide at 12:20pm, so you'll want a heavier sinker. Expect it to go quiet for a bit at the turn.",
+   "water_note": "Warm enough for snapper and kingfish, water's 17° and warming. Strong run either side of the high tide at 12:20pm, so you'll want a heavier sinker. Expect it to go quiet for a bit at the turn.",
+   "water": {
+    "sst_c": 17.0,
+    "sst_change_3d_c": 0.5,
+    "sst_trend": "warming",
+    "current": {
+     "flow_index_avg": 0.68,
+     "flow_index_max": 1.14,
+     "flow_index_start": 0.47,
+     "flow_index_end": 1.14,
+     "tide_size_ratio": 1.14,
+     "tide_range_m": 1.91,
+     "phase": "rising",
+     "turn": {
+      "time": "2026-10-31T12:18:00+13:00",
+      "type": "high"
+     },
+     "next_turn": {
+      "time": "2026-10-31T18:33:00+13:00",
+      "type": "low"
+     }
+    }
+   },
    "confidence_detail": {
     "level": "low",
     "lead_days": 5,
@@ -2466,6 +3505,51 @@
    "swell_period_s": 7.0,
    "rain_mm": 0,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 7.1,
+     "why": "sea 17.5 C, slack for 1 of 3 h, dusk",
+     "season": "in season"
+    },
+    {
+     "name": "Kahawai",
+     "score": 7.0,
+     "why": "no season on record here, dusk",
+     "season": "no seasonal data"
+    },
+    {
+     "name": "Kingfish",
+     "score": 6.5,
+     "why": "no season on record here, sea 17.5 C, no dawn",
+     "season": "no seasonal data"
+    }
+   ],
+   "water_temp_note": "Warm enough for snapper and kingfish, water's 18° and warming.",
+   "current_note": "Low tide at 6:35pm. Easy fishing round the turn, but expect it to go quiet at slack water.",
+   "water_note": "Warm enough for snapper and kingfish, water's 18° and warming. Low tide at 6:35pm. Easy fishing round the turn, but expect it to go quiet at slack water.",
+   "water": {
+    "sst_c": 17.5,
+    "sst_change_3d_c": 0.5,
+    "sst_trend": "warming",
+    "current": {
+     "flow_index_avg": 0.5,
+     "flow_index_max": 0.94,
+     "flow_index_start": 0.03,
+     "flow_index_end": 0.94,
+     "tide_size_ratio": 1.11,
+     "tide_range_m": 1.82,
+     "phase": "falling",
+     "turn": {
+      "time": "2026-10-31T18:33:00+13:00",
+      "type": "low"
+     },
+     "next_turn": {
+      "time": "2026-11-01T00:39:00+13:00",
+      "type": "high"
+     }
+    }
+   },
    "confidence_detail": {
     "level": "low",
     "lead_days": 5,
@@ -2496,7 +3580,7 @@
    "score": 8.3,
    "rating": "great",
    "headline": "Sun 5–8am looks great",
-   "advice": "Sun 5–8am, light cross-offshore S 4 kn, 0.3 m sea @ 9 s, falling tide, low 6:51am, dawn. Try snapper: soft-baits or berleyed baits along reef edges and work-ups",
+   "advice": "Sun 5–8am, light cross-offshore S 4 kn, 0.3 m sea @ 9 s, falling tide, low 6:51am, dawn. Try kingfish: live-baits or jigs around pins and reefs",
    "reasons": [
     "Wind S 4 kn (cross-offshore)",
     "Gusts to 9 kn",
@@ -2515,7 +3599,52 @@
    "swell_m": 0.2,
    "swell_period_s": 9.0,
    "rain_mm": 0,
-   "target_species": "Snapper",
+   "target_species": "Kingfish",
+   "species": [
+    {
+     "name": "Kingfish",
+     "score": 8.1,
+     "why": "no season on record here, sea 16.8 C, dawn",
+     "season": "no seasonal data"
+    },
+    {
+     "name": "Kahawai",
+     "score": 8.1,
+     "why": "no season on record here, dawn",
+     "season": "no seasonal data"
+    },
+    {
+     "name": "Snapper",
+     "score": 7.9,
+     "why": "sea 16.8 C, slack for 2 of 3 h, dawn",
+     "season": "peak"
+    }
+   ],
+   "water_temp_note": "Warm enough for kingfish and snapper, water's 16.8° and warming.",
+   "current_note": "Low tide at 6:50am. Easy fishing round the turn, but expect it to go quiet at slack water.",
+   "water_note": "Warm enough for kingfish and snapper, water's 16.8° and warming. Low tide at 6:50am. Easy fishing round the turn, but expect it to go quiet at slack water.",
+   "water": {
+    "sst_c": 16.8,
+    "sst_change_3d_c": 0.6,
+    "sst_trend": "warming",
+    "current": {
+     "flow_index_avg": 0.43,
+     "flow_index_max": 0.73,
+     "flow_index_start": 0.73,
+     "flow_index_end": 0.37,
+     "tide_size_ratio": 1.17,
+     "tide_range_m": 2.0,
+     "phase": "falling",
+     "turn": {
+      "time": "2026-11-01T06:51:00+13:00",
+      "type": "low"
+     },
+     "next_turn": {
+      "time": "2026-11-01T13:14:00+13:00",
+      "type": "high"
+     }
+    }
+   },
    "confidence_detail": {
     "level": "medium",
     "lead_days": 6,
@@ -2563,6 +3692,48 @@
    "swell_period_s": 9.0,
    "rain_mm": 0,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 6.8,
+     "why": "sea 17.1 C, slack for 1 of 3 h, no dawn or dusk",
+     "season": "peak"
+    },
+    {
+     "name": "Kingfish",
+     "score": 6.6,
+     "why": "no season on record here, sea 17.1 C, no dawn",
+     "season": "no seasonal data"
+    },
+    {
+     "name": "Kahawai",
+     "score": 5.7,
+     "why": "no season on record here, no dawn or dusk",
+     "season": "no seasonal data"
+    }
+   ],
+   "water_temp_note": "Warm enough for snapper and kingfish, water's 17° and warming.",
+   "current_note": "Steady run but easing, normal sinkers should hold. Rising till 1:15pm.",
+   "water_note": "Warm enough for snapper and kingfish, water's 17° and warming. Steady run but easing, normal sinkers should hold. Rising till 1:15pm.",
+   "water": {
+    "sst_c": 17.1,
+    "sst_change_3d_c": 0.6,
+    "sst_trend": "warming",
+    "current": {
+     "flow_index_avg": 0.81,
+     "flow_index_max": 1.14,
+     "flow_index_start": 1.14,
+     "flow_index_end": 0.41,
+     "tide_size_ratio": 1.17,
+     "tide_range_m": 2.0,
+     "phase": "rising",
+     "turn": null,
+     "next_turn": {
+      "time": "2026-11-01T13:14:00+13:00",
+      "type": "high"
+     }
+    }
+   },
    "confidence_detail": {
     "level": "medium",
     "lead_days": 6,
@@ -2610,6 +3781,51 @@
    "swell_period_s": 10.0,
    "rain_mm": 0,
    "target_species": "Snapper",
+   "species": [
+    {
+     "name": "Snapper",
+     "score": 7.5,
+     "why": "sea 17.6 C, slack for 1 of 3 h, dusk",
+     "season": "peak"
+    },
+    {
+     "name": "Kahawai",
+     "score": 7.5,
+     "why": "no season on record here, dusk",
+     "season": "no seasonal data"
+    },
+    {
+     "name": "Kingfish",
+     "score": 6.9,
+     "why": "no season on record here, sea 17.6 C, no dawn",
+     "season": "no seasonal data"
+    }
+   ],
+   "water_temp_note": "Warm enough for snapper and kingfish, water's 18° and warming.",
+   "current_note": "Low tide at 7:30pm. Easy fishing round the turn, but expect it to go quiet at slack water.",
+   "water_note": "Warm enough for snapper and kingfish, water's 18° and warming. Low tide at 7:30pm. Easy fishing round the turn, but expect it to go quiet at slack water.",
+   "water": {
+    "sst_c": 17.6,
+    "sst_change_3d_c": 0.6,
+    "sst_trend": "warming",
+    "current": {
+     "flow_index_avg": 0.34,
+     "flow_index_max": 0.53,
+     "flow_index_start": 0.53,
+     "flow_index_end": 0.48,
+     "tide_size_ratio": 1.01,
+     "tide_range_m": 1.64,
+     "phase": "falling",
+     "turn": {
+      "time": "2026-11-01T19:32:00+13:00",
+      "type": "low"
+     },
+     "next_turn": {
+      "time": "2026-11-02T01:37:00+13:00",
+      "type": "high"
+     }
+    }
+   },
    "confidence_detail": {
     "level": "low",
     "lead_days": 6,
@@ -5684,7 +6900,7 @@
   }
  ],
  "data_status": "engine",
- "engine_version": "2.4.0",
+ "engine_version": "2.6.0",
  "hourly_step_h": 1,
  "timezone": "Pacific/Auckland",
  "model_runs": {

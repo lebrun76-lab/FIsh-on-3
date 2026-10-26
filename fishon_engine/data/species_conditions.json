@@ -1,0 +1,189 @@
+{
+  "_about": "Species conditions used by fishon_engine.species_scoring (engine 2.5.0). Each factor is a condition the species is said to prefer, with the claim and a source. A window that misses a factor loses 'penalty' points from the window's safety-gated score, so a species never scores above the window. The direction of each factor is sourced; the penalty sizes and numeric cut-offs not stated in a source are engine tuning (marked 'threshold_note'). Factors we looked for but could not source, or where sources disagree, are listed under 'left_out' and not scored. Species not listed here (e.g. trevally, john dory, hapuku, groper, barracouta, trout, salmon) are not species-scored. Checked 2026-10-26 NZDT.",
+  "species": {
+    "Snapper": {
+      "factors": [
+        {
+          "factor": "sst_min",
+          "min_c": 14.8,
+          "penalty": 0.5,
+          "claim": "Inshore spawning aggregations form once the sea reaches roughly 14.8-16 C; NIWA puts the spring spawning migration at about 16 C.",
+          "sources": [
+            "Parsons et al. 2014, 'Snapper (Chrysophrys auratus): a review of life history and key vulnerabilities in New Zealand', NZ J Marine & Freshwater Research 48(2). https://www.tandfonline.com/doi/full/10.1080/00288330.2014.892013",
+            "NIWA: spring spawning migrations at about 16 C. https://niwa.co.nz/news/will-it-be-fintastic-fishing-year"
+          ]
+        },
+        {
+          "factor": "tide_running",
+          "penalty": 0.75,
+          "claim": "Snapper fishing is consistently better when the tide is running, particularly on the East Coast.",
+          "threshold_note": "Slack is taken as within 45 min of high or low (the engine's existing tide rule).",
+          "sources": [
+            "NZ Fishing News / fishing.net.nz, 'How to catch snapper'. https://www.fishing.net.nz/how-to-catch/snapper/"
+          ]
+        },
+        {
+          "factor": "light_change",
+          "when": "either",
+          "penalty": 0.5,
+          "claim": "Dawn and dusk is a prime time for snapper, since many fish rely on low light for camouflage, especially in shallow water.",
+          "sources": [
+            "NZ Fishing News / fishing.net.nz, 'How to catch snapper'. https://www.fishing.net.nz/how-to-catch/snapper/"
+          ]
+        }
+      ],
+      "left_out": [
+        {
+          "factor": "moon",
+          "reason": "Fishing lore on the moon is mixed and we found no NZ research showing a moon effect on snapper catch; the generic moon bonus in the window score is unchanged."
+        },
+        {
+          "factor": "tide direction",
+          "reason": "Sources say most spots fish better on one tide or the other, but which one is local, so only 'running vs slack' is used."
+        }
+      ]
+    },
+    "Kingfish": {
+      "factors": [
+        {
+          "factor": "sst_min",
+          "min_c": 16.0,
+          "penalty": 0.75,
+          "claim": "In the coldest months kingfish go deeper, are less common around the rocks and act sluggishly; once water temps climb to around 16-17 C they become more active and common around the rocks.",
+          "sources": [
+            "Mark Draper, 'Kingfish from the rocks pt 1', NZ Fishing News July 2008, via fishing.net.nz. https://www.fishing.net.nz/fishing-advice/fishing-hints-tips-and-how-to-articles/kingfish-from-the-rocks-pt-1/",
+            "Supporting: NIWA yellowtail kingfish growth trials, growth best at 18-26.5 C and falling away below about 15 C (NZ J Marine & Freshwater Research 2014). https://www.tandfonline.com/doi/full/10.1080/00288330.2014.930050"
+          ]
+        },
+        {
+          "factor": "light_change",
+          "when": "dawn",
+          "penalty": 0.5,
+          "claim": "Daybreak is the best time to fool kingfish in shallow water.",
+          "sources": [
+            "NZ Fishing News / fishing.net.nz, 'Using bite times'. https://www.fishing.net.nz/fishing-advice/fishing-hints-tips-and-how-to-articles/using-bite-times/"
+          ]
+        }
+      ],
+      "left_out": [
+        {
+          "factor": "tide",
+          "reason": "Sources only say some spots fire over a change of tide; nothing general enough to score."
+        }
+      ]
+    },
+    "Kahawai": {
+      "factors": [
+        {
+          "factor": "light_change",
+          "when": "either",
+          "penalty": 0.5,
+          "claim": "Dawn and dusk are prime times to target kahawai (Clutha River mouth).",
+          "sources": [
+            "Peter Davy, 'Clutha River mouth kahawai', NZ Fishing Magazine, 21 Feb 2026. https://fishingmag.co.nz/south-island/otago-fishing-destinations/clutha-river-mouth-kahawai"
+          ]
+        }
+      ],
+      "left_out": [
+        {
+          "factor": "tide",
+          "reason": "Sources disagree on which tide (incoming vs outgoing) suits river-mouth kahawai; it is local."
+        },
+        {
+          "factor": "water clarity after rain",
+          "reason": "Sourced (kahawai are clear-water feeders and move away after rain: fishing.net.nz 'Targeting mainland river mouth kahawai'; fishingmag.co.nz Clutha article) but not modelled: it needs rainfall history and only applies at river mouths."
+        }
+      ]
+    },
+    "Gurnard": {
+      "factors": [
+        {
+          "factor": "sea_max",
+          "max_m": 1.0,
+          "penalty": 1.0,
+          "claim": "Gurnard are reluctant to enter the shallows and avoid white water; clean water with low surf is the key to surfcasting success.",
+          "threshold_note": "The 1.0 m sea cut-off is engine tuning; the sources give no number.",
+          "sources": [
+            "Andy Macleod, 'Land based gurnard fishing', NZ Fishing News April 2018, via fishing.net.nz. https://www.fishing.net.nz/fishing-advice/fishing-hints-tips-and-how-to-articles/land-based-gurnard-fishing/",
+            "NZ Fishing News / fishing.net.nz, 'Expert tips to catch gurnard'. https://www.fishing.net.nz/fishing-advice/fishing-hints-tips-and-how-to-articles/expert-tips-to-catch-gurnard/"
+          ]
+        },
+        {
+          "factor": "light_change",
+          "when": "dusk",
+          "penalty": 0.25,
+          "claim": "Surfcasters bag good catches over summer, particularly those that fish the evening change of light.",
+          "sources": [
+            "NZ Fishing News / fishing.net.nz, 'Expert tips to catch gurnard'. https://www.fishing.net.nz/fishing-advice/fishing-hints-tips-and-how-to-articles/expert-tips-to-catch-gurnard/"
+          ]
+        }
+      ],
+      "left_out": [
+        {
+          "factor": "tide",
+          "reason": "Sources disagree by coast (current flowing on the east coast vs slack in west coast harbours)."
+        },
+        {
+          "factor": "sea temperature",
+          "reason": "One source says gurnard don't like warm water but gives no range."
+        }
+      ]
+    },
+    "Tarakihi": {
+      "factors": [
+        {
+          "factor": "tide_running",
+          "penalty": 0.75,
+          "claim": "Tarakihi congregate and feed in areas of higher current; the bite turns on as the tide starts to push and dies off at slack.",
+          "threshold_note": "Slack is taken as within 45 min of high or low.",
+          "sources": [
+            "Sam Boothroyd, 'Chasing sea turkeys: tips and tricks for tarakihi', NZ Fishing News November 2021, via fishing.net.nz. https://www.fishing.net.nz/fishing-advice/fishing-hints-tips-and-how-to-articles/chasing-sea-turkeys-tips-and-tricks-for-tarakihi/"
+          ]
+        }
+      ],
+      "left_out": [
+        {
+          "factor": "light",
+          "reason": "No source found."
+        },
+        {
+          "factor": "sea temperature",
+          "reason": "No source found."
+        }
+      ]
+    },
+    "Blue Cod": {
+      "factors": [
+        {
+          "factor": "daylight",
+          "penalty": 1.0,
+          "claim": "Blue cod are diurnal predators; anglers report they feed at dawn, dusk and occasionally in the day, and appear not to feed at all in the dark.",
+          "sources": [
+            "University of Auckland research on the blue cod lateral line (diurnal predator). https://researchspace.auckland.ac.nz/items/1229eb18-1dfb-4920-8f94-55966835978a",
+            "NZ Fishing News / fishing.net.nz, 'How to catch blue cod from the shore'. https://www.fishing.net.nz/fishing-advice/fishing-hints-tips-and-how-to-articles/how-to-catch-blue-cod-from-the-shore/"
+          ]
+        }
+      ],
+      "left_out": [
+        {
+          "factor": "tide",
+          "reason": "A Fisheries NZ pot survey in the Marlborough Sounds (BCO9701) found no significant tide or time-of-day effect on blue cod catch rates, so tide is deliberately not scored. https://fs.fish.govt.nz/Doc/22461/BCO9701%20Blue%20Cod%20Marlborough%20Sounds%20abundance%20structure%20sex%20ratio.pdf.ashx"
+        },
+        {
+          "factor": "dawn/dusk",
+          "reason": "An angler source says the dawn and dusk bites can be very intense, but the same Fisheries NZ pot survey found no time-of-day effect; only the dark penalty is used."
+        }
+      ]
+    }
+  },
+  "not_scored": [
+    {
+      "species": [
+        "Southern Bluefin Tuna",
+        "Pacific Bluefin Tuna",
+        "Albacore"
+      ],
+      "reason": "No NZ source we found gives a usable sea-temperature, tide or light preference (Fisheries NZ FAR 2021/16 and 2025/52 only report the sea temperature during particular seasons, e.g. over 18 C off Cape Runaway in 2025). They are also offshore boat fish, so the shore safety gate does not describe their trips. Seasons stay in species_seasons.json."
+    }
+  ]
+}

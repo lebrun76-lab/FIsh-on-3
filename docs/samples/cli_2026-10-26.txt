@@ -5,19 +5,24 @@
   tides: LINZ Mātiatia Bay [datum: chart_datum]
   VERDICT: Go Monday early morning (great, 8.2/10) [high]
     Mon 5–8am, gentle cross-offshore NW 8 kn, 0.1 m sea @ 3 s, rising tide, high 7:54am, dawn. Try snapper: soft-baits or berleyed baits along reef edges and work-ups. Also good: Wed 28 Oct.
+    By species: Snapper, kingfish, kahawai and gurnard: Mon 5–8am.
+    Water: Warm enough for snapper and kingfish, water's 16.9° and steady.
+    Current: High tide at 7:55am. Easy fishing round the turn, but expect it to go quiet at slack water.
   Mon 26 Oct: 7.7/10 great [high] wind avg 10.1 kn, gust max 19.0 kn, wave 0.29 m, swell 0.12 m, rain 0 mm, SST 17.1 C
     Excellent, go fishing. Gentle winds all day (~10 kn); 0.3 m sea. Best: Mon 5–8am.
+    By species: Snapper, kingfish, kahawai and gurnard: Mon 5–8am.
     - Mon 5–8am looks great (8.2/10): Mon 5–8am, gentle cross-offshore NW 8 kn, 0.1 m sea @ 3 s, rising tide, high 7:54am, dawn. Try snapper: soft-baits or berleyed baits along reef edges and work-ups
     - Mon 10am–1pm looks good (7.1/10): Mon 10am–1pm, gentle cross-shore N 8 kn, 0.2 m sea @ 4 s, falling tide, low 1:58pm. Try snapper: soft-baits or berleyed baits along reef edges and work-ups
-    - Mon 6–9pm looks great (7.7/10): Mon 6–9pm, gentle cross-offshore W 11 kn, 0.4 m sea @ 3 s, rising tide, high 8:09pm, dusk. Try snapper: soft-baits or berleyed baits along reef edges and work-ups
+    - Mon 6–9pm looks great (7.7/10): Mon 6–9pm, gentle cross-offshore W 11 kn, 0.4 m sea @ 3 s, rising tide, high 8:09pm, dusk. Try kahawai: lures or soft-baits on surface work-ups
     Tides: low 01:34 0.7 m; high 07:54 2.9 m; low 13:58 0.7 m; high 20:09 3.0 m
   Tue 27 Oct: 3.7/10 poor [medium] wind avg 17.3 kn, gust max 29.9 kn, wave 0.8 m, swell 0.41 m, rain 5.1 mm, SST 16.8 C
     Poor, stay home or stick to sheltered water. Fresh winds all day (~17 kn); 0.8 m sea; 5 mm rain.
     Tides: low 02:25 0.5 m; high 08:42 3.0 m; low 14:45 0.6 m; high 20:58 3.0 m
   Wed 28 Oct: 6.9/10 good [high] wind avg 12.2 kn, gust max 22.0 kn, wave 0.44 m, swell 0.27 m, rain 0.1 mm, SST 16.8 C
     Good. Moderate winds all day (~12 kn); 0.4 m sea. Best: Wed 9am–1pm.
-    - Wed 9am–1pm looks good (7.4/10): Wed 9am–1pm, gentle offshore SW 9 kn, 0.4 m sea @ 5 s, falling tide. Try snapper: soft-baits or berleyed baits along reef edges and work-ups
-    - Wed 3–6pm is fishable (5.7/10): Wed 3–6pm, moderate offshore W 15 kn, 0.5 m sea @ 5 s, falling tide, low 3:33pm. Try snapper: soft-baits or berleyed baits along reef edges and work-ups
+    By species: Gurnard, snapper, kingfish and kahawai: Wed 9am–1pm.
+    - Wed 9am–1pm looks good (7.4/10): Wed 9am–1pm, gentle offshore SW 9 kn, 0.4 m sea @ 5 s, falling tide. Try gurnard: baits on sandy bottom
+    - Wed 3–6pm is fishable (5.7/10): Wed 3–6pm, moderate offshore W 15 kn, 0.5 m sea @ 5 s, falling tide, low 3:33pm. Try gurnard: baits on sandy bottom
     Tides: low 03:14 0.4 m; high 09:29 3.1 m; low 15:33 0.6 m; high 21:47 3.1 m
   Species: Snapper (in season), Kingfish (no seasonal data), Kahawai (no seasonal data), Trevally (no seasonal data), John Dory (no seasonal data)
   LINZ vs Open-Meteo tide check: {'matched': 26, 'mean_offset_min': -37.5, 'max_abs_offset_min': 51.4, 'linz_range_m': 2.9, 'model_range_m': 2.77}
@@ -27,8 +32,12 @@
   tides: LINZ Green Island [datum: chart_datum]
   VERDICT: Go Wednesday early morning (good, 6.9/10) [medium]
     Wed 5–8am, gentle cross-offshore N 9 kn, 1.2 m sea @ 8 s, falling tide, dawn. Try blue cod: baits on the bottom off the rocks or over foul ground
+    By species: Blue cod, kahawai and tarakihi: Wed 5–8am.
+    Water: Water's cooling, 12° now.
+    Current: Steady run and building, normal sinkers should hold. Falling till 11:05am.
   Mon 26 Oct: 4.5/10 marginal [medium] wind avg 13.6 kn, gust max 36.7 kn, wave 1.02 m, swell 0.69 m, rain 11.2 mm, SST 12.6 C
     Marginal, pick your window. Moderate morning (~11 kn), moderate afternoon (~15 kn); 1.0 m sea; 11 mm rain. Best: Mon 9am–12pm.
+    By species: Blue cod and tarakihi: Mon 9am–12pm.
     - Mon 9am–12pm is fishable (5.2/10): Mon 9am–12pm, gentle cross-offshore N 10 kn, 1.0 m sea @ 9 s, rising tide. Try blue cod: baits on the bottom off the rocks or over foul ground
     Tides: high 03:12 2.0 m; low 09:27 0.3 m; high 15:36 2.0 m; low 21:44 0.3 m
   Tue 27 Oct: 2.0/10 poor [medium] wind avg 19.1 kn, gust max 33.4 kn, wave 1.93 m, swell 1.48 m, rain 1.6 mm, SST 12.3 C
@@ -36,6 +45,7 @@
     Tides: high 03:59 2.0 m; low 10:15 0.2 m; high 16:23 2.0 m; low 22:31 0.2 m
   Wed 28 Oct: 6.3/10 good [medium] wind avg 10.5 kn, gust max 17.5 kn, wave 1.19 m, swell 1.04 m, rain 0 mm, SST 12.3 C
     Good. Gentle winds all day (~10 kn); 1.2 m sea. Best: Wed 5–8am.
+    By species: Blue cod, kahawai and tarakihi: Wed 5–8am.
     - Wed 5–8am looks good (6.9/10): Wed 5–8am, gentle cross-offshore N 9 kn, 1.2 m sea @ 8 s, falling tide, dawn. Try blue cod: baits on the bottom off the rocks or over foul ground
     - Wed 10am–1pm is fishable (5.7/10): Wed 10am–1pm, gentle cross-offshore N 7 kn, 1.2 m sea @ 9 s, falling tide, low 11:07am. Try blue cod: baits on the bottom off the rocks or over foul ground
     - Wed 6–9pm is fishable (5.4/10): Wed 6–9pm, moderate offshore NW 12 kn, 1.2 m sea @ 11 s, falling tide, dusk. Try blue cod: baits on the bottom off the rocks or over foul ground

@@ -71,4 +71,4 @@ def test_pyproject_version_matches():
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     txt = open(os.path.join(root, "pyproject.toml")).read()
     assert re.search(r'version\s*=\s*\{\s*attr\s*=\s*"fishon_engine.__version__"', txt)
-    assert fishon_engine.__version__ == "2.4.0"
+    assert fishon_engine.__version__ == "2.6.0"

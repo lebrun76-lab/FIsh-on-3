@@ -13,7 +13,7 @@ Real samples, regenerated offline from recorded responses with `python tools/mak
 
 | # | Item | Engine 2.1 / 2.2 |
 |---|---|---|
-| 1 | packaging | `pyproject.toml`: `pip install -e /path/to/fish-engine`, version from `fishon_engine.__version__` (2.4.0), extras `[sstmap]`, `[test]`, script `fishon-forecast` |
+| 1 | packaging | `pyproject.toml`: `pip install -e /path/to/fish-engine`, version from `fishon_engine.__version__` (2.5.0), extras `[sstmap]`, `[test]`, script `fishon-forecast` |
 | 2 | SST too warm? | Checked against NOAA satellite SST: real and anomalously warm. See SST_CHECK.md; `warnings[]` carries a note |
 | 3 | scores too optimistic | Recalibrated weights. See SCORING.md |
 | 4 | gusts 2–2.6× mean | Sea cells and sea weather points. See WEATHER_POINTS.md; `spot.forecast_point` |
@@ -44,7 +44,7 @@ Real samples, regenerated offline from recorded responses with `python tools/mak
 - `spot`: `facing_deg`, `facing_note`, `tide_port`, `tide_port_id`, `tide_port_km`, `tide_port_linz_name` (2.3), `tide_note`, `forecast_point`, `marine_point` (2.2: `marine_point.note` when the marine cell is far from the spot; docs/MARINE_POINTS.md).
 - `verdict` (2.2): `no_window_reason`, `least_bad`, `best_later`, `horizon_days`, `horizon_end`.
 - `hourly[]`: `wave_m`, `wind_rel`, `light`, `tide_phase`, `rating`.
-- `windows[]`: `id` and `target_species` (2.4.0, see Window ids), `confidence`, `confidence_detail` (2.2), `date`, `wind_kn`, `gust_max_kn`, `wind_from`, `wind_rel`, `wave_m`, `swell_m`, `swell_period_s`, `rain_mm`.
+- `windows[]`: `id` and `target_species` (2.4.0, see Window ids), `confidence`, `confidence_detail` (2.2), `date`, `wind_kn`, `gust_max_kn`, `wind_from`, `wind_rel`, `wave_m`, `swell_m`, `swell_period_s`, `rain_mm`. `species` (2.5.0, see Species scoring).
 - `days[]`: `label`, `confidence`, `verdict_text`, `best_window` (window object), `best_window_text`, `windows` (count), `moon`, `wave_m_avg`, `wind_kn_max`, `blocks_3h[]`; 2.2: `gust_kn_max_daylight`, `wind_kn_max_daylight`, `no_window_reason`, `least_bad_window`, `lead_confidence` (kept for the Streamlit app).
 - `tides[]`: `datum`, `source`.
 
@@ -154,3 +154,87 @@ Every window object carries a fixed `id`, so a catch report ("How'd it go?") can
 **What to store per catch report.** Window `id`, `spot.id`, window `start` and `end`, window `score`, window `target_species`, and top-level `engine_version`. Storing the score and engine version next to the id lets later scoring checks tell a bad forecast from a quiet day, even after the engine is recalibrated.
 
 **Version.** `engine_version` is `"2.4.0"` (minor bump: two new window fields and a stricter validator, no changed values). It is top level in every output and pyproject reads it from `fishon_engine.__version__`. The samples are regenerated and all report 2.4.0.
+
+## Species scoring (2.5.0)
+
+Says which species is worth a go and when. One line per day first, the detail under it. All fields are additive; a 2.4.0 reader ignores them. How the scores are worked out, and the sources, are in `docs/SCORING.md` (Species scoring).
+
+**`days[].species_verdict`** (string or null). The glance line, for example from `docs/samples/v1_bay_of_islands_2026-10-26_0848.json`:
+
+```
+Tue 27 Oct: "Kahawai and snapper: Tue 6–9pm. Kingfish: Tue 5–8am."
+Wed 28 Oct: "Snapper, kingfish and kahawai: Wed 5–8am."
+```
+
+Species that share a best window are grouped, best species first, at most three windows per line. Null when the day has no fishable window. When a day has fishable windows but no species scores 4.5 or more, it reads "No species scores 4.5 or more."
+
+**`verdict.species_text`** (string or null) and **`verdict.best_by_species`** (object): the same over the verdict horizon, for the headline card.
+
+**`days[].best_by_species`** (object): `{species name: window id}`, the window in `windows[]` where that species scores best that day. Only species scoring 4.5 or more are listed. Near ties (within the engine's confidence margin) go to the earlier window. Ordered best score first. `{}` when none.
+
+**`windows[].species`** (array): `[{name, score, why}]`, best first. Example (Hauraki Gulf, Mon 5–8am, window score 8.2):
+
+```json
+"species": [
+ {"name": "Kingfish", "score": 8.2, "why": "sea 16.9 C, dawn"},
+ {"name": "Kahawai", "score": 8.2, "why": "dawn"},
+ {"name": "Snapper", "score": 7.9, "why": "sea 16.9 C, slack for 1 of 3 h, dawn"},
+ {"name": "Gurnard", "score": 7.9, "why": "low sea 0.1 m, no dusk"}
+]
+```
+
+- Only species open on that date (`peak`, `in season`, or `no seasonal data` in `species_seasons.json`) that also have sourced conditions. Off-peak and closed species never appear. **2.6.0:** off-peak species now appear too (see below); closed species still never do.
+- `score` is 0–10 and never above the window's own (safety-gated) `score`.
+- `[]` on poor windows and where no species has sourced conditions (for example the freshwater spots: trout and salmon are not scored yet).
+
+**`target_species`** is now the top entry of `windows[].species` (it was the first open main species). The advice "Try …" line follows it. Null as before when there are no species or the window is poor.
+
+**Validation.** `validate_v1` checks these fields when present: each species entry has name, score and why; scores are 0–10, not above the window score, and sorted best first; `target_species` is the top species; every `best_by_species` id is in `windows[]`; verdict lines have no em dash or spaced dash. Older outputs without the fields still pass.
+
+**Version.** `engine_version` is `"2.5.0"` (minor bump: new fields, and `target_species` can now name a different species). The samples are regenerated and all report 2.5.0.
+
+## Species fairness, off-peak and water lines (2.6.0)
+
+All additive; a 2.5.0 reader ignores the new fields. `engine_version` is `"2.6.0"` (minor bump: new fields, and species scores and order change). Samples regenerated.
+
+**Species changes.** `windows[].species[]` entries gain `season`: `peak`, `in season`, `no seasonal data` or `off-peak`. Off-peak species (open, but outside the sourced good months) are now scored, a little lower, with "slower this time of year" first in `why`. The verdict lines say it too: `"Kingfish: Wed 5–8am (slower this time of year)."`, or in a group `"Snapper and kingfish: Wed 5–8am (kingfish slower this time of year)."`. Scores are now normalised so a species with fewer factors no longer tops by default (`docs/SCORING.md`). Example, Hauraki Gulf Mon 5–8am, window 8.2:
+
+```json
+"species": [
+ {"name": "Snapper", "score": 8.0, "why": "sea 16.9 C, slack for 1 of 3 h, dawn", "season": "in season"},
+ {"name": "Kingfish", "score": 7.9, "why": "no season on record here, sea 16.9 C, dawn", "season": "no seasonal data"},
+ {"name": "Kahawai", "score": 7.9, "why": "no season on record here, dawn", "season": "no seasonal data"},
+ {"name": "Gurnard", "score": 7.6, "why": "no season on record here, low sea 0.1 m, no dusk", "season": "no seasonal data"}
+]
+```
+
+The day's best time is still shared: species only get separate times when their best windows really differ.
+
+**Water lines, on every window and on the verdict** (strings or null, plain English, meaning first, number second, no dashes, no knots):
+
+- `water_temp_note`: sea temperature against the species' sourced thresholds, plus the trend over the last 3 days. "Warm enough for snapper and kingfish, water's 16.9° and steady." / "A bit cold for kingfish, water's 15.4° and cooling. Fine for snapper." / "Water's cooling, 12° now." (no sourced threshold for the Dunedin species). Null with no SST (freshwater spots).
+- `current_note`: an estimate of how hard the tide is running, from LINZ tide times and heights. "High tide at 7:55am. Easy fishing round the turn, but expect it to go quiet at slack water." / "Strong run on a big tide and building, so you'll want a heavier sinker. Rising till 10:35am." / "Steady run, normal sinkers should hold. Falling till 11:05am." Null where tides are not from LINZ, at Wellington and Marlborough Sounds, and at freshwater spots.
+- `water_note`: the two joined with a space, or null. The verdict's three notes are the headline window's.
+
+**`windows[].water`** (object, null at freshwater spots): the raw numbers for charts.
+
+```json
+"water": {
+ "sst_c": 16.9, "sst_change_3d_c": 0.1, "sst_trend": "steady",
+ "current": {
+  "flow_index_avg": 0.57, "flow_index_max": 0.9, "flow_index_start": 0.9, "flow_index_end": 0.19,
+  "tide_size_ratio": 0.97, "tide_range_m": 2.2, "phase": "rising",
+  "turn": {"time": "2026-10-26T07:54:00+13:00", "type": "high"},
+  "next_turn": {"time": "2026-10-26T07:54:00+13:00", "type": "high"}
+ }
+}
+```
+
+- `sst_c`: mean Open-Meteo marine SST over the window's hours. `sst_change_3d_c`: that day's mean SST minus the mean 3 days earlier (past days from a separate 1-variable call for the 3 days before the forecast; later days from the forecast). `sst_trend`: `warming`, `cooling` or `steady`, null when there is no earlier day.
+- `current`: null when the current is not estimated. `flow_index_*` is an **estimate** of flow strength (1.0 = a typical mid-tide run over the fetched LINZ tides; big tides go over 1; 0 at the turn), at the start, end, average and peak of the window. `tide_size_ratio`: this tide's rate against the median. `tide_range_m`: height change of the tide at the window's end. `phase`: rising or falling at the start. `turn`: the first high or low inside the window, or null. `next_turn`: the next high or low after the window's last hour.
+
+**Sources.** When a current is estimated, `sources[]` gains "Current: estimated from LINZ tide times and heights, not measured tidal streams". The SST history call can fail on its own; then `warnings[]` says so and there is no trend word.
+
+**Why Open-Meteo ocean currents are not used.** They would fit the call budget (marine call 7 + 2 = 9 variables), but they are MeteoFrance SMOC at 0.08° (about 8 km), and Open-Meteo's own docs say "Accuracy at coastal areas is limited... not suitable for coastal navigation". Our marine cells sit up to 16 km (Bay of Islands) and 26 km (Marlborough) offshore, so they would describe open-water drift, not the run at a wharf or a reef. The tide-based estimate tracks the turn times exactly and the size of the tide, which is what the line is for.
+
+**Validation.** `validate_v1` checks, when present: the three notes are strings or null with no em dash, en dash, spaced dash or knots; `water_note` equals the other two joined; `water` numbers are numbers; `sst_trend` is one of the three words; `current` has its numbers, phase and `next_turn`; a `current_note` needs a `current`; `species[].season` is one of the four statuses.

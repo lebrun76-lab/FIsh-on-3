@@ -49,6 +49,7 @@ def patched(monkeypatch):
     monkeypatch.setattr(openmeteo, "fetch_forecast", fake_forecast)
     monkeypatch.setattr(openmeteo, "fetch_marine", fake_marine)
     monkeypatch.setattr(tides, "fetch_linz", fake_linz)
+    monkeypatch.setattr(openmeteo, "fetch_sst_history", lambda *a, **k: {"hourly": {}})
 
 
 def test_forecast_structure(patched):
