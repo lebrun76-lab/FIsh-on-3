@@ -75,13 +75,21 @@ def recorded(fix=None, spots=None, now=None):
         k = by_point[("m", round(lat, 3), round(lon, 3))].replace("_marine", "_wave_models")
         return dict(ld(k), _cache={"cache": "fixture"})
 
+    def fh(lat, lon, s, cache=None):
+        # 2.6.0 SST history; fixtures recorded before 2.6.0 have none (no trend)
+        k = by_point[("m", round(lat, 3), round(lon, 3))].replace("_marine", "_sst_history")
+        if not os.path.exists(os.path.join(fix, k)):
+            return {"hourly": {}}
+        return dict(ld(k), _cache={"cache": "fixture"})
+
     def fl(port, s, e, cache=None):
         with open(os.path.join(fix, LINZ[port]), encoding="utf-8") as f:
             return tides.parse_linz_csv(f.read())
 
     saved = (openmeteo.fetch_forecast, openmeteo.fetch_marine, tides.fetch_linz,
              engine.now_nz, engine.today_nz, openmeteo.fetch_model_runs,
-             openmeteo.fetch_wind_models, openmeteo.fetch_wave_models)
+             openmeteo.fetch_wind_models, openmeteo.fetch_wave_models, openmeteo.fetch_sst_history)
+    openmeteo.fetch_sst_history = fh
     openmeteo.fetch_forecast, openmeteo.fetch_marine, tides.fetch_linz = ff, fm, fl
     openmeteo.fetch_wind_models, openmeteo.fetch_wave_models = fw, fv
     openmeteo.fetch_model_runs = lambda cache=None: ld("model_runs.json")
@@ -91,7 +99,7 @@ def recorded(fix=None, spots=None, now=None):
     finally:
         (openmeteo.fetch_forecast, openmeteo.fetch_marine, tides.fetch_linz,
          engine.now_nz, engine.today_nz, openmeteo.fetch_model_runs,
-         openmeteo.fetch_wind_models, openmeteo.fetch_wave_models) = saved
+         openmeteo.fetch_wind_models, openmeteo.fetch_wave_models, openmeteo.fetch_sst_history) = saved
 
 
 def build(sid):

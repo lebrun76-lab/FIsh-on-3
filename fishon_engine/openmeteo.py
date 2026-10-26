@@ -28,7 +28,11 @@ MARINE_HOURLY = ["wave_height", "swell_wave_height", "swell_wave_period",
                  "swell_wave_direction", "wind_wave_height", "sea_surface_temperature",
                  "sea_level_height_msl"]                     # 7 variables total
 
+SST_HISTORY_HOURLY = ["sea_surface_temperature"]           # 1 variable (2.6.0)
+SST_HISTORY_DAYS = 3
+
 FORECAST_TTL = 3600
+SST_HISTORY_TTL = 12 * 3600
 MARINE_TTL = 3 * 3600
 MAX_DAYS = 14
 
@@ -82,6 +86,18 @@ def fetch_marine(lat: float, lon: float, start: date, end: date,
 
 
 # Model comparison for confidence (docs/CONFIDENCE.md). One extra request per
+def fetch_sst_history(lat: float, lon: float, start: date,
+                      cache: Optional[Cache] = None) -> Dict[str, Any]:
+    """Sea temperature for the SST_HISTORY_DAYS days before ``start`` (2.6.0,
+    for the warming/cooling trend). Same marine endpoint and cell as
+    fetch_marine, one variable over 3 days, so it is one call; past days are
+    Open-Meteo's archived forecasts, which change little, hence the 12 h TTL."""
+    from datetime import timedelta
+    s, e = start - timedelta(days=SST_HISTORY_DAYS), start - timedelta(days=1)
+    return _get(_host("marine"), _params(lat, lon, s, e, hourly=",".join(SST_HISTORY_HOURLY)),
+                SST_HISTORY_TTL, cache)
+
+
 # spot on each host, each <=10 model-variables so it counts as one call:
 # 3 wind models x 3 variables = 9; 3 wave models x 1 variable = 3. Open-Meteo
 # returns one column per model, e.g. ``wind_speed_10m_gfs_seamless``.

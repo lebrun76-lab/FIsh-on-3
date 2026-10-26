@@ -73,7 +73,10 @@
    "confidence": "medium"
   },
   "best_by_species": {},
-  "species_text": null
+  "species_text": null,
+  "water_temp_note": null,
+  "current_note": null,
+  "water_note": null
  },
  "days": [
   {
@@ -124,6 +127,10 @@
     "rain_mm": 2.7,
     "target_species": "Brown Trout",
     "species": [],
+    "water_temp_note": null,
+    "current_note": null,
+    "water_note": null,
+    "water": null,
     "confidence_detail": {
      "level": "high",
      "lead_days": 0,
@@ -342,6 +349,10 @@
     "rain_mm": 0,
     "target_species": "Brown Trout",
     "species": [],
+    "water_temp_note": null,
+    "current_note": null,
+    "water_note": null,
+    "water": null,
     "confidence_detail": {
      "level": "high",
      "lead_days": 1,
@@ -561,6 +572,10 @@
     "rain_mm": 0,
     "target_species": "Brown Trout",
     "species": [],
+    "water_temp_note": null,
+    "current_note": null,
+    "water_note": null,
+    "water": null,
     "confidence_detail": {
      "level": "high",
      "lead_days": 2,
@@ -779,6 +794,10 @@
     "rain_mm": 0.4,
     "target_species": "Brown Trout",
     "species": [],
+    "water_temp_note": null,
+    "current_note": null,
+    "water_note": null,
+    "water": null,
     "confidence_detail": {
      "level": "medium",
      "lead_days": 3,
@@ -997,6 +1016,10 @@
     "rain_mm": 0.3,
     "target_species": "Brown Trout",
     "species": [],
+    "water_temp_note": null,
+    "current_note": null,
+    "water_note": null,
+    "water": null,
     "confidence_detail": {
      "level": "medium",
      "lead_days": 4,
@@ -1215,6 +1238,10 @@
     "rain_mm": 0,
     "target_species": "Brown Trout",
     "species": [],
+    "water_temp_note": null,
+    "current_note": null,
+    "water_note": null,
+    "water": null,
     "confidence_detail": {
      "level": "medium",
      "lead_days": 5,
@@ -1433,6 +1460,10 @@
     "rain_mm": 0,
     "target_species": "Brown Trout",
     "species": [],
+    "water_temp_note": null,
+    "current_note": null,
+    "water_note": null,
+    "water": null,
     "confidence_detail": {
      "level": "medium",
      "lead_days": 6,
@@ -1635,6 +1666,10 @@
    "rain_mm": 2.7,
    "target_species": "Brown Trout",
    "species": [],
+   "water_temp_note": null,
+   "current_note": null,
+   "water_note": null,
+   "water": null,
    "confidence_detail": {
     "level": "high",
     "lead_days": 0,
@@ -1679,6 +1714,10 @@
    "rain_mm": 0,
    "target_species": "Brown Trout",
    "species": [],
+   "water_temp_note": null,
+   "current_note": null,
+   "water_note": null,
+   "water": null,
    "confidence_detail": {
     "level": "high",
     "lead_days": 1,
@@ -1722,6 +1761,10 @@
    "rain_mm": 0,
    "target_species": "Brown Trout",
    "species": [],
+   "water_temp_note": null,
+   "current_note": null,
+   "water_note": null,
+   "water": null,
    "confidence_detail": {
     "level": "medium",
     "lead_days": 1,
@@ -1769,6 +1812,10 @@
    "rain_mm": 0,
    "target_species": "Brown Trout",
    "species": [],
+   "water_temp_note": null,
+   "current_note": null,
+   "water_note": null,
+   "water": null,
    "confidence_detail": {
     "level": "high",
     "lead_days": 1,
@@ -1814,6 +1861,10 @@
    "rain_mm": 0,
    "target_species": "Brown Trout",
    "species": [],
+   "water_temp_note": null,
+   "current_note": null,
+   "water_note": null,
+   "water": null,
    "confidence_detail": {
     "level": "high",
     "lead_days": 2,
@@ -1859,6 +1910,10 @@
    "rain_mm": 0.7,
    "target_species": "Brown Trout",
    "species": [],
+   "water_temp_note": null,
+   "current_note": null,
+   "water_note": null,
+   "water": null,
    "confidence_detail": {
     "level": "high",
     "lead_days": 2,
@@ -1903,6 +1958,10 @@
    "rain_mm": 0.4,
    "target_species": "Brown Trout",
    "species": [],
+   "water_temp_note": null,
+   "current_note": null,
+   "water_note": null,
+   "water": null,
    "confidence_detail": {
     "level": "medium",
     "lead_days": 3,
@@ -1947,6 +2006,10 @@
    "rain_mm": 0.3,
    "target_species": "Brown Trout",
    "species": [],
+   "water_temp_note": null,
+   "current_note": null,
+   "water_note": null,
+   "water": null,
    "confidence_detail": {
     "level": "medium",
     "lead_days": 4,
@@ -1992,6 +2055,10 @@
    "rain_mm": 0,
    "target_species": "Brown Trout",
    "species": [],
+   "water_temp_note": null,
+   "current_note": null,
+   "water_note": null,
+   "water": null,
    "confidence_detail": {
     "level": "low",
     "lead_days": 4,
@@ -2038,6 +2105,10 @@
    "rain_mm": 0,
    "target_species": "Brown Trout",
    "species": [],
+   "water_temp_note": null,
+   "current_note": null,
+   "water_note": null,
+   "water": null,
    "confidence_detail": {
     "level": "medium",
     "lead_days": 5,
@@ -2081,6 +2152,10 @@
    "rain_mm": 0.3,
    "target_species": "Brown Trout",
    "species": [],
+   "water_temp_note": null,
+   "current_note": null,
+   "water_note": null,
+   "water": null,
    "confidence_detail": {
     "level": "medium",
     "lead_days": 5,
@@ -2125,6 +2200,10 @@
    "rain_mm": 0,
    "target_species": "Brown Trout",
    "species": [],
+   "water_temp_note": null,
+   "current_note": null,
+   "water_note": null,
+   "water": null,
    "confidence_detail": {
     "level": "medium",
     "lead_days": 5,
@@ -2169,6 +2248,10 @@
    "rain_mm": 0,
    "target_species": "Brown Trout",
    "species": [],
+   "water_temp_note": null,
+   "current_note": null,
+   "water_note": null,
+   "water": null,
    "confidence_detail": {
     "level": "medium",
     "lead_days": 6,
@@ -2213,6 +2296,10 @@
    "rain_mm": 0,
    "target_species": "Brown Trout",
    "species": [],
+   "water_temp_note": null,
+   "current_note": null,
+   "water_note": null,
+   "water": null,
    "confidence_detail": {
     "level": "medium",
     "lead_days": 6,
@@ -2259,6 +2346,10 @@
    "rain_mm": 0,
    "target_species": "Brown Trout",
    "species": [],
+   "water_temp_note": null,
+   "current_note": null,
+   "water_note": null,
+   "water": null,
    "confidence_detail": {
     "level": "medium",
     "lead_days": 6,
@@ -5138,7 +5229,7 @@
   }
  ],
  "data_status": "engine",
- "engine_version": "2.5.0",
+ "engine_version": "2.6.0",
  "hourly_step_h": 1,
  "timezone": "Pacific/Auckland",
  "model_runs": {

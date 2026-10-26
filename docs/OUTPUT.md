@@ -183,7 +183,7 @@ Species that share a best window are grouped, best species first, at most three 
 ]
 ```
 
-- Only species open on that date (`peak`, `in season`, or `no seasonal data` in `species_seasons.json`) that also have sourced conditions. Off-peak and closed species never appear.
+- Only species open on that date (`peak`, `in season`, or `no seasonal data` in `species_seasons.json`) that also have sourced conditions. Off-peak and closed species never appear. **2.6.0:** off-peak species now appear too (see below); closed species still never do.
 - `score` is 0–10 and never above the window's own (safety-gated) `score`.
 - `[]` on poor windows and where no species has sourced conditions (for example the freshwater spots: trout and salmon are not scored yet).
 
@@ -192,3 +192,49 @@ Species that share a best window are grouped, best species first, at most three 
 **Validation.** `validate_v1` checks these fields when present: each species entry has name, score and why; scores are 0–10, not above the window score, and sorted best first; `target_species` is the top species; every `best_by_species` id is in `windows[]`; verdict lines have no em dash or spaced dash. Older outputs without the fields still pass.
 
 **Version.** `engine_version` is `"2.5.0"` (minor bump: new fields, and `target_species` can now name a different species). The samples are regenerated and all report 2.5.0.
+
+## Species fairness, off-peak and water lines (2.6.0)
+
+All additive; a 2.5.0 reader ignores the new fields. `engine_version` is `"2.6.0"` (minor bump: new fields, and species scores and order change). Samples regenerated.
+
+**Species changes.** `windows[].species[]` entries gain `season`: `peak`, `in season`, `no seasonal data` or `off-peak`. Off-peak species (open, but outside the sourced good months) are now scored, a little lower, with "slower this time of year" first in `why`. The verdict lines say it too: `"Kingfish: Wed 5–8am (slower this time of year)."`, or in a group `"Snapper and kingfish: Wed 5–8am (kingfish slower this time of year)."`. Scores are now normalised so a species with fewer factors no longer tops by default (`docs/SCORING.md`). Example, Hauraki Gulf Mon 5–8am, window 8.2:
+
+```json
+"species": [
+ {"name": "Snapper", "score": 8.0, "why": "sea 16.9 C, slack for 1 of 3 h, dawn", "season": "in season"},
+ {"name": "Kingfish", "score": 7.9, "why": "no season on record here, sea 16.9 C, dawn", "season": "no seasonal data"},
+ {"name": "Kahawai", "score": 7.9, "why": "no season on record here, dawn", "season": "no seasonal data"},
+ {"name": "Gurnard", "score": 7.6, "why": "no season on record here, low sea 0.1 m, no dusk", "season": "no seasonal data"}
+]
+```
+
+The day's best time is still shared: species only get separate times when their best windows really differ.
+
+**Water lines, on every window and on the verdict** (strings or null, plain English, meaning first, number second, no dashes, no knots):
+
+- `water_temp_note`: sea temperature against the species' sourced thresholds, plus the trend over the last 3 days. "Warm enough for snapper and kingfish, water's 16.9° and steady." / "A bit cold for kingfish, water's 15.4° and cooling. Fine for snapper." / "Water's cooling, 12° now." (no sourced threshold for the Dunedin species). Null with no SST (freshwater spots).
+- `current_note`: an estimate of how hard the tide is running, from LINZ tide times and heights. "High tide at 7:55am. Easy fishing round the turn, but expect it to go quiet at slack water." / "Strong run on a big tide and building, so you'll want a heavier sinker. Rising till 10:35am." / "Steady run, normal sinkers should hold. Falling till 11:05am." Null where tides are not from LINZ, at Wellington and Marlborough Sounds, and at freshwater spots.
+- `water_note`: the two joined with a space, or null. The verdict's three notes are the headline window's.
+
+**`windows[].water`** (object, null at freshwater spots): the raw numbers for charts.
+
+```json
+"water": {
+ "sst_c": 16.9, "sst_change_3d_c": 0.1, "sst_trend": "steady",
+ "current": {
+  "flow_index_avg": 0.57, "flow_index_max": 0.9, "flow_index_start": 0.9, "flow_index_end": 0.19,
+  "tide_size_ratio": 0.97, "tide_range_m": 2.2, "phase": "rising",
+  "turn": {"time": "2026-10-26T07:54:00+13:00", "type": "high"},
+  "next_turn": {"time": "2026-10-26T07:54:00+13:00", "type": "high"}
+ }
+}
+```
+
+- `sst_c`: mean Open-Meteo marine SST over the window's hours. `sst_change_3d_c`: that day's mean SST minus the mean 3 days earlier (past days from a separate 1-variable call for the 3 days before the forecast; later days from the forecast). `sst_trend`: `warming`, `cooling` or `steady`, null when there is no earlier day.
+- `current`: null when the current is not estimated. `flow_index_*` is an **estimate** of flow strength (1.0 = a typical mid-tide run over the fetched LINZ tides; big tides go over 1; 0 at the turn), at the start, end, average and peak of the window. `tide_size_ratio`: this tide's rate against the median. `tide_range_m`: height change of the tide at the window's end. `phase`: rising or falling at the start. `turn`: the first high or low inside the window, or null. `next_turn`: the next high or low after the window's last hour.
+
+**Sources.** When a current is estimated, `sources[]` gains "Current: estimated from LINZ tide times and heights, not measured tidal streams". The SST history call can fail on its own; then `warnings[]` says so and there is no trend word.
+
+**Why Open-Meteo ocean currents are not used.** They would fit the call budget (marine call 7 + 2 = 9 variables), but they are MeteoFrance SMOC at 0.08° (about 8 km), and Open-Meteo's own docs say "Accuracy at coastal areas is limited... not suitable for coastal navigation". Our marine cells sit up to 16 km (Bay of Islands) and 26 km (Marlborough) offshore, so they would describe open-water drift, not the run at a wharf or a reef. The tide-based estimate tracks the turn times exactly and the size of the tide, which is what the line is for.
+
+**Validation.** `validate_v1` checks, when present: the three notes are strings or null with no em dash, en dash, spaced dash or knots; `water_note` equals the other two joined; `water` numbers are numbers; `sst_trend` is one of the three words; `current` has its numbers, phase and `next_turn`; a `current_note` needs a `current`; `species[].season` is one of the four statuses.

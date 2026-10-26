@@ -16,4 +16,4 @@ from .engine import forecast_spot, forecast_many  # noqa: F401
 from .spots import SPOTS, get_spot  # noqa: F401
 
 __all__ = ["forecast_spot", "forecast_many", "SPOTS", "get_spot"]
-__version__ = "2.5.0"
+__version__ = "2.6.0"

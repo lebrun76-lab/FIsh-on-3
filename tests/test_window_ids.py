@@ -49,7 +49,7 @@ def test_id_unique_within_output(samples):
 
 def test_engine_version_top_level(samples):
     for fc in samples:
-        assert fc["engine_version"] == fishon_engine.__version__ == "2.5.0"
+        assert fc["engine_version"] == fishon_engine.__version__ == "2.6.0"
 
 
 def test_id_stable_when_score_changes(patched, monkeypatch):  # noqa: F811

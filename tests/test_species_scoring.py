@@ -1,4 +1,4 @@
-"""Species scoring (2.5.0): per-species window scores capped at the window's
+"""Species scoring (2.5.0, 2.6.0 fairness and off-peak): per-species window scores capped at the window's
 safety-gated score, in-season species only, a source for every factor, and
 plain verdict lines. All offline (recorded samples and synthetic hours)."""
 import os
@@ -72,9 +72,10 @@ def test_out_of_season_species_never_appear(samples):
     assert "Blue Cod" not in names
     names = [x["name"] for x in ss.score_window(hrs, 6.0, _open("marlborough_sounds", date(2027, 2, 1)))]
     assert "Blue Cod" in names
-    # Cook Strait kingfish is sourced for Dec to Feb only: off-peak in October
+    # 2.6.0: Cook Strait kingfish is sourced for Dec to Feb only: off-peak in
+    # October, so it is scored, marked slower, never closed-out
     names = [x["name"] for x in ss.score_window(hrs, 6.0, _open("wellington", date(2026, 10, 28)))]
-    assert "Kingfish" not in names
+    assert "Kingfish" in names
     names = [x["name"] for x in ss.score_window(hrs, 6.0, _open("wellington", date(2027, 1, 15)))]
     assert "Kingfish" in names
     # every species in the real samples is open on that window's date
@@ -143,15 +144,15 @@ def test_factor_rules():
     run = ss.score_species("Snapper", _hours(5, 3, light="change of light"), 7.0)
     assert run["score"] == 7.0 and "tide running" in run["why"] and "dawn" in run["why"]
     slack = ss.score_species("Snapper", _hours(11, 3, tide=(0.3, 6.0)), 7.0)
-    assert slack["score"] == 5.8 and "slack tide" in slack["why"] and "no dawn or dusk" in slack["why"]
+    assert slack["score"] == 5.9 and "slack tide" in slack["why"] and "no dawn or dusk" in slack["why"]
     cool = ss.score_species("Snapper", _hours(5, 3, light="change of light", sst=14.0), 7.0)
-    assert cool["score"] == 6.5 and "cool for snapper" in cool["why"]
+    assert cool["score"] == 6.6 and "cool for snapper" in cool["why"]
     # kingfish below 16 C
-    assert ss.score_species("Kingfish", _hours(5, 3, light="change of light", sst=15.0), 7.0)["score"] == 6.2
+    assert ss.score_species("Kingfish", _hours(5, 3, light="change of light", sst=15.0), 7.0)["score"] == 6.1
     # gurnard and white water
-    assert ss.score_species("Gurnard", _hours(17, 3, light="change of light", sea=1.4), 7.0)["score"] == 6.0
+    assert ss.score_species("Gurnard", _hours(17, 3, light="change of light", sea=1.4), 7.0)["score"] == 5.8
     # blue cod don't feed in the dark; tide is not scored for blue cod
-    assert ss.score_species("Blue Cod", _hours(1, 3, light="dark", tide=(0.2, 6.0)), 5.0)["score"] == 4.0
+    assert ss.score_species("Blue Cod", _hours(1, 3, light="dark", tide=(0.2, 6.0)), 5.0)["score"] == 3.5
     assert ss.score_species("Blue Cod", _hours(10, 3, tide=(0.2, 6.0)), 5.0)["score"] == 5.0
     # missing data costs nothing
     r = ss.score_species("Tarakihi", _hours(10, 3, tide=None), 5.0)
@@ -169,3 +170,48 @@ def test_verdict_line_groups_species_sharing_a_window():
     assert best == {"Kingfish": "x:b", "Snapper": "x:a", "Kahawai": "x:a"}
     assert ss.verdict_line(best, [w1, w2]) == "Kingfish: Sun 5\u20138am. Snapper and kahawai: Sat 6\u20139am."
     assert ss.verdict_line({}, []) is None
+
+
+def test_off_peak_is_scored_but_slower():
+    hrs = _hours(5, 3, light="change of light")
+    sp = _open("wellington", date(2026, 10, 28))
+    st = {x["name"]: x["status"] for x in sp}
+    assert st["Kingfish"] == "off-peak"
+    out = {x["name"]: x for x in ss.score_window(hrs, 7.0, sp)}
+    k = out["Kingfish"]
+    assert k["season"] == "off-peak" and k["why"].startswith("slower this time of year")
+    assert k["score"] == round(7.0 - ss.SEASON_PENALTY["off-peak"], 1)
+    # the same window in season (January) carries no season penalty
+    jan = {x["name"]: x for x in ss.score_window(hrs, 7.0, _open("wellington", date(2027, 1, 15)))}
+    assert jan["Kingfish"]["score"] == 7.0 and "slower" not in jan["Kingfish"]["why"]
+    # verdict says so
+    w = {"id": "x:a", "start": "2026-10-28T05:00:00+13:00", "end": "2026-10-28T08:00:00+13:00",
+         "confidence": "high", "species": [k]}
+    assert ss.verdict_line({"Kingfish": "x:a"}, [w]) == "Kingfish: Wed 5\u20138am (slower this time of year)."
+    w["species"] = [dict(k, name="Snapper", season="in season"), k]
+    assert ss.verdict_line({"Snapper": "x:a", "Kingfish": "x:a"}, [w]) == \
+        "Snapper and kingfish: Wed 5\u20138am (kingfish slower this time of year)."
+    # closed stays out
+    names = [x["name"] for x in ss.score_window(hrs, 7.0, _open("marlborough_sounds", date(2026, 10, 28)))]
+    assert "Blue Cod" not in names
+
+
+@pytest.mark.parametrize("spot_id", ["hauraki_gulf", "bay_of_islands"])
+def test_kingfish_no_longer_outranks_snapper_on_equal_conditions(spot_id):
+    sp = _open(spot_id, date(2026, 10, 28))
+    cases = [
+        _hours(5, 3, light="change of light"),            # everything met
+        _hours(10, 3),                                     # both miss the change of light
+        _hours(5, 3, light="change of light", sst=13.0),  # both too cold
+        _hours(10, 3, sst=13.0),                           # both miss light and SST
+    ]
+    for i, hrs in enumerate(cases):
+        out = ss.score_window(hrs, 7.0, sp)
+        sc = {x["name"]: x["score"] for x in out}
+        assert sc["Snapper"] > sc["Kingfish"], (spot_id, sc)
+        if i < 2:   # cold water is not equal for kahawai (no sourced SST need)
+            assert out[0]["name"] == "Snapper", (spot_id, out)
+    # fairness: every species can lose the same most for missed conditions
+    worst = _hours(1, 3, light="dark", sst=10.0, sea=3.0, tide=(0.2, 6.0))
+    for name in ss.conditions():
+        assert ss.score_species(name, worst, 9.0)["score"] == round(9.0 - ss.PENALTY_BUDGET, 1), name

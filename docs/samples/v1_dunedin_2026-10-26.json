@@ -56,7 +56,8 @@
  "sources": [
   "Open-Meteo (CC BY 4.0)",
   "Tide predictions: Land Information New Zealand (LINZ), CC BY 4.0. Not for navigation.",
-  "Tides: LINZ Green Island"
+  "Tides: LINZ Green Island",
+  "Current: estimated from LINZ tide times and heights, not measured tidal streams"
  ],
  "verdict": {
   "rating": "good",
@@ -89,7 +90,10 @@
    "Kahawai": "dunedin:2026-10-28T05:00:00+13:00/2026-10-28T08:00:00+13:00",
    "Tarakihi": "dunedin:2026-10-28T05:00:00+13:00/2026-10-28T08:00:00+13:00"
   },
-  "species_text": "Blue cod, kahawai and tarakihi: Wed 5–8am."
+  "species_text": "Blue cod, kahawai and tarakihi: Wed 5–8am.",
+  "water_temp_note": "Water's cooling, 12° now.",
+  "current_note": "Steady run and building, normal sinkers should hold. Falling till 11:05am.",
+  "water_note": "Water's cooling, 12° now. Steady run and building, normal sinkers should hold. Falling till 11:05am."
  },
  "days": [
   {
@@ -142,20 +146,48 @@
     "species": [
      {
       "name": "Blue Cod",
-      "score": 5.2,
-      "why": "daylight"
+      "score": 5.0,
+      "why": "no season on record here, daylight",
+      "season": "no seasonal data"
      },
      {
       "name": "Tarakihi",
-      "score": 5.0,
-      "why": "slack for 1 of 3 h"
+      "score": 4.5,
+      "why": "no season on record here, slack for 1 of 3 h",
+      "season": "no seasonal data"
      },
      {
       "name": "Kahawai",
-      "score": 4.7,
-      "why": "no dawn or dusk"
+      "score": 3.5,
+      "why": "no season on record here, no dawn or dusk",
+      "season": "no seasonal data"
      }
     ],
+    "water_temp_note": "Water's steady at 12°.",
+    "current_note": "Low tide at 9:25am. Easy fishing round the turn, but expect it to go quiet at slack water.",
+    "water_note": "Water's steady at 12°. Low tide at 9:25am. Easy fishing round the turn, but expect it to go quiet at slack water.",
+    "water": {
+     "sst_c": 12.5,
+     "sst_change_3d_c": 0.3,
+     "sst_trend": "steady",
+     "current": {
+      "flow_index_avg": 0.53,
+      "flow_index_max": 0.98,
+      "flow_index_start": 0.03,
+      "flow_index_end": 0.98,
+      "tide_size_ratio": 1.13,
+      "tide_range_m": 1.7,
+      "phase": "rising",
+      "turn": {
+       "time": "2026-10-26T09:27:00+13:00",
+       "type": "low"
+      },
+      "next_turn": {
+       "time": "2026-10-26T15:36:00+13:00",
+       "type": "high"
+      }
+     }
+    },
     "confidence_detail": {
      "level": "medium",
      "lead_days": 0,
@@ -332,10 +364,9 @@
    "score_full_day": 4.5,
    "best_by_species": {
     "Blue Cod": "dunedin:2026-10-26T09:00:00+13:00/2026-10-26T12:00:00+13:00",
-    "Tarakihi": "dunedin:2026-10-26T09:00:00+13:00/2026-10-26T12:00:00+13:00",
-    "Kahawai": "dunedin:2026-10-26T09:00:00+13:00/2026-10-26T12:00:00+13:00"
+    "Tarakihi": "dunedin:2026-10-26T09:00:00+13:00/2026-10-26T12:00:00+13:00"
    },
-   "species_verdict": "Blue cod, tarakihi and kahawai: Mon 9am–12pm."
+   "species_verdict": "Blue cod and tarakihi: Mon 9am–12pm."
   },
   {
    "date": "2026-10-27",
@@ -391,6 +422,28 @@
     "rain_mm": 0.2,
     "target_species": null,
     "species": [],
+    "water_temp_note": "Water's steady at 12°.",
+    "current_note": "Strong run on a big tide, so you'll want a heavier sinker. Falling till 10:30pm.",
+    "water_note": "Water's steady at 12°. Strong run on a big tide, so you'll want a heavier sinker. Falling till 10:30pm.",
+    "water": {
+     "sst_c": 12.2,
+     "sst_change_3d_c": -0.3,
+     "sst_trend": "steady",
+     "current": {
+      "flow_index_avg": 1.1,
+      "flow_index_max": 1.2,
+      "flow_index_start": 1.06,
+      "flow_index_end": 1.03,
+      "tide_size_ratio": 1.2,
+      "tide_range_m": 1.8,
+      "phase": "falling",
+      "turn": null,
+      "next_turn": {
+       "time": "2026-10-27T22:31:00+13:00",
+       "type": "low"
+      }
+     }
+    },
     "confidence_detail": {
      "level": "medium",
      "lead_days": 1,
@@ -616,20 +669,45 @@
     "species": [
      {
       "name": "Blue Cod",
-      "score": 6.9,
-      "why": "daylight"
+      "score": 6.7,
+      "why": "no season on record here, daylight",
+      "season": "no seasonal data"
      },
      {
       "name": "Kahawai",
-      "score": 6.9,
-      "why": "dawn"
+      "score": 6.7,
+      "why": "no season on record here, dawn",
+      "season": "no seasonal data"
      },
      {
       "name": "Tarakihi",
-      "score": 6.7,
-      "why": "slack for 1 of 3 h"
+      "score": 6.2,
+      "why": "no season on record here, slack for 1 of 3 h",
+      "season": "no seasonal data"
      }
     ],
+    "water_temp_note": "Water's cooling, 12° now.",
+    "current_note": "Steady run and building, normal sinkers should hold. Falling till 11:05am.",
+    "water_note": "Water's cooling, 12° now. Steady run and building, normal sinkers should hold. Falling till 11:05am.",
+    "water": {
+     "sst_c": 12.2,
+     "sst_change_3d_c": -0.4,
+     "sst_trend": "cooling",
+     "current": {
+      "flow_index_avg": 0.84,
+      "flow_index_max": 1.2,
+      "flow_index_start": 0.4,
+      "flow_index_end": 1.2,
+      "tide_size_ratio": 1.24,
+      "tide_range_m": 1.9,
+      "phase": "falling",
+      "turn": null,
+      "next_turn": {
+       "time": "2026-10-28T11:07:00+13:00",
+       "type": "low"
+      }
+     }
+    },
     "confidence_detail": {
      "level": "medium",
      "lead_days": 2,
@@ -864,6 +942,31 @@
     "rain_mm": 0,
     "target_species": null,
     "species": [],
+    "water_temp_note": "Water's steady at 12°.",
+    "current_note": "High tide at 5:45am. Easy fishing round the turn, but expect it to go quiet at slack water.",
+    "water_note": "Water's steady at 12°. High tide at 5:45am. Easy fishing round the turn, but expect it to go quiet at slack water.",
+    "water": {
+     "sst_c": 12.2,
+     "sst_change_3d_c": -0.3,
+     "sst_trend": "steady",
+     "current": {
+      "flow_index_avg": 0.49,
+      "flow_index_max": 0.9,
+      "flow_index_start": 0.15,
+      "flow_index_end": 0.9,
+      "tide_size_ratio": 1.17,
+      "tide_range_m": 1.8,
+      "phase": "rising",
+      "turn": {
+       "time": "2026-10-29T05:45:00+13:00",
+       "type": "high"
+      },
+      "next_turn": {
+       "time": "2026-10-29T12:02:00+13:00",
+       "type": "low"
+      }
+     }
+    },
     "confidence_detail": {
      "level": "low",
      "lead_days": 3,
@@ -1092,6 +1195,31 @@
     "rain_mm": 1.5,
     "target_species": null,
     "species": [],
+    "water_temp_note": "Water's steady at 12°.",
+    "current_note": "High tide at 6:45am. Easy fishing round the turn, but expect it to go quiet at slack water.",
+    "water_note": "Water's steady at 12°. High tide at 6:45am. Easy fishing round the turn, but expect it to go quiet at slack water.",
+    "water": {
+     "sst_c": 12.2,
+     "sst_change_3d_c": -0.1,
+     "sst_trend": "steady",
+     "current": {
+      "flow_index_avg": 0.41,
+      "flow_index_max": 0.66,
+      "flow_index_start": 0.66,
+      "flow_index_end": 0.44,
+      "tide_size_ratio": 1.17,
+      "tide_range_m": 1.8,
+      "phase": "rising",
+      "turn": {
+       "time": "2026-10-30T06:44:00+13:00",
+       "type": "high"
+      },
+      "next_turn": {
+       "time": "2026-10-30T13:01:00+13:00",
+       "type": "low"
+      }
+     }
+    },
     "confidence_detail": {
      "level": "medium",
      "lead_days": 4,
@@ -1315,6 +1443,31 @@
     "rain_mm": 0.5,
     "target_species": null,
     "species": [],
+    "water_temp_note": "Water's steady at 12°.",
+    "current_note": "Low tide at 2:05pm. Easy fishing round the turn, but expect it to go quiet at slack water.",
+    "water_note": "Water's steady at 12°. Low tide at 2:05pm. Easy fishing round the turn, but expect it to go quiet at slack water.",
+    "water": {
+     "sst_c": 12.4,
+     "sst_change_3d_c": -0.0,
+     "sst_trend": "steady",
+     "current": {
+      "flow_index_avg": 0.67,
+      "flow_index_max": 0.91,
+      "flow_index_start": 0.2,
+      "flow_index_end": 0.72,
+      "tide_size_ratio": 0.93,
+      "tide_range_m": 1.4,
+      "phase": "rising",
+      "turn": {
+       "time": "2026-10-31T14:04:00+13:00",
+       "type": "low"
+      },
+      "next_turn": {
+       "time": "2026-10-31T20:14:00+13:00",
+       "type": "high"
+      }
+     }
+    },
     "confidence_detail": {
      "level": "medium",
      "lead_days": 5,
@@ -1539,20 +1692,45 @@
     "species": [
      {
       "name": "Blue Cod",
-      "score": 6.5,
-      "why": "daylight"
+      "score": 6.2,
+      "why": "no season on record here, daylight",
+      "season": "no seasonal data"
      },
      {
       "name": "Tarakihi",
-      "score": 6.5,
-      "why": "tide running"
+      "score": 6.2,
+      "why": "no season on record here, tide running",
+      "season": "no seasonal data"
      },
      {
       "name": "Kahawai",
-      "score": 6.5,
-      "why": "dusk"
+      "score": 6.2,
+      "why": "no season on record here, dusk",
+      "season": "no seasonal data"
      }
     ],
+    "water_temp_note": "Water's steady at 13°.",
+    "current_note": "Steady run but easing, normal sinkers should hold. Rising till 9:20pm.",
+    "water_note": "Water's steady at 13°. Steady run but easing, normal sinkers should hold. Rising till 9:20pm.",
+    "water": {
+     "sst_c": 12.7,
+     "sst_change_3d_c": 0.2,
+     "sst_trend": "steady",
+     "current": {
+      "flow_index_avg": 0.68,
+      "flow_index_max": 0.92,
+      "flow_index_start": 0.92,
+      "flow_index_end": 0.38,
+      "tide_size_ratio": 0.93,
+      "tide_range_m": 1.4,
+      "phase": "rising",
+      "turn": null,
+      "next_turn": {
+       "time": "2026-11-01T21:20:00+13:00",
+       "type": "high"
+      }
+     }
+    },
     "confidence_detail": {
      "level": "low",
      "lead_days": 6,
@@ -1766,20 +1944,48 @@
    "species": [
     {
      "name": "Blue Cod",
-     "score": 5.2,
-     "why": "daylight"
+     "score": 5.0,
+     "why": "no season on record here, daylight",
+     "season": "no seasonal data"
     },
     {
      "name": "Tarakihi",
-     "score": 5.0,
-     "why": "slack for 1 of 3 h"
+     "score": 4.5,
+     "why": "no season on record here, slack for 1 of 3 h",
+     "season": "no seasonal data"
     },
     {
      "name": "Kahawai",
-     "score": 4.7,
-     "why": "no dawn or dusk"
+     "score": 3.5,
+     "why": "no season on record here, no dawn or dusk",
+     "season": "no seasonal data"
     }
    ],
+   "water_temp_note": "Water's steady at 12°.",
+   "current_note": "Low tide at 9:25am. Easy fishing round the turn, but expect it to go quiet at slack water.",
+   "water_note": "Water's steady at 12°. Low tide at 9:25am. Easy fishing round the turn, but expect it to go quiet at slack water.",
+   "water": {
+    "sst_c": 12.5,
+    "sst_change_3d_c": 0.3,
+    "sst_trend": "steady",
+    "current": {
+     "flow_index_avg": 0.53,
+     "flow_index_max": 0.98,
+     "flow_index_start": 0.03,
+     "flow_index_end": 0.98,
+     "tide_size_ratio": 1.13,
+     "tide_range_m": 1.7,
+     "phase": "rising",
+     "turn": {
+      "time": "2026-10-26T09:27:00+13:00",
+      "type": "low"
+     },
+     "next_turn": {
+      "time": "2026-10-26T15:36:00+13:00",
+      "type": "high"
+     }
+    }
+   },
    "confidence_detail": {
     "level": "medium",
     "lead_days": 0,
@@ -1834,20 +2040,45 @@
    "species": [
     {
      "name": "Blue Cod",
-     "score": 6.9,
-     "why": "daylight"
+     "score": 6.7,
+     "why": "no season on record here, daylight",
+     "season": "no seasonal data"
     },
     {
      "name": "Kahawai",
-     "score": 6.9,
-     "why": "dawn"
+     "score": 6.7,
+     "why": "no season on record here, dawn",
+     "season": "no seasonal data"
     },
     {
      "name": "Tarakihi",
-     "score": 6.7,
-     "why": "slack for 1 of 3 h"
+     "score": 6.2,
+     "why": "no season on record here, slack for 1 of 3 h",
+     "season": "no seasonal data"
     }
    ],
+   "water_temp_note": "Water's cooling, 12° now.",
+   "current_note": "Steady run and building, normal sinkers should hold. Falling till 11:05am.",
+   "water_note": "Water's cooling, 12° now. Steady run and building, normal sinkers should hold. Falling till 11:05am.",
+   "water": {
+    "sst_c": 12.2,
+    "sst_change_3d_c": -0.4,
+    "sst_trend": "cooling",
+    "current": {
+     "flow_index_avg": 0.84,
+     "flow_index_max": 1.2,
+     "flow_index_start": 0.4,
+     "flow_index_end": 1.2,
+     "tide_size_ratio": 1.24,
+     "tide_range_m": 1.9,
+     "phase": "falling",
+     "turn": null,
+     "next_turn": {
+      "time": "2026-10-28T11:07:00+13:00",
+      "type": "low"
+     }
+    }
+   },
    "confidence_detail": {
     "level": "medium",
     "lead_days": 2,
@@ -1901,20 +2132,48 @@
    "species": [
     {
      "name": "Blue Cod",
-     "score": 5.7,
-     "why": "daylight"
+     "score": 5.5,
+     "why": "no season on record here, daylight",
+     "season": "no seasonal data"
     },
     {
      "name": "Tarakihi",
-     "score": 5.2,
-     "why": "slack for 2 of 3 h"
+     "score": 4.5,
+     "why": "no season on record here, slack for 2 of 3 h",
+     "season": "no seasonal data"
     },
     {
      "name": "Kahawai",
-     "score": 5.2,
-     "why": "no dawn or dusk"
+     "score": 4.0,
+     "why": "no season on record here, no dawn or dusk",
+     "season": "no seasonal data"
     }
    ],
+   "water_temp_note": "Water's cooling, 12° now.",
+   "current_note": "Low tide at 11:05am. Easy fishing round the turn, but expect it to go quiet at slack water.",
+   "water_note": "Water's cooling, 12° now. Low tide at 11:05am. Easy fishing round the turn, but expect it to go quiet at slack water.",
+   "water": {
+    "sst_c": 12.3,
+    "sst_change_3d_c": -0.4,
+    "sst_trend": "cooling",
+    "current": {
+     "flow_index_avg": 0.47,
+     "flow_index_max": 0.79,
+     "flow_index_start": 0.38,
+     "flow_index_end": 0.79,
+     "tide_size_ratio": 1.21,
+     "tide_range_m": 1.8,
+     "phase": "falling",
+     "turn": {
+      "time": "2026-10-28T11:07:00+13:00",
+      "type": "low"
+     },
+     "next_turn": {
+      "time": "2026-10-28T17:13:00+13:00",
+      "type": "high"
+     }
+    }
+   },
    "confidence_detail": {
     "level": "medium",
     "lead_days": 2,
@@ -1969,20 +2228,45 @@
    "species": [
     {
      "name": "Blue Cod",
-     "score": 5.4,
-     "why": "daylight"
+     "score": 5.2,
+     "why": "no season on record here, daylight",
+     "season": "no seasonal data"
     },
     {
      "name": "Tarakihi",
-     "score": 5.4,
-     "why": "tide running"
+     "score": 5.2,
+     "why": "no season on record here, tide running",
+     "season": "no seasonal data"
     },
     {
      "name": "Kahawai",
-     "score": 5.4,
-     "why": "dusk"
+     "score": 5.2,
+     "why": "no season on record here, dusk",
+     "season": "no seasonal data"
     }
    ],
+   "water_temp_note": "Water's cooling, 12° now.",
+   "current_note": "Steady run and building, normal sinkers should hold. Falling till 11:25pm.",
+   "water_note": "Water's cooling, 12° now. Steady run and building, normal sinkers should hold. Falling till 11:25pm.",
+   "water": {
+    "sst_c": 12.5,
+    "sst_change_3d_c": -0.4,
+    "sst_trend": "cooling",
+    "current": {
+     "flow_index_avg": 1.0,
+     "flow_index_max": 1.18,
+     "flow_index_start": 0.72,
+     "flow_index_end": 1.18,
+     "tide_size_ratio": 1.19,
+     "tide_range_m": 1.8,
+     "phase": "falling",
+     "turn": null,
+     "next_turn": {
+      "time": "2026-10-28T23:24:00+13:00",
+      "type": "low"
+     }
+    }
+   },
    "confidence_detail": {
     "level": "medium",
     "lead_days": 2,
@@ -2038,20 +2322,48 @@
    "species": [
     {
      "name": "Blue Cod",
-     "score": 6.3,
-     "why": "daylight"
+     "score": 6.0,
+     "why": "no season on record here, daylight",
+     "season": "no seasonal data"
     },
     {
      "name": "Kahawai",
-     "score": 6.3,
-     "why": "dawn"
+     "score": 6.0,
+     "why": "no season on record here, dawn",
+     "season": "no seasonal data"
     },
     {
      "name": "Tarakihi",
-     "score": 6.0,
-     "why": "slack for 1 of 3 h"
+     "score": 5.5,
+     "why": "no season on record here, slack for 1 of 3 h",
+     "season": "no seasonal data"
     }
    ],
+   "water_temp_note": "Water's steady at 12°.",
+   "current_note": "High tide at 8:50am. Easy fishing round the turn, but expect it to go quiet at slack water.",
+   "water_note": "Water's steady at 12°. High tide at 8:50am. Easy fishing round the turn, but expect it to go quiet at slack water.",
+   "water": {
+    "sst_c": 12.3,
+    "sst_change_3d_c": 0.2,
+    "sst_trend": "steady",
+    "current": {
+     "flow_index_avg": 0.62,
+     "flow_index_max": 1.0,
+     "flow_index_start": 1.0,
+     "flow_index_end": 0.18,
+     "tide_size_ratio": 1.09,
+     "tide_range_m": 1.7,
+     "phase": "rising",
+     "turn": {
+      "time": "2026-11-01T08:50:00+13:00",
+      "type": "high"
+     },
+     "next_turn": {
+      "time": "2026-11-01T08:50:00+13:00",
+      "type": "high"
+     }
+    }
+   },
    "confidence_detail": {
     "level": "low",
     "lead_days": 6,
@@ -2104,20 +2416,45 @@
    "species": [
     {
      "name": "Blue Cod",
-     "score": 5.1,
-     "why": "daylight"
+     "score": 4.8,
+     "why": "no season on record here, daylight",
+     "season": "no seasonal data"
     },
     {
      "name": "Tarakihi",
-     "score": 5.1,
-     "why": "tide running"
+     "score": 4.8,
+     "why": "no season on record here, tide running",
+     "season": "no seasonal data"
     },
     {
      "name": "Kahawai",
-     "score": 4.6,
-     "why": "no dawn or dusk"
+     "score": 3.3,
+     "why": "no season on record here, no dawn or dusk",
+     "season": "no seasonal data"
     }
    ],
+   "water_temp_note": "Water's steady at 12°.",
+   "current_note": "Steady run but easing, normal sinkers should hold. Falling till 3:10pm.",
+   "water_note": "Water's steady at 12°. Steady run but easing, normal sinkers should hold. Falling till 3:10pm.",
+   "water": {
+    "sst_c": 12.5,
+    "sst_change_3d_c": 0.2,
+    "sst_trend": "steady",
+    "current": {
+     "flow_index_avg": 0.92,
+     "flow_index_max": 1.0,
+     "flow_index_start": 1.0,
+     "flow_index_end": 0.76,
+     "tide_size_ratio": 1.03,
+     "tide_range_m": 1.6,
+     "phase": "falling",
+     "turn": null,
+     "next_turn": {
+      "time": "2026-11-01T15:10:00+13:00",
+      "type": "low"
+     }
+    }
+   },
    "confidence_detail": {
     "level": "medium",
     "lead_days": 6,
@@ -2171,20 +2508,45 @@
    "species": [
     {
      "name": "Blue Cod",
-     "score": 6.5,
-     "why": "daylight"
+     "score": 6.2,
+     "why": "no season on record here, daylight",
+     "season": "no seasonal data"
     },
     {
      "name": "Tarakihi",
-     "score": 6.5,
-     "why": "tide running"
+     "score": 6.2,
+     "why": "no season on record here, tide running",
+     "season": "no seasonal data"
     },
     {
      "name": "Kahawai",
-     "score": 6.5,
-     "why": "dusk"
+     "score": 6.2,
+     "why": "no season on record here, dusk",
+     "season": "no seasonal data"
     }
    ],
+   "water_temp_note": "Water's steady at 13°.",
+   "current_note": "Steady run but easing, normal sinkers should hold. Rising till 9:20pm.",
+   "water_note": "Water's steady at 13°. Steady run but easing, normal sinkers should hold. Rising till 9:20pm.",
+   "water": {
+    "sst_c": 12.7,
+    "sst_change_3d_c": 0.2,
+    "sst_trend": "steady",
+    "current": {
+     "flow_index_avg": 0.68,
+     "flow_index_max": 0.92,
+     "flow_index_start": 0.92,
+     "flow_index_end": 0.38,
+     "tide_size_ratio": 0.93,
+     "tide_range_m": 1.4,
+     "phase": "rising",
+     "turn": null,
+     "next_turn": {
+      "time": "2026-11-01T21:20:00+13:00",
+      "type": "high"
+     }
+    }
+   },
    "confidence_detail": {
     "level": "low",
     "lead_days": 6,
@@ -5259,7 +5621,7 @@
   }
  ],
  "data_status": "engine",
- "engine_version": "2.5.0",
+ "engine_version": "2.6.0",
  "hourly_step_h": 1,
  "timezone": "Pacific/Auckland",
  "model_runs": {

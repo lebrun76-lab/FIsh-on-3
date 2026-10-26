@@ -81,6 +81,7 @@ def validate_v1(fc: Dict) -> List[str]:
     if isinstance(vw, dict) and vw.get("id") not in seen:
         errs.append("verdict.window.id: not in windows[]")
     _check_species(fc, seen, errs)
+    _check_water(fc, errs)
     for i, x in enumerate(fc.get("tides") or []):
         _check(x, TIDE, f"tides[{i}]", errs)
         if x.get("type") not in ("high", "low"):
@@ -92,6 +93,60 @@ def validate_v1(fc: Dict) -> List[str]:
 
 def _bad_dash(t: str) -> bool:
     return "\u2014" in t or " \u2013 " in t or " - " in t
+
+
+WATER_NOTES = ("water_temp_note", "current_note", "water_note")
+SEASONS = ("peak", "in season", "no seasonal data", "off-peak")
+
+
+def _check_water(fc: Dict, errs: List[str]) -> None:
+    """2.6.0 water fields, checked only when present: the three notes are
+    string or null, plain (no em dash, spaced dash or knots), water_note is
+    the other two joined; windows[].water holds the raw numbers."""
+    places = [(f"windows[{i}]", w) for i, w in enumerate(fc.get("windows") or []) if isinstance(w, dict)]
+    if isinstance(fc.get("verdict"), dict):
+        places.append(("verdict", fc["verdict"]))
+    for where, obj in places:
+        if not any(k in obj for k in WATER_NOTES):
+            continue
+        for k in WATER_NOTES:
+            t = obj.get(k)
+            if t is None:
+                continue
+            if not isinstance(t, str) or _bad_dash(t) or "knot" in t.lower() or " kn " in t or "–" in t:
+                errs.append(f"{where}.{k}: not a plain string (dash or knots)")
+        joined = " ".join(x for x in (obj.get("water_temp_note"), obj.get("current_note")) if isinstance(x, str)) or None
+        if obj.get("water_note") != joined:
+            errs.append(f"{where}.water_note: not water_temp_note + current_note")
+        if not where.startswith("windows"):
+            continue
+        wa = obj.get("water")
+        if wa is None:
+            continue
+        if not isinstance(wa, dict):
+            errs.append(f"{where}.water: not an object")
+            continue
+        for k in ("sst_c", "sst_change_3d_c"):
+            if wa.get(k) is not None and (not isinstance(wa[k], NUM) or isinstance(wa[k], bool)):
+                errs.append(f"{where}.water.{k}: not a number or null")
+        if wa.get("sst_trend") not in ("warming", "cooling", "steady", None):
+            errs.append(f"{where}.water.sst_trend")
+        cur = wa.get("current")
+        if cur is not None:
+            if not isinstance(cur, dict):
+                errs.append(f"{where}.water.current: not an object")
+                continue
+            for k in ("flow_index_avg", "flow_index_max", "flow_index_start", "flow_index_end",
+                      "tide_size_ratio", "tide_range_m"):
+                if not isinstance(cur.get(k), NUM) or isinstance(cur.get(k), bool):
+                    errs.append(f"{where}.water.current.{k}: not a number")
+            if cur.get("phase") not in ("rising", "falling"):
+                errs.append(f"{where}.water.current.phase")
+            nt = cur.get("next_turn")
+            if not isinstance(nt, dict) or nt.get("type") not in ("high", "low") or not isinstance(nt.get("time"), str):
+                errs.append(f"{where}.water.current.next_turn")
+        elif obj.get("current_note") is not None:
+            errs.append(f"{where}.current_note: set but water.current is null")
 
 
 def _check_species(fc: Dict, ids: set, errs: List[str]) -> None:
@@ -115,6 +170,8 @@ def _check_species(fc: Dict, ids: set, errs: List[str]) -> None:
                 continue
             if not 0 <= x["score"] <= 10:
                 errs.append(f"windows[{i}].species[{j}].score: out of 0-10")
+            if "season" in x and x["season"] not in SEASONS:
+                errs.append(f"windows[{i}].species[{j}].season: not one of {SEASONS}")
             if isinstance(w.get("score"), NUM) and x["score"] > w["score"]:
                 errs.append(f"windows[{i}].species[{j}].score: above the window score")
             if last is not None and x["score"] > last:

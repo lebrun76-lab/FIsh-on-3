@@ -31,6 +31,9 @@ def main(argv=None):
         print(f"    {v['advice']}")
         if v.get("species_text"):
             print(f"    By species: {v['species_text']}")
+        for k, lab in (("water_temp_note", "Water"), ("current_note", "Current")):
+            if v.get(k):
+                print(f"    {lab}: {v[k]}")
         for d in fc["days"]:
             print(f"  {d['label']}: {'-' if d['score'] is None else d['score']}/10 {d['rating']} "
                   f"[{d['confidence']}] wind avg {d['wind_kn_avg']} kn, gust max {d['gust_kn_max']} kn, "

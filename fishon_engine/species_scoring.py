@@ -1,15 +1,26 @@
-"""Per-species window scores (engine 2.5.0; data: data/species_conditions.json).
+"""Per-species window scores (engine 2.6.0; data: data/species_conditions.json).
 
 A species score starts from the window's score, which already carries the
 safety gate (wind, gusts, swell and sea relative to the shore), and loses
-points for each sourced species condition the window misses. It is clamped
-to [0, window score], so a species can never score above what the window is
-safe to fish. Missing data (no tide, no SST) costs nothing.
+points for the sourced species conditions the window misses, plus a small
+season adjustment. It is clamped to [0, window score], so a species can never
+score above what the window is safe to fish. Missing data (no tide, no SST)
+costs nothing.
 
-Only species that are open and in season at the spot on the day are scored:
-status 'peak', 'in season' or 'no seasonal data' (species.species_for).
-'off-peak' (outside the sourced months) and 'closed' are left out, as are
-species with no entry in species_conditions.json.
+Fairness (2.6.0): each factor's ``penalty`` in the JSON is a relative weight.
+What a window loses is PENALTY_BUDGET x (weight of the factors it misses /
+weight of all that species' factors), so every species can lose the same
+most, however many factors it has. Without this, a species with fewer
+sourced factors lost points less often and ranked higher.
+
+Season (2.6.0): 'peak' and 'in season' cost nothing; 'no seasonal data'
+costs SEASON_PENALTY['no seasonal data'] (we can't say it's on, so a sourced
+in-season species wins a tie); 'off-peak' (outside the sourced months, but
+open) costs more and says "slower this time of year". 'closed' is never
+scored, nor are species with no entry in species_conditions.json.
+
+Tuning, not sourced: PENALTY_BUDGET, SEASON_PENALTY, the factor weights and
+the gurnard 1.0 m threshold.
 """
 from __future__ import annotations
 
@@ -22,7 +33,10 @@ from typing import Dict, List, Optional
 from .tz import fmt_range
 
 _PATH = os.path.join(os.path.dirname(__file__), "data", "species_conditions.json")
-OPEN_STATUSES = ("peak", "in season", "no seasonal data")
+OPEN_STATUSES = ("peak", "in season", "no seasonal data", "off-peak")
+PENALTY_BUDGET = 1.5    # tuning: most a species can lose for missed conditions
+SEASON_PENALTY = {"peak": 0.0, "in season": 0.0, "no seasonal data": 0.25, "off-peak": 0.5}  # tuning
+OFF_PEAK_NOTE = "slower this time of year"
 SLACK_H = 0.75          # within 45 min of high or low (the engine's tide rule)
 VERDICT_MIN = 4.5       # a species needs a 'marginal' score or better to be named
 VERDICT_MAX = 3         # windows named per verdict line
@@ -100,22 +114,29 @@ def _factor(f: Dict, hours: List[Dict], name: str):
     raise ValueError(f"unknown species factor {kind!r}")
 
 
-def score_species(name: str, hours: List[Dict], window_score: float) -> Dict:
-    """{name, score, why} for one species over one window's hours."""
-    pen, bits = 0.0, []
-    for f in conditions()[name]["factors"]:
+def score_species(name: str, hours: List[Dict], window_score: float, season: str = "in season") -> Dict:
+    """{name, score, why, season} for one species over one window's hours."""
+    factors = conditions()[name]["factors"]
+    total = sum(f["penalty"] for f in factors) or 1.0
+    missed, bits = 0.0, []
+    if season == "off-peak":
+        bits.append(OFF_PEAK_NOTE)
+    elif season == "no seasonal data":
+        bits.append("no season on record here")
+    for f in factors:
         p, why = _factor(f, hours, name)
-        pen += p
+        missed += p
         bits.append(why)
+    pen = PENALTY_BUDGET * missed / total + SEASON_PENALTY.get(season, 0.0)
     score = max(0.0, min(window_score, round(window_score - pen, 1)))
-    return {"name": name, "score": score, "why": ", ".join(bits)}
+    return {"name": name, "score": score, "why": ", ".join(bits), "season": season}
 
 
 def score_window(hours: List[Dict], window_score: float, species_list: List[Dict]) -> List[Dict]:
     """windows[].species: scored open species, best first (ties keep the
     seasonal order from species_for)."""
     sc = scorable(species_list)
-    out = [score_species(s["name"], hours, window_score) for s in sc]
+    out = [score_species(s["name"], hours, window_score, s["status"]) for s in sc]
     order = {s["name"]: i for i, s in enumerate(sc)}
     out.sort(key=lambda x: (-x["score"], order[x["name"]]))
     return out
@@ -157,7 +178,12 @@ def verdict_line(best: Dict[str, str], windows: List[Dict]) -> Optional[str]:
     for wid, names in list(groups.items())[:VERDICT_MAX]:
         w = by_id[wid]
         when = fmt_range(datetime.fromisoformat(w["start"]), datetime.fromisoformat(w["end"]))
-        parts.append(f"{_names(names)}: {when}.")
+        slow = [x["name"] for x in w.get("species") or [] if x["name"] in names and x.get("season") == "off-peak"]
+        note = ""
+        if slow:
+            who = "" if len(names) == 1 else _names(slow).lower() + " "
+            note = f" ({who}{OFF_PEAK_NOTE})"
+        parts.append(f"{_names(names)}: {when}{note}.")
     return " ".join(parts) or None
 
 
