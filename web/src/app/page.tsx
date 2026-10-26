@@ -5,17 +5,20 @@ import { SpotCard } from "@/components/SpotCard";
 import { BRAND } from "@/lib/brand";
 import { Photo } from "@/components/ui";
 import { HOME_HERO } from "@/lib/photos";
+import { HomeNudge, YourSpots } from "@/components/Onboarding";
 
 export default function Home() {
   const top = allSummaries().sort((a, b) => b.score - a.score).slice(0, 4);
   const calls = regionCalls().slice(0, 3);
+  const all = allSummaries();
   return (
     <div className="space-y-8 pt-6">
+      <YourSpots all={all} />
       <section className="grid gap-4 md:grid-cols-2 md:items-center">
         <div>
           <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">NZ fishing forecast</p>
           <h1 className="mt-2 text-3xl md:text-4xl font-extrabold leading-tight text-ocean-950">{BRAND.tagline}</h1>
-          <p className="mt-3 max-w-xl text-slate-600">Wind, swell, tide and water temp for {allSummaries().length} spots around the country, boiled down to go, maybe, or stay home. And the best few hours to be out there.</p>
+          <p className="mt-3 max-w-xl text-slate-600">Wind, swell, tide and water temp for {all.length} spots around the country, boiled down to go, maybe, or stay home. And the best few hours to be out there.</p>
           <div className="mt-5 flex flex-wrap gap-3">
             <Link href="/spots" className="rounded-full bg-ocean-900 px-5 py-3 font-semibold text-white">Check a spot</Link>
             <Link href="/where-to-go" className="rounded-full px-5 py-3 font-semibold text-ocean-900 ring-1 ring-ocean-900/30">Where to go</Link>
@@ -23,6 +26,7 @@ export default function Home() {
         </div>
         <Photo p={HOME_HERO} ratio="3 / 2" preload sizes="(min-width: 1024px) 496px, (min-width: 768px) 50vw, 100vw" />
       </section>
+      <HomeNudge />
       <section>
         <div className="mb-3 flex items-end justify-between"><h2 className="text-xl font-bold">Best bets, next 3 days</h2><Link href="/where-to-go" className="text-sm text-ocean-700 font-semibold">All regions →</Link></div>
         <div className="grid gap-3 md:grid-cols-3">{calls.map((c) => <CallCard key={c.region} c={c} />)}</div>

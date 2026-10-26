@@ -10,6 +10,7 @@ import { Photo, PhotoSlot, RatingBadge, RATING_STYLE } from "./ui";
 import { SPOT_BANNERS } from "@/lib/photos";
 import { bestCall, dayScore, isNearBest, ratingFor, targetList, todayStale, whenText } from "@/lib/call";
 import { FavButton } from "./FavButton";
+import { SpotNudge } from "./Onboarding";
 import { Locked } from "./Locked";
 import { OfflineButton } from "./Offline";
 import { WindChart, SwellChart, TideChart, SstChart } from "./Charts";
@@ -158,6 +159,8 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
         <p className="mt-3 rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-700"><b>The call:</b> {call}</p>
         {!pro && (later ? laterBetter : f.windows[0] && f.windows[0].start.slice(0, 10) !== today) && <p className="mt-2 text-sm text-ocean-900">A <b>{later?.rating ?? f.windows[0]?.rating}</b> window shows up later this week. <Link href="/pricing" className="underline">see it with Pro</Link>.</p>}
       </section>
+
+      <SpotNudge id={f.spot.id} name={f.spot.name} />
 
       {/* 2. Safety check (always free) */}
       <section className={`rounded-2xl p-4 ring-1 ${SAFETY[safety.level][0]}`}>

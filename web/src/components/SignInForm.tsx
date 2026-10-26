@@ -4,14 +4,16 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth";
 import { FishTimesPicker } from "@/components/FishTimesPicker";
 import { DEFAULT_FISH_TIMES, type FishTime } from "@/lib/fishtimes";
-
-const safeNext = (n: string | null) => (n && n.startsWith("/") && !n.startsWith("//") ? n : "/saved");
+import { safeNext, safeSpotId, welcomeHref } from "@/lib/onboarding";
 
 export function SignInForm() {
   const auth = useAuth();
   const router = useRouter();
   const params = useSearchParams();
   const next = safeNext(params.get("next"));
+  const save = safeSpotId(params.get("save"));
+  // Every sign-in goes through /welcome: it saves the spot they tapped, or asks for a home spot if they have none.
+  const after = welcomeHref(next, save);
   const real = auth.mode === "supabase";
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
@@ -21,20 +23,20 @@ export function SignInForm() {
   const [times, setTimes] = useState<FishTime[]>(DEFAULT_FISH_TIMES);
 
   // Already signed in (for example back from the email link): carry on.
-  useEffect(() => { if (real && auth.ready && auth.user) router.replace(next); }, [real, auth.ready, auth.user, next, router]);
+  useEffect(() => { if (real && auth.ready && auth.user) router.replace(after); }, [real, auth.ready, auth.user, after, router]);
 
-  const mockDone = (e: string, n?: string) => { auth.signIn(e, n, times); router.push(next); };
-  const run = async (f: () => Promise<{ error?: string }>, after?: () => void) => {
+  const mockDone = (e: string, n?: string) => { auth.signIn(e, n, times); router.push(after); };
+  const run = async (f: () => Promise<{ error?: string }>, done?: () => void) => {
     setBusy(true); setErr(null);
     const r = await f();
     setBusy(false);
-    if (r.error) setErr(r.error); else after?.();
+    if (r.error) setErr(r.error); else done?.();
   };
-  const google = () => (real ? run(() => auth.signInWithGoogle(times, next)) : mockDone("alex@example.com", "Alex"));
+  const google = () => (real ? run(() => auth.signInWithGoogle(times, after)) : mockDone("alex@example.com", "Alex"));
   const sendLink = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.includes("@")) return;
-    if (real) run(() => auth.sendEmailLink(email.trim(), times, next), () => setSent(true));
+    if (real) run(() => auth.sendEmailLink(email.trim(), times, after), () => setSent(true));
     else setSent(true);
   };
   const verify = (e: React.FormEvent) => { e.preventDefault(); run(() => auth.verifyEmailCode(email.trim(), code)); };
@@ -42,7 +44,7 @@ export function SignInForm() {
   return (
     <div className="mx-auto max-w-sm pt-10 space-y-4">
       <h1 className="text-2xl font-bold text-center">Sign in or create an account</h1>
-      <p className="text-center text-sm text-slate-600">Free. Save your spots and get fishing-window alerts.</p>
+      <p className="text-center text-sm text-slate-600">{save ? "Free account, no card needed. We'll save that spot as soon as you're in." : "Free account, no card needed. Save your home spot and its forecast comes up first."}</p>
       <div className="rounded-2xl bg-white p-4 ring-1 ring-slate-100"><FishTimesPicker value={times} onChange={setTimes} /></div>
       <button onClick={google} disabled={busy} className="w-full rounded-full bg-white py-3 font-semibold ring-1 ring-slate-300 disabled:opacity-60">
         <span className="mr-2 font-bold text-[#4285F4]">G</span>Continue with Google{real ? "" : " (pretend)"}
