@@ -44,6 +44,10 @@ export function SpotMap({ spots, island, favourites, tall, days = 7 }: { spots: 
   const fit = useRef<View | null>(null);
   const ptrs = useRef(new Map<number, { x: number; y: number }>());
   const moved = useRef(0);
+  // Touch: one finger scrolls the page (with a brief hint), two fingers pan and zoom the map.
+  const touch = useRef<{ x: number; y: number }[] | null>(null);
+  const [hint, setHint] = useState(false);
+  const hintTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   useLayoutEffect(() => {
     const el = box.current; if (!el) return;
@@ -87,26 +91,75 @@ export function SpotMap({ spots, island, favourites, tall, days = 7 }: { spots: 
     return () => el.removeEventListener("wheel", onWheel);
   }, [zoomAt]);
 
+  // Two fingers (or one in fullscreen): the map point under the old midpoint follows the new one, scaled by the spread.
+  const panZoom = useCallback((a: { x: number; y: number }[], b: { x: number; y: number }[]) => {
+    const r = box.current?.getBoundingClientRect(); if (!r) return;
+    const mid = (q: { x: number; y: number }[]) => ({ x: q.reduce((n, p) => n + p.x, 0) / q.length - r.left, y: q.reduce((n, p) => n + p.y, 0) / q.length - r.top });
+    const spread = (q: { x: number; y: number }[]) => (q.length > 1 ? Math.hypot(q[0].x - q[1].x, q[0].y - q[1].y) : 0);
+    const m0 = mid(a), m1 = mid(b), d0 = spread(a), d1 = spread(b);
+    const f = d0 > 0 && d1 > 0 ? d1 / d0 : 1;
+    moved.current += Math.abs(m1.x - m0.x) + Math.abs(m1.y - m0.y) + Math.abs(d1 - d0);
+    setView((v) => {
+      if (!v) return v;
+      const mx = v.cx + (m0.x - size.w / 2) / v.s, my = v.cy + (m0.y - size.h / 2) / v.s;
+      const f0 = fit.current, s = f0 ? Math.min(Math.max(v.s * f, f0.s), f0.s * MAX_ZOOM) : v.s * f;
+      return clamp({ s, cx: mx - (m1.x - size.w / 2) / s, cy: my - (m1.y - size.h / 2) / s });
+    });
+  }, [clamp, size.w, size.h]);
+
+  useEffect(() => {
+    const el = box.current; if (!el) return;
+    const full = () => !!document.fullscreenElement && document.fullscreenElement.contains(el);
+    const list = (e: TouchEvent) => [...e.touches].slice(0, 2).map((t) => ({ x: t.clientX, y: t.clientY }));
+    const onStart = (e: TouchEvent) => {
+      if ((e.target as HTMLElement).closest("[data-nopan]")) { touch.current = null; return; }
+      if (e.touches.length === 1) moved.current = 0;
+      touch.current = list(e);
+      if (e.touches.length >= 2) { e.preventDefault(); setHint(false); }
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      const prev = touch.current; if (!prev) return;
+      const cur = list(e);
+      if (cur.length >= 2 || full()) {
+        if (e.cancelable) e.preventDefault();
+        if (prev.length === cur.length) panZoom(prev, cur);
+        touch.current = cur;
+        return;
+      }
+      // One finger: leave it to the page to scroll; just say how to move the map.
+      const dx = cur[0].x - prev[0].x, dy = cur[0].y - prev[0].y;
+      moved.current = Math.max(moved.current, Math.abs(dx) + Math.abs(dy));
+      if (moved.current > 10) {
+        setHint(true);
+        clearTimeout(hintTimer.current);
+        hintTimer.current = setTimeout(() => setHint(false), 1500);
+      }
+    };
+    const onEnd = (e: TouchEvent) => { touch.current = e.touches.length ? list(e) : null; };
+    el.addEventListener("touchstart", onStart, { passive: false });
+    el.addEventListener("touchmove", onTouchMove, { passive: false });
+    el.addEventListener("touchend", onEnd);
+    el.addEventListener("touchcancel", onEnd);
+    return () => {
+      el.removeEventListener("touchstart", onStart); el.removeEventListener("touchmove", onTouchMove);
+      el.removeEventListener("touchend", onEnd); el.removeEventListener("touchcancel", onEnd);
+      clearTimeout(hintTimer.current);
+    };
+  }, [panZoom]);
+
+  // Mouse and pen: drag pans. Touch is handled above.
   const onDown = (e: React.PointerEvent) => {
-    if ((e.target as HTMLElement).closest("[data-nopan]")) return;
+    if (e.pointerType === "touch" || (e.target as HTMLElement).closest("[data-nopan]")) return;
     ptrs.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
-    if (ptrs.current.size === 1) moved.current = 0;
+    moved.current = 0;
   };
   const onMove = (e: React.PointerEvent) => {
-    const p = ptrs.current; const prev = p.get(e.pointerId); if (!prev) return;
+    const prev = ptrs.current.get(e.pointerId); if (!prev) return;
     const cur = { x: e.clientX, y: e.clientY };
-    if (p.size === 1) {
-      const dx = cur.x - prev.x, dy = cur.y - prev.y;
-      moved.current += Math.abs(dx) + Math.abs(dy);
-      setView((v) => (v ? clamp({ ...v, cx: v.cx - dx / v.s, cy: v.cy - dy / v.s }) : v));
-    } else if (p.size === 2) {
-      const other = [...p.entries()].find(([id]) => id !== e.pointerId)![1];
-      const d0 = Math.hypot(prev.x - other.x, prev.y - other.y), d1 = Math.hypot(cur.x - other.x, cur.y - other.y);
-      const r = box.current!.getBoundingClientRect();
-      moved.current += 20;
-      if (d0 > 0) zoomAt(d1 / d0, (cur.x + other.x) / 2 - r.left, (cur.y + other.y) / 2 - r.top);
-    }
-    p.set(e.pointerId, cur);
+    const dx = cur.x - prev.x, dy = cur.y - prev.y;
+    moved.current += Math.abs(dx) + Math.abs(dy);
+    setView((v) => (v ? clamp({ ...v, cx: v.cx - dx / v.s, cy: v.cy - dy / v.s }) : v));
+    ptrs.current.set(e.pointerId, cur);
   };
   const onUp = (e: React.PointerEvent) => { ptrs.current.delete(e.pointerId); };
 
@@ -186,9 +239,9 @@ export function SpotMap({ spots, island, favourites, tall, days = 7 }: { spots: 
           ))}
         </div>
       </div>
-      <div ref={box} role="region" aria-label={`Map of the ${island} Island fishing spots. Drag to pan, pinch or use the plus and minus buttons to zoom.`}
+      <div ref={box} role="region" aria-label={`Map of the ${island} Island fishing spots. Drag with two fingers or the mouse to pan. Pinch, or use the plus and minus buttons, to zoom.`}
         className={`relative ${tall ? "h-[calc(100svh-17rem)] min-h-[440px] max-h-[820px]" : "h-[min(72vh,calc(100svh-21rem))] min-h-[420px]"} w-full select-none overflow-hidden rounded-2xl ring-1 ring-slate-200`}
-        style={{ background: SEA, touchAction: "none" }}
+        style={{ background: SEA, touchAction: "pan-y" }}
         onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp} onPointerLeave={onUp}
         onClick={(e) => { if (!(e.target as HTMLElement).closest("[data-nopan]") && moved.current < 6) setSel(null); }}>
         <canvas ref={cv} aria-hidden="true" className="absolute inset-0 block" style={{ width: size.w, height: size.h }} />
@@ -217,6 +270,9 @@ export function SpotMap({ spots, island, favourites, tall, days = 7 }: { spots: 
             </div>
           );
         })}
+        <div aria-hidden="true" className={`pointer-events-none absolute inset-0 z-[15] flex items-center justify-center bg-slate-900/25 transition-opacity duration-300 ${hint ? "opacity-100" : "opacity-0"}`}>
+          <span className="rounded-full bg-slate-900/70 px-3 py-1.5 text-sm font-semibold text-white">Use two fingers to move the map</span>
+        </div>
         <div data-nopan className="absolute right-2 top-2 z-10 flex flex-col overflow-hidden rounded-xl shadow-sm ring-1 ring-slate-200">
           <button type="button" className={ctl} onClick={() => zoomAt(1.6)} aria-label="Zoom in">+</button>
           <button type="button" className={`${ctl} border-t border-slate-200`} onClick={() => zoomAt(1 / 1.6)} aria-label="Zoom out">−</button>
