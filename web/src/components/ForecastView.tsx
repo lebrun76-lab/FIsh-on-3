@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { FishingWindow, HourPoint, SpotForecast } from "@/lib/types";
 import type { SstMapData } from "@/lib/sst";
 import { SstMap } from "./SstMap";
+import { CatchCheck } from "./CatchCheck";
 import { DATUM_TEXT, speciesOf, confidenceText, noWindowText } from "@/lib/view";
 import { useAuth, isPaid } from "@/lib/auth";
 import { Photo, RatingBadge, RATING_STYLE } from "./ui";
@@ -297,16 +298,9 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
       {/* 6. Rules — always free */}
       <section className="space-y-2">
         <div className="flex items-end justify-between"><h2 className="text-lg font-bold">Rules here</h2><Link href="/rules" className="text-sm font-semibold text-ocean-700">Rules map →</Link></div>
-        <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-          {species.map((s) => (
-            <div key={s.id} className="rounded-2xl bg-white p-3 ring-1 ring-slate-100 text-sm">
-              <div className="font-semibold">{s.name}{s.maori ? ` · ${s.maori}` : ""}</div>
-              <div className="text-slate-600">{s.minSizeCm ? `Min ${s.minSizeCm} cm` : "No min size"} · {s.dailyBag ? `bag ${s.dailyBag}/day` : "see local rules"}</div>
-            </div>
-          ))}
-        </div>
+        <CatchCheck spotId={f.spot.id} spotSpecies={f.spot.species} />
         {near.map((c) => <div key={c.id} className="rounded-2xl bg-rose-50 p-3 text-sm text-rose-900 ring-1 ring-rose-100"><b>{c.name}</b> ({c.type}): {c.rule}</div>)}
-        <p className="text-xs text-slate-400">Sizes, bag limits and closures above are a guide only, not verified. Check the official MPI rules before you fish.</p>
+        <p className="text-xs text-slate-400">Closures above are a guide only, not verified. Check MPI and DOC before you fish.</p>
       </section>
 
       {/* 7. Pro tools */}

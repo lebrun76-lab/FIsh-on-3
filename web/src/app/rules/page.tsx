@@ -1,6 +1,7 @@
 import { CLOSURES } from "@/lib/rules";
 import { SPOTS } from "@/lib/mock";
 import Link from "next/link";
+import { CatchCheck } from "@/components/CatchCheck";
 export const metadata = { title: "Rules and closures" };
 const X = (lon: number) => ((lon - 166) / 13.5) * 300 + 10;
 const Y = (lat: number) => ((-34 - lat) / 13.5) * 380 + 10;
@@ -11,6 +12,7 @@ export default function Rules() {
       <h1 className="text-2xl md:text-3xl font-bold">Rules & closures map</h1>
       <p className="text-slate-600">Marine reserves, seasonal closures, rāhui and area rules. Free for everyone. <Link href="/species" className="font-semibold text-ocean-700">Sizes & bag limits →</Link></p>
       <p className="rounded-xl bg-yellow-50 p-3 text-sm text-yellow-900 ring-1 ring-yellow-200">A guide only, not verified. Rules change, so check the official MPI and DOC rules before you fish.</p>
+      <div className="max-w-xl"><CatchCheck spots={SPOTS.map((s) => ({ id: s.id, name: s.name }))} /></div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-[1fr_1.2fr]">
         <div className="rounded-2xl bg-ocean-100 p-2 ring-1 ring-slate-100">
           <svg viewBox="0 0 320 400" className="w-full max-h-[70vh]">
