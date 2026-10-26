@@ -16,5 +16,7 @@ export default async function SpotPage({ params }: { params: Promise<{ id: strin
   const all = f.spot.coastal && f.data_status !== "mock-fallback" ? loadSst() : null;
   const mp = all?.spots[id]?.marine_point ?? [f.spot.lat, f.spot.lon];
   const sst = all ? { map: cropSst(all, mp[0], mp[1], f.spot.name), caption: spotCaption(all, id, f.spot.name) } : null;
-  return <ForecastView f={f} sst={sst} />;
+  // Internal notes (engine version, model run, check notes) stay on the server; the page doesn't show them.
+  const shown = { ...f, engine_version: undefined, model_run: "", warnings: undefined, spot: { ...f.spot, tide_note: undefined } };
+  return <ForecastView f={shown} sst={sst} />;
 }

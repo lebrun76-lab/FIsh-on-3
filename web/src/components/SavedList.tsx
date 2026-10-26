@@ -26,7 +26,7 @@ export function SavedList({ all }: { all: SpotSummary[] }) {
         ))}
       </div>
       {!mine.length && <p className="text-slate-600">No saved spots yet. <Link className="text-ocean-700 font-semibold" href="/spots">Find one →</Link></p>}
-      {plan === "free" && <Link href="/pricing" className="block rounded-2xl bg-ocean-100 p-4 text-sm text-ocean-900">Free saves 1 spot. Pro: unlimited spots, catch log, alerts and offline. <b>Try {BRAND.trialDays} days free, no card →</b></Link>}
+      {plan === "free" && <Link href="/pricing" className="block rounded-2xl bg-ocean-100 p-4 text-sm text-ocean-900">Free saves 2 spots. Pro saves up to 5, plus the catch log, alerts and offline mode. <b>Try {BRAND.trialDays} days free, no card →</b></Link>}
     </div>
   );
 }

@@ -89,7 +89,7 @@ export function WelcomePicker({ spots }: { spots: PickSpot[] }) {
       const room = paid || favourites.length < FREE_FAV_LIMIT;
       if (!favourites.includes(saveSpot) && room) { saveSpots([saveSpot]).then(() => router.replace(next)); return; }
       if (favourites.includes(saveSpot)) { router.replace(next); return; }
-      // Free plan with a spot already saved: don't swap it silently, send them on.
+      // Free plan already full: don't swap one out silently, send them on.
       router.replace(next); return;
     }
     if (favourites.length) { router.replace(next); return; }
@@ -105,7 +105,7 @@ export function WelcomePicker({ spots }: { spots: PickSpot[] }) {
   }, [spots, q]);
 
   if (!asking) return <p className="pt-10 text-center text-sm text-slate-500">One moment...</p>;
-  const toggle = (id: string) => setPicked((p) => (p.includes(id) ? p.filter((x) => x !== id) : max === 1 ? [id] : p.length >= max ? p : [...p, id]));
+  const toggle = (id: string) => setPicked((p) => (p.includes(id) ? p.filter((x) => x !== id) : p.length >= max ? p : [...p, id]));
   const go = async () => {
     setBusy(true); setErr(null);
     const r = await saveSpots(picked);
@@ -117,7 +117,7 @@ export function WelcomePicker({ spots }: { spots: PickSpot[] }) {
     <div className="mx-auto max-w-xl space-y-4 pt-6">
       <div>
         <h1 className="text-2xl font-bold">Where do you fish?</h1>
-        <p className="mt-1 text-slate-600">{paid ? `Pick up to ${max} spots you fish most. The first one's your home spot and comes up first.` : "Pick your home spot and its forecast comes up first. Free saves one spot. The Pro trial saves as many as you like."}</p>
+        <p className="mt-1 text-slate-600">{`Pick up to ${max} spots you fish most. The first one's your home spot and comes up first.${paid ? "" : ` Pro saves up to ${WELCOME_MAX}.`}`}</p>
       </div>
       <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search a harbour, beach or region" className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-base outline-none focus:ring-2 focus:ring-ocean-500" />
       {groups.length === 0 && <p className="text-sm text-slate-500">Nothing by that name yet. Try the region instead.</p>}

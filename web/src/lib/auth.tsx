@@ -43,7 +43,7 @@ const AuthCtx = createContext<Ctx | null>(null);
 const KEY = "saltsupply-mock-state";
 const LEGACY_KEY = "fishcast-mock-state"; // pre-rename prototype state, read once and migrated
 const PENDING_TIMES = "saltsupply-pending-fishing-times"; // picked on the sign-in page, saved to the profile after sign-in
-export const FREE_FAV_LIMIT = 1;
+export const FREE_FAV_LIMIT = 2;
 const trialEndDefault = () => new Date(Date.now() + BRAND.trialDays * 864e5).toISOString().slice(0, 10);
 const nzDate = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString("en-CA", { timeZone: "Pacific/Auckland" }) : null);
 
@@ -184,7 +184,7 @@ function SupabaseAuth({ children }: { children: ReactNode }) {
       const add = !s.favourites.includes(id);
       setS((x) => ({ ...x, home: id, favourites: add ? [...x.favourites, id] : x.favourites }));
       patchProfile({ home_spot_id: id });
-      // The free plan's one-spot limit is also enforced in the database; if it refuses, reload shows the truth.
+      // The free plan's two-spot limit is also enforced in the database; if it refuses, reload shows the truth.
       if (add) sb.from("favourites").insert({ user_id: me, spot_id: id }).then(({ error }) => { if (error) reload(); });
     },
     saveSpots: async (ids) => {

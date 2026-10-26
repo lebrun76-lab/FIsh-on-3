@@ -1,13 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth, isPaid } from "@/lib/auth";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useAuth, isPaid, FREE_FAV_LIMIT } from "@/lib/auth";
 import { BRAND } from "@/lib/brand";
-const FREE = ["Today’s call and best window for every spot", "Save 1 spot", "Tides, basic wind & swell", "Wind + swell safety check", "All fishing rules, sizes & closures (map)", "Species guide", "No intrusive ads"];
-const PRO = ["Everything in Free", "7–10 day outlook for every spot", "Ranked “where to go” list with species & tactics", "Sea temperature and temperature breaks", "Email when a good window comes up", "Unlimited spots + catch log", "Offline mode for the boat ramp", "No ads at all"];
+const FREE = ["Today’s call and best window for every spot", "Save 2 spots", "Tides, basic wind & swell", "Wind + swell safety check", "All fishing rules, sizes & closures (map)", "Species guide", "No intrusive ads"];
+const PRO = ["Everything in Free", "7–10 day outlook for every spot", "Ranked “where to go” list with species & tactics", "Sea temperature and temperature breaks", "Email when a good window comes up", "Save up to 5 spots, plus a catch log", "Offline mode for the boat ramp", "No ads at all"];
 export function PricingCards() {
   const { user, plan, setPlan, hadTrial } = useAuth();
   const router = useRouter();
+  const full = useSearchParams().get("reason") === "spots";
   const [interval, setBilling] = useState<"month" | "year">("month");
   const [busy, setBusy] = useState(false), [err, setErr] = useState<string | null>(null);
   // One trial per person: ask the server (Stripe / subscriptions) as well as the browser. Until it answers, go by the browser.
@@ -35,6 +36,7 @@ export function PricingCards() {
   const annualSave = Math.round((1 - BRAND.proAnnualNzd / (BRAND.proPriceNzd * 12)) * 100);
   return (
     <div className="grid gap-4 md:grid-cols-2">
+      {full && <p role="status" className="rounded-2xl bg-ocean-100 p-4 text-sm text-ocean-900 md:col-span-2">You&apos;ve saved {FREE_FAV_LIMIT} spots, which is the most Free holds. Remove one from Saved to swap it, or try Pro to save up to 5.</p>}
       <div className="rounded-3xl bg-white p-6 ring-1 ring-slate-200">
         <div className="text-lg font-bold">Free</div><div className="mt-1 text-3xl font-extrabold">$0</div>
         <div className="text-sm text-slate-500">Free. Safety and rules stay free.</div>

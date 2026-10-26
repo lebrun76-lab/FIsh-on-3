@@ -3,8 +3,7 @@ import Link from "next/link";
 import type { FishingWindow, HourPoint, SpotForecast } from "@/lib/types";
 import type { SstMapData } from "@/lib/sst";
 import { SstMap } from "./SstMap";
-import { tideSourceText } from "@/lib/plain";
-import { DATUM_TEXT, latLon, speciesOf, confidenceText, noWindowText } from "@/lib/view";
+import { DATUM_TEXT, speciesOf, confidenceText, noWindowText } from "@/lib/view";
 import { useAuth, isPaid } from "@/lib/auth";
 import { Photo, PhotoSlot, RatingBadge, RATING_STYLE } from "./ui";
 import { SPOT_BANNERS } from "@/lib/photos";
@@ -68,6 +67,40 @@ function NoWindowCard({ reason, when, leastBad, withDay }: { reason?: string | n
   );
 }
 
+/** "today", "yesterday" or "Sat 24 Oct" for when a forecast was made (NZ wall time in the string). */
+function madeDay(iso: string, today: string) {
+  const d = iso.slice(0, 10);
+  if (d === today) return "today";
+  const y = new Date(Date.parse(`${today}T00:00:00Z`) - 864e5).toISOString().slice(0, 10);
+  return d === y ? "yesterday" : `on ${dateLabel(d)}`;
+}
+
+/** "LINZ secondary port Moeraki (offsets from Timaru)" -> { port: "Moeraki", from: "Timaru" }. */
+function tidePort(src?: string | null) {
+  if (!src) return null;
+  const m = /^(?:LINZ )?(?:secondary port |standard port )?(.+?)(?: \(offsets from ([^()]+)\))?$/.exec(src.trim());
+  return m ? { port: m[1], from: m[2] ?? null } : null;
+}
+
+/** Collapsed, friendly note on where the numbers come from. Keeps the CC BY attribution, nothing internal. */
+function HowItWorks({ f }: { f: SpotForecast }) {
+  const tp = f.spot.coastal ? tidePort(f.tide_source) : null;
+  const km = f.spot.tide_port_km;
+  const atSea = f.spot.forecast_point?.cell_selection === "sea";
+  return (
+    <details className="rounded-2xl bg-white p-4 text-sm text-slate-600 ring-1 ring-slate-100">
+      <summary className="cursor-pointer font-semibold text-slate-800">How this forecast works</summary>
+      <div className="mt-2 space-y-2">
+        <p>Wind, weather{f.spot.coastal ? ", waves and sea temperature" : ""} come from Open-Meteo, which pulls together the main global weather models.{atSea ? " We take the weather just offshore, where you'll be fishing, rather than over land." : ""}</p>
+        {f.spot.coastal && <p>Sea temperature is a model figure. We&apos;ve checked it against NOAA satellite readings around the coast and it lines up within about 1.2°C.</p>}
+        {tp && <p>Tides are LINZ predictions for {tp.port}{km != null ? `, ${km} km from the spot` : ""}{tp.from ? `, worked out from ${tp.from}` : ""}. Not for navigation.</p>}
+        <p>This forecast was made at {clock(f.generated_at)} on {dateLabel(f.generated_at)} (NZ time). We score each hour for wind, sea, tide and light, then pick the best windows.</p>
+        <p className="text-xs text-slate-500">Weather and marine data: Open-Meteo.com, CC BY 4.0.{f.spot.coastal ? " Tide predictions: Land Information New Zealand (LINZ), CC BY 4.0." : ""}{f.spot.coastal ? " Sea temperature check: NOAA Coral Reef Watch." : ""}</p>
+      </div>
+    </details>
+  );
+}
+
 export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapData; caption: string[] } | null }) {
   const { plan } = useAuth();
   const pro = isPaid(plan);
@@ -114,6 +147,9 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
   };
   const mock = f.data_status === "mock-fallback";
   const ts = todayStale(f, now);
+  const ageH = (now - Date.parse(f.generated_at)) / 36e5;
+  const made = `${clock(f.generated_at)} ${madeDay(f.generated_at, realToday)}`;
+  const madeText = ageH > 24 ? "This forecast is over a day old." : f.stale ? `Forecast from ${made}, so it may be a bit behind.` : `Forecast from ${made}.`;
   const alsoText = vc.also.map((w) => `${whenText(w.start, w.end, realToday, w.start.slice(0, 10) !== vc.date)} (${w.rating}, ${w.score.toFixed(1)})`).join(", ");
   const rs = RATING_STYLE[v.rating];
   const call = noWin ? `Stay home${pro ? ` for the next ${hz} days` : ` ${todayWord}`}.${laterBetter && later ? ` Next good chance: ${later.headline.replace(/ looks .*/, "")}.` : ""} If you do go, stay sheltered and watch the weather.` : `${v.headline}. ${targetList((targets.length ? targets : f.spot.species).slice(0, 2))}${tgt[0] ? `. ${tgt[0].name}: ${sizeText(tgt[0])}` : ""}.`;
@@ -136,12 +172,7 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
       {mock ? (
         <div className="rounded-2xl bg-yellow-100 p-3 text-sm text-yellow-950 ring-2 ring-yellow-400"><b>MOCK FALLBACK: not a real forecast.</b> {f.fallback_reason} Numbers below are generated placeholders.</div>
       ) : (
-        <div className={`rounded-xl px-3 py-2 text-xs ring-1 ${f.stale ? "bg-amber-50 text-amber-900 ring-amber-200" : "bg-white text-slate-500 ring-slate-100"}`}>
-          {f.stale ? "Old forecast (more than 6 hours) · " : ""}Forecast Brain {f.engine_version ? `v${f.engine_version}` : "(version not recorded)"} · generated {dayShort(f.generated_at)} {clock(f.generated_at)} NZ time{ts.until && !ts.stale ? ` · current until ${clock(ts.until)}` : ""}{f.model_run ? ` · model: ${f.model_run.replace(/ \(.*\)$/, "")}` : ""}
-          {f.spot.forecast_point && <div>Weather for {latLon(f.spot.forecast_point.lat, f.spot.forecast_point.lon)}{f.spot.forecast_point.cell_selection === "sea" ? " (at sea)" : ""}{f.spot.marine_point && f.spot.coastal ? ` · waves & sea temp for ${latLon(f.spot.marine_point.lat, f.spot.marine_point.lon)}` : ""}{f.spot.coastal && f.tide_source ? ` · tides: ${tideSourceText(f.tide_source, f.spot.tide_port_km)}` : ""}</div>}
-          {ts.stale && <div>{ts.from ? <>Today&apos;s score counts from {clock(ts.from)}, when this forecast was made. </> : null}A fresh one was due at {ts.until ? clock(ts.until) : "the top of the hour"}.</div>}
-          {f.warnings?.map((w) => <div key={w}>Note: {w}</div>)}
-        </div>
+        <p className={`-mt-3 text-xs ${ageH > 24 ? "font-semibold text-amber-800" : "text-slate-500"}`}>{madeText}</p>
       )}
 
       {/* 1. The call — plain English first */}
@@ -230,7 +261,7 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
       <section className="space-y-3">
         <h2 className="text-lg font-bold">The detail {pro ? "" : <span className="text-sm font-normal text-slate-500">(today)</span>}</h2>
         {f.spot.coastal && <div className="flex flex-wrap gap-2 text-sm">{f.tides.filter((t) => t.time.slice(0, 10) >= today).slice(0, 4).map((t) => <span key={t.time} className="rounded-full bg-white px-3 py-1 ring-1 ring-slate-100">{t.type === "high" ? "▲ High" : "▼ Low"} {dayShort(t.time)} {clock(t.time)} · {t.height_m} m</span>)}</div>}
-        {f.spot.coastal && f.tide_datum && <p className="text-xs text-slate-500">Tide heights in {DATUM_TEXT[f.tide_datum] ?? f.tide_datum}{f.tide_source ? `, ${tideSourceText(f.tide_source)}` : ""}. {f.spot.tide_note ? `${f.spot.tide_note.replace(/\.?$/, ".")} ` : ""}Not for navigation.</p>}
+        {f.spot.coastal && f.tide_datum && <p className="text-xs text-slate-500">Tide heights in {DATUM_TEXT[f.tide_datum] ?? f.tide_datum}. Not for navigation.</p>}
         {!pro && <p className="text-xs text-slate-500">Charts show {dateLabel(today)}{f.hourly_step_h ? ` in ${f.hourly_step_h}-hour steps` : ""}.</p>}
         <div className="grid gap-3 md:grid-cols-2">
           <WindChart data={hourly} />
@@ -260,7 +291,7 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
               </div>
             ))}
           </div>
-          <p className="text-xs text-slate-400">Seasons and closures from Forecast Brain’s sourced species table{d0.moon ? ` · moon: ${d0.moon.phase}, ${d0.moon.illumination_pct}%` : ""}.</p>
+          <p className="text-xs text-slate-400">Seasons and closures from our species table, with sources on each card{d0.moon ? ` · moon: ${d0.moon.phase}, ${d0.moon.illumination_pct}%` : ""}.</p>
         </section>
       )}
 
@@ -285,7 +316,7 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
         {pro ? <Link href="/catch-log" className="rounded-2xl bg-white p-4 ring-1 ring-slate-100"><div className="font-semibold">Log a catch here</div><div className="text-sm text-slate-600">Species, size, photo. We add the wind, sea and tide for you.</div></Link>
           : <Locked compact title="Catch log" body="Log what you caught and see which conditions work at your spots." />}
       </section>
-      <p className="text-xs text-slate-400">{f.sources.join(" · ")}</p>
+      {!mock && <HowItWorks f={f} />}
     </div>
   );
 }
