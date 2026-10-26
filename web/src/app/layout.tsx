@@ -13,13 +13,25 @@ export const metadata: Metadata = {
   title: { default: `${BRAND.name} · NZ fishing forecasts in plain English`, template: `%s · ${BRAND.name}` },
   description: BRAND.description,
   manifest: "/manifest.webmanifest",
-  openGraph: { type: "website", siteName: BRAND.name, url: BRAND.url, title: `${BRAND.name} · NZ fishing forecasts in plain English`, description: BRAND.description, locale: "en_NZ" },
-  twitter: { card: "summary", title: BRAND.name, description: BRAND.description },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "16x16 32x32" },
+      { url: "/icons/favicon-16.png", sizes: "16x16", type: "image/png" },
+      { url: "/icons/favicon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
+  openGraph: {
+    type: "website", siteName: BRAND.name, url: BRAND.url, title: `${BRAND.name} · NZ fishing forecasts in plain English`, description: BRAND.description, locale: "en_NZ",
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: BRAND.name }],
+  },
+  twitter: { card: "summary_large_image", title: BRAND.name, description: BRAND.description, images: ["/og.png"] },
   appleWebApp: { title: BRAND.shortName },
   // Demo mode: keep it out of search results (also robots.txt and the X-Robots-Tag header in proxy.ts).
   ...(demoMode() ? { robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } } } : {}),
 };
-export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#06223a" };
+export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#1B2541" };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

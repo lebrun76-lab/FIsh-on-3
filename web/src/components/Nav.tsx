@@ -3,6 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BRAND } from "@/lib/brand";
 import { useAuth } from "@/lib/auth";
+import { Logo } from "@/components/Logo";
 
 const TABS = [
   { href: "/", label: "Home", icon: "⌂" },
@@ -17,18 +18,18 @@ export function TopBar() {
   const { user, plan } = useAuth();
   const path = usePathname();
   return (
-    <header className="sticky top-0 z-30 bg-ocean-950 text-white">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-        <Link href="/" className="text-lg font-extrabold tracking-tight">{BRAND.name}</Link>
+    <header className="sticky top-0 z-30 border-b border-salt-navy/10 bg-sand-50/95 text-salt-navy backdrop-blur">
+      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-2.5">
+        <Link href="/" aria-label={`${BRAND.name} home`} className="shrink-0"><Logo className="block h-9 w-auto md:h-10" /></Link>
         <nav className="hidden md:flex items-center gap-5 text-sm">
           {DESKTOP.map((t) => (
-            <Link key={t.href} href={t.href} className={path.startsWith(t.href) ? "text-white font-semibold" : "text-ocean-100/80 hover:text-white"}>{t.label}</Link>
+            <Link key={t.href} href={t.href} className={path.startsWith(t.href) ? "text-salt-navy font-semibold" : "text-salt-navy/70 hover:text-salt-navy"}>{t.label}</Link>
           ))}
-          {user ? <span className="rounded-full bg-ocean-700 px-3 py-1 text-xs">{user.name} · {planLabel(plan)}</span>
-            : <Link href="/signin" className="rounded-full bg-white px-4 py-1.5 font-semibold text-ocean-950">Sign in</Link>}
+          {user ? <span className="rounded-full bg-salt-navy px-3 py-1 text-xs text-white">{user.name} · {planLabel(plan)}</span>
+            : <Link href="/signin" className="rounded-full bg-salt-navy px-4 py-1.5 font-semibold text-white">Sign in</Link>}
         </nav>
-        {!user && <Link href="/signin" className="md:hidden rounded-full bg-white px-3 py-1 text-sm font-semibold text-ocean-950">Sign in</Link>}
-        {user && <Link href="/account" className="md:hidden rounded-full bg-ocean-700 px-2.5 py-1 text-xs">{planLabel(plan)}</Link>}
+        {!user && <Link href="/signin" className="md:hidden rounded-full bg-salt-navy px-3 py-1 text-sm font-semibold text-white">Sign in</Link>}
+        {user && <Link href="/account" className="md:hidden rounded-full bg-salt-navy px-2.5 py-1 text-xs text-white">{planLabel(plan)}</Link>}
       </div>
     </header>
   );

@@ -6,6 +6,10 @@
   --color-ocean-500: #1f8ac0;
   --color-ocean-100: #e3f2fa;
   --color-sand-50: #fbf8f2;
+  /* Salt Supply Co. logo colours */
+  --color-salt-navy: #1B2541;
+  --color-salt-bone: #EEE6D3;
+  --color-salt-red: #C8323B;
 }
 html, body { background: var(--color-sand-50); color: #0f172a; }
 body { -webkit-tap-highlight-color: transparent; }
