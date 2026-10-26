@@ -48,7 +48,21 @@ const trialEndDefault = () => new Date(Date.now() + BRAND.trialDays * 864e5).toI
 const nzDate = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString("en-CA", { timeZone: "Pacific/Auckland" }) : null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  return authMode() === "supabase" ? <SupabaseAuth>{children}</SupabaseAuth> : <MockAuth>{children}</MockAuth>;
+  return authMode() === "supabase" ? <SupabaseAuth><AuthHint />{children}</SupabaseAuth> : <MockAuth><AuthHint />{children}</MockAuth>;
+}
+
+/** Who's looking, for CSS: html[data-auth] = guest | free | paid. The layout's head script sets it from
+ *  this hint before paint, so a signed-in user never sees the sales home flash; this corrects it once known. */
+export const AUTH_HINT_KEY = "saltsupply-auth-hint";
+function AuthHint() {
+  const { ready, user, plan } = useAuth();
+  useEffect(() => {
+    if (!ready) return;
+    const a = !user ? "guest" : isPaid(plan) ? "paid" : "free";
+    document.documentElement.dataset.auth = a;
+    try { localStorage.setItem(AUTH_HINT_KEY, a); } catch {}
+  }, [ready, user, plan]);
+  return null;
 }
 export function useAuth() { const c = useContext(AuthCtx); if (!c) throw new Error("no AuthProvider"); return c; }
 

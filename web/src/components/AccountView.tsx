@@ -9,6 +9,7 @@ import { FishTimesPicker } from "@/components/FishTimesPicker";
 import { fitsTimes } from "@/lib/fishtimes";
 import { pickOf } from "@/lib/call";
 import { PauseControl } from "@/components/PauseControl";
+import { PhoneAlerts } from "@/components/PhoneAlerts";
 import { pauseLabel } from "@/lib/pause";
 
 /** Per spot: every window the alert could pick (1 to 2 days ahead, >= 4.5) with its email, built on the server. */
@@ -63,6 +64,7 @@ export function AccountView({ spots, alerts: alertMails, welcome, trial }: { spo
       <section id="fishing-times" className="rounded-2xl bg-white p-5 ring-1 ring-slate-100">
         <FishTimesPicker value={fishingTimes} onChange={setFishingTimes} />
       </section>
+      <PhoneAlerts spots={spots} />
       <section className="rounded-2xl bg-white p-5 ring-1 ring-slate-100 space-y-4">
         <div className="flex items-center justify-between">
           <div><h2 className="font-bold">Fishing-window email alerts</h2><p className="text-sm text-slate-500">For your saved spots: {names.length ? names.join(", ") : "none yet"}</p></div>

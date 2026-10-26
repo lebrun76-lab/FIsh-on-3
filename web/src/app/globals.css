@@ -13,3 +13,9 @@
 }
 html, body { background: var(--color-sand-50); color: #0f172a; }
 body { -webkit-tap-highlight-color: transparent; }
+
+/* Signed-in vs guest content (html[data-auth] is set before paint, see layout.tsx and AuthHint). */
+.member-only { display: none; }
+html[data-auth="free"] .member-only, html[data-auth="paid"] .member-only { display: block; }
+html[data-auth="free"] .guest-only, html[data-auth="paid"] .guest-only { display: none; }
+html[data-auth="paid"] .free-only { display: none; }

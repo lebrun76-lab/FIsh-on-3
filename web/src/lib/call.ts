@@ -153,7 +153,7 @@ export function bestCall(f: SpotForecast, scope: Scope, now = Date.now(), only?:
 export const ALERT_LEAD_DAYS = [1, 2];
 export const alertDates = (today = nzTodayISO()) => ALERT_LEAD_DAYS.map((n) => addDays(today, n));
 export function alertCall(f: SpotForecast, times: FishTime[] = DEFAULT_FISH_TIMES, now = Date.now(), keep?: (w: FishingWindow) => boolean): Call {
-  return bestCall(f, "horizon", now, { dates: alertDates(), keep: (w) => fitsTimes(w.start, w.end, times) && (!keep || keep(w)) });
+  return bestCall(f, "horizon", now, { dates: alertDates(new Intl.DateTimeFormat("en-CA", { timeZone: "Pacific/Auckland" }).format(new Date(now))), keep: (w) => fitsTimes(w.start, w.end, times) && (!keep || keep(w)) });
 }
 
 /** "Snapper, kingfish" for a sentence, from engine names like "Blue Cod". */

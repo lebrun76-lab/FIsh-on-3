@@ -4,7 +4,7 @@ export default function Species() {
   return (
     <div className="pt-6 space-y-4">
       <h1 className="text-2xl md:text-3xl font-bold">Species guide</h1>
-      <p className="text-slate-600">What to target, when, how, and the legal size. Free for everyone.</p>
+      <p className="text-slate-600">What to target, when, how, and the legal size.<span className="guest-only inline"> Free for everyone.</span></p>
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">{SPECIES.map((s) => (
         <div key={s.id} className="rounded-2xl bg-white p-4 ring-1 ring-slate-100">
           <div className="flex justify-between"><b>{s.name}{s.maori ? ` · ${s.maori}` : ""}</b><span className="text-xs text-slate-500">{s.water === "salt" ? "Saltwater" : "Freshwater"}</span></div>

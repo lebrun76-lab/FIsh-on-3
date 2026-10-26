@@ -5,15 +5,19 @@ import { SpotCard } from "@/components/SpotCard";
 import { BRAND } from "@/lib/brand";
 import { HeroRotator } from "@/components/HeroRotator";
 import { HOME_HERO_SLIDES } from "@/lib/photos";
-import { HomeNudge, YourSpots } from "@/components/Onboarding";
+import { HomeNudge } from "@/components/Onboarding";
+import { MemberHome } from "@/components/MemberHome";
 
 export default async function Home() {
   const [all, rc] = await Promise.all([allSummaries(), regionCalls()]);
   const top = [...all].sort((a, b) => b.score - a.score).slice(0, 4);
   const calls = rc.slice(0, 3);
+  // Signed in: the map and your spots only (MemberHome). Guests: the overview. html[data-auth] picks one
+  // before paint (layout.tsx), so neither flashes.
   return (
-    <div className="space-y-8 pt-6">
-      <YourSpots all={all} />
+    <>
+    <div className="member-only"><MemberHome all={all} /></div>
+    <div className="guest-only space-y-8 pt-6">
       <section className="grid grid-cols-1 gap-4 md:grid-cols-2 md:items-center">
         <div>
           <p className="text-sm font-semibold uppercase tracking-wide text-slate-500">NZ fishing forecast</p>
@@ -46,6 +50,7 @@ export default async function Home() {
         ))}
       </section>
     </div>
+    </>
   );
 }
 

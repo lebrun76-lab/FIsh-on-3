@@ -22,10 +22,10 @@ export function TopBar() {
       <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-2.5">
         <Link href="/" aria-label={`${BRAND.name} home`} className="shrink-0"><Logo className="block h-9 w-auto md:h-10" /></Link>
         <nav className="hidden md:flex items-center gap-5 text-sm">
-          {DESKTOP.map((t) => (
+          {DESKTOP.filter((t) => !(user && t.href === "/pricing")).map((t) => (
             <Link key={t.href} href={t.href} className={path.startsWith(t.href) ? "text-salt-navy font-semibold" : "text-salt-navy/70 hover:text-salt-navy"}>{t.label}</Link>
           ))}
-          {user ? <span className="rounded-full bg-salt-navy px-3 py-1 text-xs text-white">{user.name} · {planLabel(plan)}</span>
+          {user ? <Link href="/account" className="rounded-full bg-salt-navy px-3 py-1 text-xs text-white">{user.name} · {planLabel(plan)}</Link>
             : <Link href="/signin" className="rounded-full bg-salt-navy px-4 py-1.5 font-semibold text-white">Sign in</Link>}
         </nav>
         {!user && <Link href="/signin" className="md:hidden rounded-full bg-salt-navy px-3 py-1 text-sm font-semibold text-white">Sign in</Link>}

@@ -83,6 +83,7 @@ export function dueFollowups(alerts: AlertRow[], accounts: Record<string, Follow
   const seen = new Set<string>();
   return alerts.filter((a) => {
     const acc = accounts[a.user_id];
+    if ((a.channel ?? "email") !== "email") return false; // follow-ups hang off email alerts only, not phone alerts
     if (!acc || acc.unsubscribed || isPaused(acc.paused_until, now) || a.followup_sent_at || seen.has(a.id) || !followupDue(a, now)) return false;
     seen.add(a.id);
     return true;
