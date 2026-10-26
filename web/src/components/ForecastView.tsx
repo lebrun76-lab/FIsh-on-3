@@ -56,7 +56,7 @@ function LeastBadCard({ w, withDay }: { w: LeastBad; withDay?: boolean }) {
 function NoWindowCard({ reason, when, leastBad, withDay }: { reason?: string | null; when: string; leastBad?: LeastBad | null; withDay?: boolean }) {
   const t = noWindowText(reason, when);
   return (
-    <div className="grid gap-2 md:grid-cols-3">
+    <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
       <div className="rounded-2xl bg-rose-50 p-4 text-sm text-rose-900 ring-1 ring-rose-100 md:col-span-2">
         <div className="font-bold">No fishable window</div>
         <p className="mt-1">{t.main}</p>
@@ -212,7 +212,7 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
               <div key={date}>
                 {pro && <div className="mb-1 text-sm font-semibold text-slate-700">{label} <span className="font-normal text-slate-400">· {ws.length ? `${ws.length} window${ws.length > 1 ? "s" : ""}` : "no fishable window"}</span></div>}
                 {!ws.length && vc.source === "hourly" && vc.date === date ? <p className="rounded-2xl bg-white p-4 text-slate-700 ring-1 ring-slate-100">{hourlyNote}</p>
-                  : ws.length ? <div className="grid gap-2 md:grid-cols-2">{ws.map((w) => <WindowCard key={w.start} w={w} pick={isPick(w)} near={isNearBest(f, w)} />)}</div>
+                  : ws.length ? <div className="grid grid-cols-1 gap-2 md:grid-cols-2">{ws.map((w) => <WindowCard key={w.start} w={w} pick={isPick(w)} near={isNearBest(f, w)} />)}</div>
                   : day && (day.no_window_reason || day.least_bad_window) ? <NoWindowCard reason={day.no_window_reason} when={date === realToday ? "today" : `on ${dateLabel(date)}`} leastBad={day.least_bad_window} />
                   : <p className="rounded-2xl bg-white p-4 text-slate-600 ring-1 ring-slate-100">No standout window {date === realToday ? "today" : `on ${dateLabel(date)}`}. Forecasts update every few hours.</p>}
               </div>
@@ -263,7 +263,7 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
         {f.spot.coastal && <div className="flex flex-wrap gap-2 text-sm">{f.tides.filter((t) => t.time.slice(0, 10) >= today).slice(0, 4).map((t) => <span key={t.time} className="rounded-full bg-white px-3 py-1 ring-1 ring-slate-100">{t.type === "high" ? "▲ High" : "▼ Low"} {dayShort(t.time)} {clock(t.time)} · {t.height_m} m</span>)}</div>}
         {f.spot.coastal && f.tide_datum && <p className="text-xs text-slate-500">Tide heights in {DATUM_TEXT[f.tide_datum] ?? f.tide_datum}. Not for navigation.</p>}
         {!pro && <p className="text-xs text-slate-500">Charts show {dateLabel(today)}{f.hourly_step_h ? ` in ${f.hourly_step_h}-hour steps` : ""}.</p>}
-        <div className="grid gap-3 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           <WindChart data={hourly} />
           {f.spot.coastal && <SwellChart data={hourly} />}
           {f.spot.coastal && <TideChart data={tideData} />}
@@ -280,7 +280,7 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
         <section className="space-y-2">
           <h2 className="text-lg font-bold">What’s on {todayWord}</h2>
           {closed.map((c) => <div key={c.name} className="rounded-2xl bg-rose-50 p-3 text-sm text-rose-900 ring-1 ring-rose-100"><b>{c.name}: closed.</b> {c.notes[0]}</div>)}
-          <div className="grid gap-2 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
             {engineSpecies.filter((x) => x.status !== "closed").slice(0, pro ? 8 : 3).map((x) => (
               <div key={x.name} className="rounded-2xl bg-white p-3 text-sm ring-1 ring-slate-100">
                 <div className="flex items-center justify-between"><b>{x.name}</b><span className={`rounded-full px-2 py-0.5 text-xs ${x.status === "peak" ? "bg-emerald-100 text-emerald-800" : x.status === "in season" ? "bg-lime-100 text-lime-800" : "bg-slate-100 text-slate-600"}`}>{x.status}</span></div>
@@ -298,7 +298,7 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
       {/* 6. Rules — always free */}
       <section className="space-y-2">
         <div className="flex items-end justify-between"><h2 className="text-lg font-bold">Rules here</h2><Link href="/rules" className="text-sm font-semibold text-ocean-700">Rules map →</Link></div>
-        <div className="grid gap-2 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
           {species.map((s) => (
             <div key={s.id} className="rounded-2xl bg-white p-3 ring-1 ring-slate-100 text-sm">
               <div className="font-semibold">{s.name}{s.maori ? ` · ${s.maori}` : ""}</div>
@@ -311,7 +311,7 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
       </section>
 
       {/* 7. Pro tools */}
-      <section className="grid gap-3 md:grid-cols-2">
+      <section className="grid grid-cols-1 gap-3 md:grid-cols-2">
         <OfflineButton spotId={f.spot.id} pro={pro} />
         {pro ? <Link href="/catch-log" className="rounded-2xl bg-white p-4 ring-1 ring-slate-100"><div className="font-semibold">Log a catch here</div><div className="text-sm text-slate-600">Species, size, photo. We add the wind, sea and tide for you.</div></Link>
           : <Locked compact title="Catch log" body="Log what you caught and see which conditions work at your spots." />}

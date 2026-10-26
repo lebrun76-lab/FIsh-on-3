@@ -35,7 +35,7 @@ export function PricingCards() {
   };
   const annualSave = Math.round((1 - BRAND.proAnnualNzd / (BRAND.proPriceNzd * 12)) * 100);
   return (
-    <div className="grid gap-4 md:grid-cols-2">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       {full && <p role="status" className="rounded-2xl bg-ocean-100 p-4 text-sm text-ocean-900 md:col-span-2">You&apos;ve saved {FREE_FAV_LIMIT} spots, which is the most Free holds. Remove one from Saved to swap it, or try Pro to save up to 5.</p>}
       <div className="rounded-3xl bg-white p-6 ring-1 ring-slate-200">
         <div className="text-lg font-bold">Free</div><div className="mt-1 text-3xl font-extrabold">$0</div>

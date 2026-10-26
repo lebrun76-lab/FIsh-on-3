@@ -41,7 +41,7 @@ export function YourSpots({ all }: { all: SpotSummary[] }) {
   return (
     <section>
       <div className="mb-3 flex items-end justify-between"><h2 className="text-xl font-bold">Your spots</h2><Link href="/saved" className="text-sm text-ocean-700 font-semibold">Manage →</Link></div>
-      <div className="grid gap-3 md:grid-cols-2">{mine.map((s) => (
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">{mine.map((s) => (
         <div key={s.id}>{s.id === home && <div className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Home spot</div>}<SpotCard s={s} /></div>
       ))}</div>
     </section>

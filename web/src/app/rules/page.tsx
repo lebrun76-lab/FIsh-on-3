@@ -11,7 +11,7 @@ export default function Rules() {
       <h1 className="text-2xl md:text-3xl font-bold">Rules & closures map</h1>
       <p className="text-slate-600">Marine reserves, seasonal closures, rāhui and area rules. Free for everyone. <Link href="/species" className="font-semibold text-ocean-700">Sizes & bag limits →</Link></p>
       <p className="rounded-xl bg-yellow-50 p-3 text-sm text-yellow-900 ring-1 ring-yellow-200">Sample data for the prototype, not verified. Production pulls MPI and DOC data with a “last checked” date and links to the official rule.</p>
-      <div className="grid gap-4 md:grid-cols-[1fr_1.2fr]">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-[1fr_1.2fr]">
         <div className="rounded-2xl bg-ocean-100 p-2 ring-1 ring-slate-100">
           <svg viewBox="0 0 320 400" className="w-full max-h-[70vh]">
             {SPOTS.map((s) => <circle key={s.id} cx={X(s.lon)} cy={Y(s.lat)} r={3} fill="#64748b" opacity={0.5} />)}

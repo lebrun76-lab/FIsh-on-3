@@ -5,11 +5,12 @@ import { speciesFor, sizeText } from "./rules";
 import { dateLabel, nzTodayISO } from "./time";
 import { bestCall, targetList } from "./call";
 
-export interface SpotSummary { id: string; name: string; region: string; island: string; lat: number; lon: number; coastal: boolean; species: string[]; rating: Rating; score: number; headline: string; mock?: boolean; }
+export interface SpotSummary { id: string; name: string; region: string; island: string; lat: number; lon: number; coastal: boolean; species: string[]; rating: Rating; score: number; headline: string; best: string | null; mock?: boolean; }
 export async function allSummaries(): Promise<SpotSummary[]> {
   return (await allForecasts()).map((f) => {
     const s = f.spot;
-    return { id: s.id, name: s.name, region: s.region, island: s.island, lat: s.lat, lon: s.lon, coastal: s.coastal, species: s.species, rating: f.verdict.rating, score: f.verdict.score, headline: f.verdict.headline, mock: f.data_status === "mock-fallback" };
+    const c = bestCall(f, "horizon");
+    return { id: s.id, name: s.name, region: s.region, island: s.island, lat: s.lat, lon: s.lon, coastal: s.coastal, species: s.species, rating: f.verdict.rating, score: f.verdict.score, headline: f.verdict.headline, best: c.kind === "window" ? c.headline : null, mock: f.data_status === "mock-fallback" };
   });
 }
 

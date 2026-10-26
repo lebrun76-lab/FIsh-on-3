@@ -70,7 +70,7 @@ export function AccountView({ spots, alerts: alertMails, welcome, trial }: { spo
         </div>
         <div>
           <div className="mb-1 text-sm font-semibold">Alert type</div>
-          <div className="grid gap-2 sm:grid-cols-2 text-sm">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 text-sm">
             <div className={`rounded-xl p-3 ring-1 ${pro ? "ring-ocean-500 bg-ocean-100/50" : "ring-slate-200 opacity-60"}`}>Weekly outlook {pro ? "" : "(Pro)"}<br /><span className="text-slate-500">Thursday evening: the best weekend window</span></div>
             <div className={`rounded-xl p-3 ring-1 ${pro ? "ring-ocean-500 bg-ocean-100/50" : "ring-slate-200 opacity-60"}`}>“It’s on” alert {pro ? "" : "(Pro)"}<br /><span className="text-slate-500">When a good window shows up 1 to 2 days ahead</span></div>
           </div>

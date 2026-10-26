@@ -20,7 +20,7 @@ export function SavedList({ all }: { all: SpotSummary[] }) {
     <div className="pt-6 space-y-4">
       <div className="flex items-end justify-between"><h1 className="text-2xl font-bold">Saved spots</h1><span className="text-sm text-slate-500">{plan === "free" ? `${mine.length}/${FREE_FAV_LIMIT} on Free` : `${mine.length} saved`}</span></div>
       {homeSpot && (<div><div className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500">Home spot</div><SpotCard s={homeSpot} /></div>)}
-      <div className="grid gap-3 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         {mine.filter((s) => s.id !== home).map((s) => (
           <div key={s.id} className="space-y-1"><SpotCard s={s} /><button onClick={() => setHome(s.id)} className="text-xs text-ocean-700 pl-2">Make home spot</button></div>
         ))}

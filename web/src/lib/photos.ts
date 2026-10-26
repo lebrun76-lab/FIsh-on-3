@@ -35,3 +35,17 @@ export const SPOT_BANNERS: Record<string, Photo> = {
   stewart_island: { src: "/photos/spot-stewart_island-p19.jpg", width: 2400, height: 1350, place: "Port Pegasus, Stewart Island", alt: "Snorkeller in a calm, overcast inlet with a rocky, bush-covered shore", position: "50% 50%" },
   bluff: { src: "/photos/spot-bluff-p21.jpg", width: 2400, height: 1800, place: "Foveaux Strait", alt: "Low sun over choppy water with a rod in front and a seabird on the water", position: "50% 55%" },
 };
+
+/** Home page hero rotation: the current hero first (server-rendered, preloaded), then alternating
+ * North and South Island photos already used on the site. Positions tuned for the 3:2 hero crop. */
+const hero = (id: string, position: string): Photo => ({ ...SPOT_BANNERS[id], position });
+export const HOME_HERO_SLIDES: Photo[] = [
+  HOME_HERO,
+  hero("bay_of_plenty", "50% 50%"),
+  hero("marlborough_sounds", "50% 55%"),
+  hero("coromandel", "50% 50%"),
+  hero("moeraki", "50% 55%"),
+  hero("hawkes_bay", "50% 55%"),
+  hero("fiordland", "50% 50%"),
+  hero("far_north", "50% 55%"),
+];
