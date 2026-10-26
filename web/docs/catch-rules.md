@@ -1,11 +1,18 @@
 # Size and bag limits
 
-A free guide panel on every spot page and on `/rules`. You tap a fish (the spot's own species first, "More fish" for
-the rest) and it shows that spot's rules straight away: the minimum size with "Under that, put it back.", the daily
-limit per person, any per-boat or shared limit, the combined finfish total for the area, closures and notes. No length
-input and no over/under verdict. No-take species say "No take here. Put it back." and a closure in force says "Closed
-here until X. Put it back." It never says "you can keep it".
-It's a guide. The law is the MPI rules.
+A free guide panel on every spot page and on `/rules`. Tap a fish (the spot's own species first, "More fish" for the
+rest) and the panel shows that spot's rules in big numbers: minimum size ("Under that, put it back." underneath),
+daily limit, per-boat or shared limit if any, and the area finfish total. Then one "Source: MPI" link to that rule area's
+MPI page. No length input, no explanations under the numbers.
+
+The only words kept, because they are the rule: "Under that, put it back.", "No take here. Put it back.",
+"Closed here until X. Put it back." and Jackson Bay's "Whole or gutted only." Disputed rows show the stricter number,
+hidden rows (stale or null) show a dash, and both get a small "check MPI" next to the source link, as do page-only
+rows. Split spots show "Depends where you are" with area buttons. Lakes say "Freshwater: Fish & Game rules apply."
+The footer is one line: "Guide only. Rāhui may apply. MPI data CC BY 4.0."
+
+All notes, verification and source metadata stay in the JSON; the panel just doesn't show them. It never says
+"you can keep it". It's a guide. The law is the MPI rules.
 
 ## Files
 

@@ -1,59 +1,49 @@
 "use client";
 import { useMemo, useState } from "react";
 import {
-  CATCH_SPECIES, LINKS, MPI_ATTRIBUTION, closedNow, dailyText, minText, totalText, rowFor, showable, speciesIdsFor, spotRules, statusLine, zoneById,
-  type CatchRow, type CatchZone, type Tone,
+  CATCH_SPECIES, LINKS, closedNow, effectiveDaily, rowFor, showable, speciesIdsFor, spotRules, zoneById,
+  type CatchRow, type CatchZone,
 } from "@/lib/catch";
 
-const TONE: Record<Tone, string> = {
-  back: "bg-rose-50 text-rose-900 ring-rose-200",
-  check: "bg-amber-50 text-amber-900 ring-amber-200",
-};
-const nzDate = (iso: string) => new Date(`${iso}T12:00:00+13:00`).toLocaleDateString("en-NZ", { day: "numeric", month: "short", year: "numeric", timeZone: "Pacific/Auckland" });
+const DASH = "–";
+const ROW = "self-center text-sm text-slate-500";
+const BIG = "text-2xl font-bold leading-tight text-slate-900";
+const SMALL = "text-sm font-normal text-slate-500";
 
 function Fixed() {
   return (
-    <div className="space-y-1.5 border-t border-slate-100 pt-3 text-xs text-slate-600">
-      <p className="font-semibold text-slate-800">Guide only. The law is the MPI rules. Check the <a className="underline" href={LINKS.mpiApp} target="_blank" rel="noopener noreferrer">NZ Fishing Rules app</a> or <a className="underline" href={LINKS.mpiRules} target="_blank" rel="noopener noreferrer">mpi.govt.nz</a> before you keep fish.</p>
-      <p>Local rāhui may apply. See <a className="underline" href={LINKS.mpiClosures} target="_blank" rel="noopener noreferrer">MPI closures</a> and <a className="underline" href={LINKS.docReserves} target="_blank" rel="noopener noreferrer">DOC marine reserves</a>.</p>
-      <p className="text-slate-400">{MPI_ATTRIBUTION.replace("Creative Commons Attribution 4.0 International licence.", "")}<a className="underline" href={LINKS.ccBy} target="_blank" rel="license noopener noreferrer">Creative Commons Attribution 4.0 International licence</a>.</p>
-    </div>
+    <p className="border-t border-slate-100 pt-3 text-xs text-slate-400">
+      Guide only. <a className="underline" href={LINKS.mpiClosures} target="_blank" rel="noopener noreferrer">Rāhui</a> may apply. MPI data <a className="underline" href={LINKS.ccBy} target="_blank" rel="license noopener noreferrer">CC BY 4.0</a>.
+    </p>
   );
 }
 
-const isBoat = (t: string) => /vessel|boat/i.test(t);
-
 function Answer({ row, zone, label }: { row?: CatchRow; zone?: CatchZone; label: string | null }) {
   const ok = showable(row);
-  const v = statusLine(row);
-  const shut = row && ok ? closedNow(row) : null;
+  const shut = ok ? closedNow(row) : null;
+  const noTake = ok && row.dailyLimit === "no-take";
   const src = row?.sourceUrl ?? zone?.sourceUrl ?? LINKS.mpiRules;
+  const check = !ok || row.disputed || row.pageOnly || !!row.landedState?.includes("Check MPI");
+  const daily = !ok ? DASH : row.dailyLimit === "combined" ? "Part of the total" : String(effectiveDaily(row).n);
   return (
     <div className="space-y-2 rounded-xl bg-white p-3 ring-1 ring-slate-200">
       {label && <div className="text-xs font-semibold uppercase tracking-wide text-slate-500">{label}</div>}
-      {v && <p role="status" className={`rounded-lg px-3 py-2 text-base font-semibold ring-1 ${TONE[v.tone]}`}>{v.text}</p>}
-      {ok ? (
-        <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm">
-          <dt className="text-slate-500">Size</dt>
-          <dd>{row.dailyLimit === "no-take" ? "No take here. Put it back." : <>{minText(row)}{typeof row.minSizeCm === "number" && <span className="block font-semibold">Under that, put it back.</span>}</>}</dd>
-          {row.dailyLimit !== "no-take" && <><dt className="text-slate-500">Per person</dt><dd>{dailyText(row, zone)}</dd></>}
-          {row.shared && <><dt className="text-slate-500">{isBoat(row.shared) ? "Per boat" : "Shared"}</dt><dd>{row.shared}</dd></>}
-          <dt className="text-slate-500">All finfish</dt><dd>{totalText(row)}</dd>
-          {row.closure && <><dt className="text-slate-500">Closure</dt><dd className={shut ? "font-semibold text-rose-800" : ""}>{row.closure.text}{shut ? " Closed now." : ""}</dd></>}
-          {row.accumulation && <><dt className="text-slate-500">Over days</dt><dd>{row.accumulation}</dd></>}
-          {row.landedState && <><dt className="text-slate-500">Landed</dt><dd>{row.landedState}</dd></>}
-        </dl>
+      {shut && <p className="text-sm font-semibold text-rose-800">Closed here until {shut.until}. Put it back.</p>}
+      {noTake ? (
+        <p className="text-sm font-semibold text-rose-800">No take here. Put it back.</p>
       ) : (
-        <p className="text-sm text-slate-700">No numbers shown for this one. <a className="font-semibold text-ocean-700 underline" href={src} target="_blank" rel="noopener noreferrer">Check the MPI page</a>.</p>
+        <dl className="grid grid-cols-[6.5rem_1fr] gap-x-3 gap-y-2">
+          <dt className={ROW}>Minimum</dt>
+          <dd className={BIG}>{!ok ? DASH : row.minSizeCm === "none" ? "None" : <>{row.minSizeCm} <span className={SMALL}>cm</span><span className="block text-xs font-normal text-slate-500">Under that, put it back.</span></>}</dd>
+          <dt className={ROW}>Daily limit</dt><dd className={daily.length > 3 ? "text-base font-semibold" : BIG}>{daily}</dd>
+          {ok && row.shared && <><dt className={ROW}>{/vessel|boat/i.test(row.shared) ? "Per boat" : "Shared"}</dt><dd className={/^Vessel limit \d+/.test(row.shared) ? BIG : "text-sm"}>{row.shared.replace(/^Vessel limit (\d+) .*$/, "$1")}</dd></>}
+          <dt className={ROW}>Area total</dt><dd className={BIG}>{ok || zone ? <>{ok ? row.combinedDaily : zone!.combinedDaily} <span className={SMALL}>finfish{ok && row.combinedVessel ? `, ${row.combinedVessel} per boat` : ""}</span></> : DASH}</dd>
+          {ok && row.landedState?.startsWith("Whole or gutted only") && <><dt className={ROW}>Landed</dt><dd className="self-center text-sm font-semibold">Whole or gutted only.</dd></>}
+        </dl>
       )}
-      {row?.disputed && <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-900 ring-1 ring-amber-200">MPI sources differ, check MPI. We show the lower number.</p>}
-      {row?.pageOnly && <p className="text-xs text-slate-500">This number is from the MPI area page only, not the 2026 notice.</p>}
-      {row?.notes.map((n) => <p key={n} className="text-xs text-slate-500">{row.disputed ? n.replace("MPI sources differ, check MPI. ", "") : n}</p>)}
-      {zone?.notes.map((n) => <p key={n} className="text-xs text-slate-500">{n}</p>)}
       <p className="text-xs text-slate-400">
-        Source: <a className="underline" href={src} target="_blank" rel="noopener noreferrer">MPI {zone?.fma ?? ""} rules</a>{zone ? ` (last reviewed ${nzDate(zone.lastReviewedOnSource)})` : ""}
-        {row?.noticePart && row.noticeUrl ? <>, <a className="underline" href={row.noticeUrl} target="_blank" rel="noopener noreferrer">2026 notice</a> cl. {row.noticePart}</> : null}
-        {row ? (row.verified && row.verifiedOn ? `. Checked against MPI twice, last on ${nzDate(row.verifiedOn)}.` : `. We checked it ${nzDate(row.dateChecked)}. Not confirmed by a second check.`) : "."}
+        <a className="underline" href={src} target="_blank" rel="noopener noreferrer">Source: MPI</a>
+        {check && <span className="ml-2 font-semibold text-amber-700">check MPI</span>}
       </p>
     </div>
   );
@@ -78,7 +68,6 @@ export function CatchCheck({ spotId, spotSpecies = [], spots }: { spotId?: strin
     <section aria-labelledby="catch-check" className="space-y-3 rounded-2xl bg-white p-4 ring-1 ring-slate-100">
       <div>
         <h2 id="catch-check" className="text-lg font-bold">Size and bag limits</h2>
-        <p className="text-sm text-slate-600">Pick a fish to see the rules for this spot. Free, no sign-in.</p>
       </div>
 
       {spots && (
@@ -91,23 +80,21 @@ export function CatchCheck({ spotId, spotSpecies = [], spots }: { spotId?: strin
       )}
 
       {!sr ? (
-        <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-900 ring-1 ring-amber-200">We haven't mapped this spot to an MPI area yet. <a className="font-semibold underline" href={LINKS.mpiRules} target="_blank" rel="noopener noreferrer">Find your area on mpi.govt.nz</a>.</p>
+        <p className="text-sm text-slate-700">Not mapped yet. <a className="underline" href={LINKS.mpiRules} target="_blank" rel="noopener noreferrer">Source: MPI</a></p>
       ) : sr.freshwater ? (
-        <p className="rounded-xl bg-ocean-100 p-3 text-sm text-ocean-900">Freshwater: Fish &amp; Game rules apply. You need a licence, and seasons and limits are set by region. <a className="font-semibold underline" href={LINKS.fishAndGame} target="_blank" rel="noopener noreferrer">Fish &amp; Game rules</a>.</p>
+        <p className="text-sm text-slate-700">Freshwater: <a className="underline" href={LINKS.fishAndGame} target="_blank" rel="noopener noreferrer">Fish &amp; Game rules</a> apply.</p>
       ) : (
         <>
           <div className="space-y-2">
-            <p className="text-sm font-semibold">{here.length && !more ? "Fish caught here" : "Fish"}</p>
             <div className="flex flex-wrap gap-2" role="group" aria-label="Fish">
               {chips.map((id) => <button type="button" key={id} aria-pressed={species === id} className={pill(species === id)} onClick={() => setSpecies(id)}>{CATCH_SPECIES.find((x) => x.id === id)!.name}</button>)}
               {here.length > 0 && <button type="button" className="rounded-full px-3 py-2 text-sm text-ocean-700 underline" onClick={() => { setMore(!more); if (more && !here.includes(species)) setSpecies(here[0]); }}>{more ? "Fewer fish" : "More fish"}</button>}
             </div>
-            {species === "blue_cod" && <p className="text-xs text-slate-500">Blue cod are measured from the nose to the end of the middle ray of the tail.</p>}
           </div>
 
           {options.length > 1 && (
             <div className="space-y-2">
-              <p className="text-sm"><b>Depends where you are.</b> {sr.note}</p>
+              <p className="text-sm font-semibold">Depends where you are</p>
               <div className="flex flex-wrap gap-2">
                 <button type="button" className={pill(where === "all")} onClick={() => setWhere("all")}>Show all</button>
                 {options.map((o) => <button type="button" key={o.zone} className={pill(where === o.zone)} onClick={() => setWhere(o.zone)}>{o.label}</button>)}
@@ -115,7 +102,7 @@ export function CatchCheck({ spotId, spotSpecies = [], spots }: { spotId?: strin
             </div>
           )}
           <div className="space-y-2">
-            {shown.map((o) => <Answer key={o.zone} row={rowFor(o.zone, species)} zone={zoneById(o.zone)} label={options.length > 1 ? o.label : zoneById(o.zone)?.name ?? null} />)}
+            {shown.map((o) => <Answer key={o.zone} row={rowFor(o.zone, species)} zone={zoneById(o.zone)} label={options.length > 1 ? o.label : null} />)}
           </div>
         </>
       )}
