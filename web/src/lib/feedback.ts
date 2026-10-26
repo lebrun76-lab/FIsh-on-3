@@ -15,6 +15,7 @@ import crypto from "node:crypto";
 import { BRAND } from "./brand";
 import { howdItGoEmail, type EmailTemplate } from "./emails";
 import { sendEmail } from "./mailer";
+import { serviceHeaders, serviceRole } from "./supabase/config";
 import { getSpot } from "./mock";
 import { isPaused, nzDate } from "./pause";
 import type { SentAlert } from "./alerts";
@@ -37,7 +38,7 @@ export interface FollowupAccount { email: string; paused_until: string | null; u
 export function feedbackSecret(): string {
   const s = process.env.FEEDBACK_SECRET;
   if (s) return s;
-  if (process.env.RESEND_API_KEY || process.env.SUPABASE_URL) throw new Error("FEEDBACK_SECRET must be set outside mock mode");
+  if (process.env.RESEND_API_KEY || serviceRole()) throw new Error("FEEDBACK_SECRET must be set outside mock mode");
   return "fbk_mock_prototype";
 }
 const sign = (alertId: string, exp: number, secret: string) => crypto.createHmac("sha256", secret).update(`howd-it-go.v1.${alertId}.${exp}`, "utf8").digest("base64url");
@@ -121,7 +122,7 @@ export function memoryStore(alerts: AlertRow[] = []) {
 }
 /** Service-role REST writes (bypass RLS) when Supabase is configured; otherwise one in-memory store. */
 function supabaseStore(url: string, key: string): FeedbackStore {
-  const h = { apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json" };
+  const h = { ...serviceHeaders(key), "Content-Type": "application/json" };
   const one = async <T>(path: string) => { const r = await fetch(`${url}/rest/v1/${path}`, { headers: h }); if (!r.ok) throw new Error(`${path.split("?")[0]} ${r.status}`); return ((await r.json()) as T[])[0] ?? null; };
   return {
     alert: (id) => one<AlertRow>(`alerts_sent?id=eq.${encodeURIComponent(id)}&select=id,user_id,spot_id,window_id,target_species,window_start,window_end,score,sent_at,followup_sent_at`),
@@ -140,8 +141,8 @@ export function demoAlert(now = Date.now()): AlertRow {
 }
 const g = globalThis as unknown as { __feedbackStore?: ReturnType<typeof memoryStore> };
 export function feedbackStore(): FeedbackStore {
-  const url = process.env.SUPABASE_URL, key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (url && key) return supabaseStore(url, key);
+  const sr = serviceRole();
+  if (sr) return supabaseStore(sr.url, sr.key);
   return (g.__feedbackStore ??= memoryStore([demoAlert()]));
 }
 

@@ -2,7 +2,7 @@
 // Tokens (valid, expiry, tamper), GET never records, one answer per alert, change within 7 days,
 // send timing (8am NZ next day, DST), skip paused/unsubscribed, dedupe, didnt_go out of hit rates,
 // export has no user ids, engine 2.4 window.id / target_species (fixture) with older output fallback.
-delete process.env.SUPABASE_URL; delete process.env.RESEND_API_KEY; delete process.env.FEEDBACK_SECRET; // mock mode only
+delete process.env.SUPABASE_URL; delete process.env.NEXT_PUBLIC_SUPABASE_URL; delete process.env.SUPABASE_SERVICE_ROLE_KEY; delete process.env.RESEND_API_KEY; delete process.env.FEEDBACK_SECRET; // mock mode only
 import { allForecasts } from "../src/lib/forecasts";
 import { planAlerts, sentRows, windowIdOf } from "../src/lib/alerts";
 import { howdItGoEmail, wordsBeforeButton } from "../src/lib/emails";

@@ -14,7 +14,7 @@ import { POST as pauseRoute } from "../src/app/api/billing/pause/route";
 import { POST as resumeRoute } from "../src/app/api/billing/resume/route";
 import { POST as webhookRoute } from "../src/app/api/stripe/webhook/route";
 
-delete process.env.STRIPE_SECRET_KEY; delete process.env.STRIPE_TEST_SECRET_KEY; delete process.env.SUPABASE_URL; delete process.env.STRIPE_WEBHOOK_SECRET; delete process.env.RESEND_API_KEY; // mock mode only
+delete process.env.STRIPE_SECRET_KEY; delete process.env.STRIPE_TEST_SECRET_KEY; delete process.env.SUPABASE_URL; delete process.env.NEXT_PUBLIC_SUPABASE_URL; delete process.env.SUPABASE_SERVICE_ROLE_KEY; delete process.env.STRIPE_WEBHOOK_SECRET; delete process.env.RESEND_API_KEY; // mock mode only
 const probs: string[] = [];
 const eq = (what: string, got: unknown, want: unknown) => { if (JSON.stringify(got) !== JSON.stringify(want)) probs.push(`${what}: got ${JSON.stringify(got)}, want ${JSON.stringify(want)}`); };
 const nz = (s: string) => Date.parse(s);

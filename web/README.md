@@ -64,6 +64,25 @@ See `docs/forecast-api.md` (it includes the engine→v1 mapping and the proposed
 - `GET /api/v1/spots/{id}/windows?min_score=4.5` (default 4.5)
 - `GET /api/v1/summaries`
 
+## Sign-in, demo mode and deploy
+Full steps for the private demo on saltsupply.co.nz: `docs/demo-deploy.md`.
+- Auth (`src/lib/supabase/`, `src/lib/auth.tsx`): with `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` set, sign-in is Supabase Auth (email link or 6-digit code, Google). The links come back to `/auth/callback` (PKCE code) or `/auth/confirm` (token hash). The session cookie is refreshed in `src/proxy.ts`. Without those vars the site uses pretend sign-in and localStorage, as before. The server works out who is calling from the Supabase session (`src/lib/identity.ts`). The body's `user_id` is only trusted with pretend sign-in.
+- Server-only `SUPABASE_SERVICE_ROLE_KEY` (an `sb_secret_` key or the legacy `service_role` JWT) is used by the webhook and billing routes. `sb_secret_` keys go on `apikey` only.
+- Migration `supabase/migrations/20261026180000_auth_demo.sql`: spots catalogue, a profile row per new user, editable alert settings, and a database limit of one saved spot on Free.
+- Payment mode (`src/lib/payment-mode.ts`): no key gives `mock`, a test key gives `test`, and a live key gives `refused`. `DemoBanner` shows on every page in each mode. While not live (always, for now), the site is noindexed: `robots.txt` has `Disallow: /`, there is a robots meta tag, and `X-Robots-Tag` is set.
+- Pricing: `POST /api/billing/eligibility` says whether Checkout would include a trial. Someone who has had one sees "Subscribe".
+- Crons: `/api/cron/alerts`, `/api/cron/followups` and `/api/cron/pause-reminders` need `Authorization: Bearer $CRON_SECRET`. They are not scheduled (`vercel.json` `crons: []`) and return `scheduled: false` until the send loops are written.
+- Env vars:
+  - `NEXT_PUBLIC_SUPABASE_URL`
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+  - `SUPABASE_SERVICE_ROLE_KEY`
+  - `STRIPE_TEST_SECRET_KEY`
+  - `STRIPE_WEBHOOK_SECRET`
+  - `FEEDBACK_SECRET`
+  - `CRON_SECRET`
+  - optional `RESEND_API_KEY`
+  - Never put a live key in `STRIPE_SECRET_KEY`.
+
 ## Billing: Pro subscriptions (Stripe TEST MODE only)
 Pricing: NZ$7.99/month or NZ$49.99/year, 30-day free trial, no card. Stripe test objects on Alex's "Salt Supply co" account: product `prod_VVb2iTqWXQ7c2s` "Salt Supply Pro", prices by lookup_key `pro_monthly_nzd` (799 NZD/month) and `pro_yearly_nzd` (4999 NZD/year). The code resolves prices by lookup_key and checks the amount.
 
@@ -72,7 +91,7 @@ Keys (`src/lib/stripe.ts`): `STRIPE_TEST_SECRET_KEY`, then `STRIPE_SECRET_KEY`. 
 - `POST /api/billing/checkout {interval: "month"|"year"}`: Checkout Session, `mode: subscription`, NZD, `payment_method_collection: if_required`, `subscription_data.trial_period_days: 30`, `trial_settings.end_behavior.missing_payment_method: cancel`, `metadata.user_id`. One trial per person: a returning user gets Checkout without a trial. No `payment_method_types` (dynamic payment methods) and no `automatic_tax` (no GST registration in Stripe yet).
 - Trial end with no card: **cancel**, not pause. That matches the promise (no card, no charge, back to Free) and keeps Stripe's `paused` status from being confused with Pause for winter. Coming back is a fresh Checkout.
 - `POST /api/billing/portal`: Stripe Customer portal (update card, cancel, invoices), using the portal configuration with `metadata.app = salt-supply-web` (test mode `bpc_1UUZydCuajdRSWMVZP9nqk5S`: update card, cancel at period end with a reason, invoice history, email).
-- `GET /api/billing/session?id=cs_...`: what a finished Checkout started (read only). `GET /api/billing/state`: prototype-only view of what the webhook wrote (404 once `SUPABASE_URL` is set).
+- `GET /api/billing/session?id=cs_...`: what a finished Checkout started (read only). `GET /api/billing/state`: prototype-only view of what the webhook wrote (404 once Supabase is configured).
 - `POST /api/stripe/webhook` (`src/lib/billing.ts` `handleStripeEvent`): `checkout.session.completed`, `customer.subscription.created/updated/deleted` (re-read from Stripe, then upsert `subscriptions` by user and set `profiles.plan`: trialing to `trial` with `trial_ends_at`, active or past_due to `pro`/`pro_annual`, anything else to `free`), `invoice.paid`/`invoice.payment_failed` (`latest_invoice_status`), `customer.subscription.trial_will_end` (the "trial ends in 3 days, add a card to keep Pro" email, or the "then it's $7.99 a month on your card" one if a card is on file). Migration `20261026170000_stripe_checkout.sql`.
 - Test clocks: set `STRIPE_TEST_CUSTOMER_ID=cus_...` (a customer created on a test clock) and Checkout uses that customer, so the real Checkout page and the clock work together. Test mode only.
 - Tested end to end in test mode on 26 Oct 2026 (`stripe listen`, all 19 webhook deliveries 200): no-card trial through Checkout; test clock `clock_1UUa1WCuajdRSWMVMI0juoy6` +27 days sent the trial email, +31 days the subscription was canceled with a $0 invoice and the profile went to Free; the same person back through Checkout got no second trial and paid with 4242; pause and resume against that subscription; `pm_card_visa` yearly on clock `clock_1UUa4wCuajdRSWMVhFgVKVrQ` renewed at $49.99 after a year; `pm_card_chargeCustomerFail` gave `invoice.payment_failed` and stayed Free.

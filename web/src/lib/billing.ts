@@ -63,11 +63,13 @@ export async function hadTrial(userId: string, customerId?: string): Promise<boo
   return subs.data.some((s) => s.trial_start != null);
 }
 
-export async function createCheckout(i: Omit<CheckoutInput, "priceId" | "hadTrial">): Promise<{ url: string; id: string; mode: "mock" | "test"; trial: boolean }> {
+/** knownHadTrial: the caller already knows the trial was used (mock sign-in keeps that in the browser). */
+export async function createCheckout(i: Omit<CheckoutInput, "priceId" | "hadTrial"> & { knownHadTrial?: boolean }): Promise<{ url: string; id: string; mode: "mock" | "test"; trial: boolean }> {
   // STRIPE_TEST_CUSTOMER_ID: prototype hook so a test-clock customer can go through the real Checkout page.
   const customerId = i.customerId ?? mockStateFor(i.userId)?.subscription.stripe_customer_id ?? (stripeMode() === "test" ? process.env.STRIPE_TEST_CUSTOMER_ID || undefined : undefined);
-  const trial = !(await hadTrial(i.userId, customerId));
-  const params = checkoutParams({ ...i, customerId, priceId: await priceFor(i.interval), hadTrial: !trial });
+  const trial = !(i.knownHadTrial || (await hadTrial(i.userId, customerId)));
+  const { knownHadTrial: _k, ...rest } = i;
+  const params = checkoutParams({ ...rest, customerId, priceId: await priceFor(i.interval), hadTrial: !trial });
   if (stripeMode() === "mock") return { url: `/account?upgraded=1&checkout=mock`, id: "cs_mock_prototype", mode: "mock", trial };
   const s = await stripeClient().checkout.sessions.create(params, { idempotencyKey: `checkout-${i.userId}-${i.interval}-${crypto.randomUUID()}` });
   return { url: s.url!, id: s.id, mode: "test", trial };

@@ -11,7 +11,7 @@ import { POST as checkoutRoute } from "../src/app/api/billing/checkout/route";
 import { POST as portalRoute } from "../src/app/api/billing/portal/route";
 import { POST as webhookRoute } from "../src/app/api/stripe/webhook/route";
 
-for (const k of ["STRIPE_SECRET_KEY", "STRIPE_TEST_SECRET_KEY", "STRIPE_API_KEY", "STRIPE_WEBHOOK_SECRET", "SUPABASE_URL", "RESEND_API_KEY", "STRIPE_TEST_SUBSCRIPTION_ID", "STRIPE_TEST_CUSTOMER_ID"]) delete process.env[k]; // mock mode only
+for (const k of ["STRIPE_SECRET_KEY", "STRIPE_TEST_SECRET_KEY", "STRIPE_API_KEY", "STRIPE_WEBHOOK_SECRET", "SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY", "SUPABASE_SERVICE_ROLE_KEY", "RESEND_API_KEY", "STRIPE_TEST_SUBSCRIPTION_ID", "STRIPE_TEST_CUSTOMER_ID"]) delete process.env[k]; // mock mode only
 const probs: string[] = [];
 const eq = (what: string, got: unknown, want: unknown) => { if (JSON.stringify(got) !== JSON.stringify(want)) probs.push(`${what}: got ${JSON.stringify(got)}, want ${JSON.stringify(want)}`); };
 const throws = (what: string, f: () => unknown, re: RegExp, mustNotContain?: string) => {

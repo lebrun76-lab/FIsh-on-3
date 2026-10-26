@@ -49,7 +49,7 @@ export function AccountView({ spots, alerts: alertMails, welcome, trial }: { spo
   const names = favourites.map((id) => spots.find((s) => s.id === id)?.name).filter(Boolean);
   return (
     <div className="pt-6 space-y-4 max-w-2xl">
-      {upgraded && <div className="rounded-2xl bg-emerald-50 p-4 text-emerald-800 ring-1 ring-emerald-200">{plan === "trial" ? `Your ${BRAND.trialDays}-day Pro trial has started${upgraded === "stripe" ? "" : " (mock)"}. No card taken. We’ll email you 3 days before it ends. Add a card to keep Pro, or it goes back to Free.` : upgraded === "stripe" ? "You’re on Pro. Thanks." : "You’re on Pro (mock)."}</div>}
+      {upgraded && <div className="rounded-2xl bg-emerald-50 p-4 text-emerald-800 ring-1 ring-emerald-200">{plan === "trial" ? `Your ${BRAND.trialDays}-day Pro trial has started. No card taken. We’ll email you 3 days before it ends. Add a card to keep Pro, or it goes back to Free.` : upgraded === "stripe" ? "You’re on Pro. Thanks." : "You’re on Pro. Payments are switched off on this copy, so nothing was charged."}</div>}
       <h1 className="text-2xl font-bold">Account</h1>
       <section className="rounded-2xl bg-white p-5 ring-1 ring-slate-100 space-y-1">
         <div className="text-sm text-slate-500">Signed in as</div><div className="font-semibold">{user.email}</div>

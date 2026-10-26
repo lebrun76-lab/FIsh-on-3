@@ -8,6 +8,7 @@
 import crypto from "node:crypto";
 import Stripe from "stripe";
 import { NO_END } from "./pause";
+import { serviceHeaders, serviceRole } from "./supabase/config";
 
 export const STRIPE_API_VERSION = "2026-09-30.endive" as const;
 export const KEY_VARS = ["STRIPE_TEST_SECRET_KEY", "STRIPE_SECRET_KEY"] as const;
@@ -88,17 +89,7 @@ export async function getSubscription(id: string): Promise<StripeSubscription | 
   return toSub(await stripeClient().subscriptions.retrieve(id, { expand: ["items.data.price"] }));
 }
 
-/**
- * Which subscription the request is for. Production: look up subscriptions.stripe_sub_id for the
- * signed-in user (Supabase session), never an id sent by the browser. The prototype has mock auth
- * only, so it uses one subscription: the mock one; in test mode STRIPE_TEST_SUBSCRIPTION_ID, else the
- * newest live (not canceled) subscription the webhook has synced into memory.
- */
-export function subscriptionForRequest(_req: Request): string | null {
-  if (stripeMode() === "mock") return "sub_mock_prototype";
-  if (process.env.STRIPE_TEST_SUBSCRIPTION_ID) return process.env.STRIPE_TEST_SUBSCRIPTION_ID;
-  return [...mockSynced].reverse().find((s) => !["canceled", "incomplete_expired"].includes(s.subscription.status))?.subscription.stripe_sub_id ?? null;
-}
+// Which subscription a request is for: see subscriptionIdFor in identity.ts (session user with Supabase).
 
 // ------------------------------------------------------------------ webhooks
 export const webhookSecret = () => process.env.STRIPE_WEBHOOK_SECRET ?? (stripeMode() === "mock" ? "whsec_mock_prototype" : null);
@@ -146,15 +137,16 @@ export const mockSynced = (gs.__mockSync ??= []);
 /** Newest synced state for a user, in memory (no Supabase). */
 export const mockStateFor = (userId: string) => [...mockSynced].reverse().find((s) => s.subscription.user_id === userId) ?? null;
 
-const sbHeaders = (key: string) => ({ apikey: key, Authorization: `Bearer ${key}`, "Content-Type": "application/json", Prefer: "return=representation" });
+const sbHeaders = (key: string) => ({ ...serviceHeaders(key), "Content-Type": "application/json", Prefer: "return=representation" });
 /** Write the sync with the Supabase service role (bypasses RLS), or keep it in memory without Supabase. */
 export async function saveSync(s: SubscriptionSync): Promise<"supabase" | "mock"> {
-  const url = process.env.SUPABASE_URL, key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) {
+  const sr = serviceRole();
+  if (!sr) {
     const prevUser = s.subscription.user_id ?? mockSynced.find((x) => x.subscription.stripe_sub_id === s.subscription.stripe_sub_id)?.subscription.user_id;
     mockSynced.push(prevUser ? { ...s, subscription: { ...s.subscription, user_id: prevUser } } : s);
     return "mock";
   }
+  const { url, key } = sr;
   const h = sbHeaders(key), row = { ...s.subscription, updated_at: new Date().toISOString() };
   const r = s.subscription.user_id
     ? await fetch(`${url}/rest/v1/subscriptions?on_conflict=user_id`, { method: "POST", headers: { ...h, Prefer: "return=representation,resolution=merge-duplicates" }, body: JSON.stringify(row) })
@@ -169,9 +161,9 @@ export async function saveSync(s: SubscriptionSync): Promise<"supabase" | "mock"
 }
 /** invoice.paid / invoice.payment_failed: record the latest invoice outcome on the subscription row. */
 export async function saveInvoice(subId: string, status: "paid" | "payment_failed", invoiceId: string): Promise<"supabase" | "mock"> {
-  const url = process.env.SUPABASE_URL, key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) { mockInvoices.push({ subId, status, invoiceId }); return "mock"; }
-  const r = await fetch(`${url}/rest/v1/subscriptions?stripe_sub_id=eq.${encodeURIComponent(subId)}`, { method: "PATCH", headers: sbHeaders(key), body: JSON.stringify({ latest_invoice_id: invoiceId, latest_invoice_status: status, updated_at: new Date().toISOString() }) });
+  const sr = serviceRole();
+  if (!sr) { mockInvoices.push({ subId, status, invoiceId }); return "mock"; }
+  const r = await fetch(`${sr.url}/rest/v1/subscriptions?stripe_sub_id=eq.${encodeURIComponent(subId)}`, { method: "PATCH", headers: sbHeaders(sr.key), body: JSON.stringify({ latest_invoice_id: invoiceId, latest_invoice_status: status, updated_at: new Date().toISOString() }) });
   if (!r.ok) throw new Error(`subscriptions invoice update ${r.status}`);
   return "supabase";
 }

@@ -2,7 +2,8 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth";
 import { TopBar, BottomTabs } from "@/components/Nav";
-import { MockBanner } from "@/components/ui";
+import { DemoBanner } from "@/components/DemoBanner";
+import { demoMode } from "@/lib/demo";
 import { BRAND } from "@/lib/brand";
 import { SWRegister, OfflineIndicator } from "@/components/Offline";
 
@@ -15,6 +16,8 @@ export const metadata: Metadata = {
   openGraph: { type: "website", siteName: BRAND.name, url: BRAND.url, title: `${BRAND.name} · NZ fishing forecasts in plain English`, description: BRAND.description, locale: "en_NZ" },
   twitter: { card: "summary", title: BRAND.name, description: BRAND.description },
   appleWebApp: { title: BRAND.shortName },
+  // Demo mode: keep it out of search results (also robots.txt and the X-Robots-Tag header in proxy.ts).
+  ...(demoMode() ? { robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } } } : {}),
 };
 export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: "#06223a" };
 
@@ -24,7 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen antialiased font-sans">
         <AuthProvider>
           <SWRegister />
-          <MockBanner />
+          <DemoBanner />
           <OfflineIndicator />
           <TopBar />
           <main className="mx-auto max-w-5xl px-4 pb-24 md:pb-12">{children}</main>
