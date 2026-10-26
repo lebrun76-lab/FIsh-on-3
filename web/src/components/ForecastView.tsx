@@ -3,6 +3,8 @@ import Link from "next/link";
 import type { FishingWindow, HourPoint, SpotForecast } from "@/lib/types";
 import type { SstMapData } from "@/lib/sst";
 import { SstMap } from "./SstMap";
+import { CatchCheck } from "./CatchCheck";
+import { headlineRule } from "@/lib/catch";
 import { DATUM_TEXT, speciesOf, confidenceText, noWindowText } from "@/lib/view";
 import { useAuth, isPaid } from "@/lib/auth";
 import { Photo, RatingBadge, RATING_STYLE } from "./ui";
@@ -15,7 +17,7 @@ import { OfflineButton } from "./Offline";
 import { WindChart, SwellChart, TideChart, SstChart } from "./Charts";
 import { clock, dateLabel, dayShort, nzTodayISO } from "@/lib/time";
 import { safetyCheck } from "@/lib/safety";
-import { CLOSURES, speciesFor, sizeText } from "@/lib/rules";
+import { CLOSURES, speciesFor } from "@/lib/rules";
 
 const SAFETY = { ok: ["bg-emerald-50 ring-emerald-200 text-emerald-900", "Safe to go"], caution: ["bg-amber-50 ring-amber-200 text-amber-900", "Take care"], no: ["bg-rose-50 ring-rose-200 text-rose-900", "Not safe for small boats"] } as const;
 
@@ -128,7 +130,8 @@ export function ForecastView({ f, sst, reserves = [] }: { f: SpotForecast; sst?:
   const closed = engineSpecies.filter((x) => x.status === "closed");
   const targets = engineSpecies.filter((x) => x.status !== "closed").map((x) => x.name);
   const species = speciesFor(f.spot.species);
-  const tgt = speciesFor(targets.length ? targets : f.spot.species);
+  const tgtNames = targets.length ? targets : f.spot.species;
+  const rule = tgtNames[0] ? headlineRule(f.spot.id, tgtNames[0]) : null;
   const hz = f.verdict.horizon_days ?? 3;
   const now = Date.now();
   const future = <T extends { end: string } | null | undefined>(w: T) => (w && Date.parse(w.end) > now ? w : null);
@@ -152,7 +155,7 @@ export function ForecastView({ f, sst, reserves = [] }: { f: SpotForecast; sst?:
   const madeText = ageH > 24 ? "This forecast is over a day old." : f.stale ? `Forecast from ${made}, so it may be a bit behind.` : `Forecast from ${made}.`;
   const alsoText = vc.also.map((w) => `${whenText(w.start, w.end, realToday, w.start.slice(0, 10) !== vc.date)} (${w.rating}, ${w.score.toFixed(1)})`).join(", ");
   const rs = RATING_STYLE[v.rating];
-  const call = noWin ? `Stay home${pro ? ` for the next ${hz} days` : ` ${todayWord}`}.${laterBetter && later ? ` Next good chance: ${later.headline.replace(/ looks .*/, "")}.` : ""} If you do go, stay sheltered and watch the weather.` : `${v.headline}. ${targetList((targets.length ? targets : f.spot.species).slice(0, 2))}${tgt[0] ? `. ${tgt[0].name}: ${sizeText(tgt[0])}` : ""}.`;
+  const call = noWin ? `Stay home${pro ? ` for the next ${hz} days` : ` ${todayWord}`}.${laterBetter && later ? ` Next good chance: ${later.headline.replace(/ looks .*/, "")}.` : ""} If you do go, stay sheltered and watch the weather.` : `${v.headline}. ${targetList((targets.length ? targets : f.spot.species).slice(0, 2))}${rule ? `. ${rule}` : ""}.`;
   const near = CLOSURES.filter((c) => Math.hypot(c.lat - f.spot.lat, c.lon - f.spot.lon) < 1.2);
   const safety = safetyCheck(dayHours(today), f.spot.coastal);
   return (
@@ -298,16 +301,9 @@ export function ForecastView({ f, sst, reserves = [] }: { f: SpotForecast; sst?:
       <section className="space-y-2">
         <div className="flex items-end justify-between"><h2 className="text-lg font-bold">Rules here</h2><Link href="/rules" className="text-sm font-semibold text-ocean-700">Rules map →</Link></div>
         {reserves.map((r) => <p key={r} className="rounded-2xl bg-white p-3 text-sm text-slate-700 ring-1 ring-slate-200"><span aria-hidden="true" className="mr-1.5 inline-block h-2.5 w-2.5 rounded-sm align-baseline" style={{ background: "rgba(226,84,60,.45)", border: "1px solid #B83A26" }} />Marine reserve nearby: {r}. No fishing inside it.</p>)}
-        <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-          {species.map((s) => (
-            <div key={s.id} className="rounded-2xl bg-white p-3 ring-1 ring-slate-100 text-sm">
-              <div className="font-semibold">{s.name}{s.maori ? ` · ${s.maori}` : ""}</div>
-              <div className="text-slate-600">{s.minSizeCm ? `Min ${s.minSizeCm} cm` : "No min size"} · {s.dailyBag ? `bag ${s.dailyBag}/day` : "see local rules"}</div>
-            </div>
-          ))}
-        </div>
+        <CatchCheck spotId={f.spot.id} spotSpecies={f.spot.species} />
         {near.map((c) => <div key={c.id} className="rounded-2xl bg-rose-50 p-3 text-sm text-rose-900 ring-1 ring-rose-100"><b>{c.name}</b> ({c.type}): {c.rule}</div>)}
-        <p className="text-xs text-slate-400">Sizes, bag limits and closures above are a guide only, not verified. Check the official MPI rules before you fish.</p>
+        <p className="text-xs text-slate-400">Closures above are a guide only, not verified. Check MPI and DOC before you fish.</p>
       </section>
 
       {/* 7. Pro tools */}
