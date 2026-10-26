@@ -7,6 +7,9 @@ import { demoMode } from "@/lib/demo";
 import { BRAND } from "@/lib/brand";
 import { SWRegister, OfflineIndicator } from "@/components/Offline";
 
+/** Before paint: last known sign-in state (guest | free | paid), so CSS shows the right home straight away. */
+const AUTH_HINT_JS = `try{var a=localStorage.getItem("saltsupply-auth-hint");if(a==="free"||a==="paid")document.documentElement.dataset.auth=a}catch(e){}`;
+
 export const metadata: Metadata = {
   metadataBase: new URL(BRAND.url),
   applicationName: BRAND.name,
@@ -35,7 +38,8 @@ export const viewport: Viewport = { width: "device-width", initialScale: 1, them
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-NZ">
+    <html lang="en-NZ" data-auth="guest" suppressHydrationWarning>
+      <head><script dangerouslySetInnerHTML={{ __html: AUTH_HINT_JS }} /></head>
       <body className="min-h-screen antialiased font-sans">
         <AuthProvider>
           <SWRegister />
@@ -44,7 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <TopBar />
           <main className="mx-auto max-w-5xl px-4 pb-24 md:pb-12">{children}</main>
           <footer className="mx-auto max-w-5xl px-4 pb-24 md:pb-8 text-xs text-slate-500">
-            © {BRAND.name} · saltsupply.co.nz · Forecasts are guidance only. Always check the MetService marine forecast and local conditions before heading out. Weather & marine data: Open-Meteo (CC BY 4.0). Tides: LINZ (CC BY 4.0), not for navigation. No pop-ups, no autoplay, no intrusive ads. <a href="/about" className="underline">About</a> · <a href="/credits" className="underline">Credits</a>
+            © {BRAND.name} · saltsupply.co.nz · Forecasts are guidance only. Always check the MetService marine forecast and local conditions before heading out. Weather & marine data: Open-Meteo (CC BY 4.0). Tides: LINZ (CC BY 4.0), not for navigation. <span className="guest-only inline">No pop-ups, no autoplay, no intrusive ads. </span><a href="/about" className="underline">About</a> · <a href="/credits" className="underline">Credits</a>
           </footer>
           <BottomTabs />
         </AuthProvider>
