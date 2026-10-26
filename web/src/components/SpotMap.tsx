@@ -6,11 +6,16 @@ import type { Rating } from "@/lib/types";
 import { ISLAND_BOUNDS, NZ_LAND_PATH, project } from "@/lib/nzmap";
 import { RatingBadge, RATING_STYLE } from "./ui";
 import { FavButton } from "./FavButton";
+import { RESERVES, RESERVES_CREDIT } from "@/lib/reserves";
 
 /** Flat site colours. Marker fills match the list's rating dots (Tailwind 500/400 shades). */
 const FILL: Record<Rating, string> = { great: "#10b981", good: "#84cc16", marginal: "#fbbf24", poor: "#f43f5e" };
 const SEA = "#EEF3F6", LAND = "#E7DFD0", COAST = "#B9AD97";
 const MAX_ZOOM = 6;
+/** Marine reserves: flat snapper red, semi-transparent, thin outline. */
+const RES_FILL = "#E2543C", RES_LINE = "#B83A26";
+/** Reserves smaller than this on screen (px) also get a ring so they don't vanish when zoomed out. */
+const RES_MIN_PX = 10;
 type View = { cx: number; cy: number; s: number }; // map-unit centre, px per map unit
 const short = (n: string) => n.split(" (")[0].split(" / ")[0];
 
@@ -28,6 +33,8 @@ export function SpotMap({ spots, island, favourites }: { spots: SpotSummary[]; i
   const [size, setSize] = useState({ w: 0, h: 0 });
   const [view, setView] = useState<View | null>(null);
   const [sel, setSel] = useState<string | null>(null);
+  const [selRes, setSelRes] = useState<string | null>(null);
+  const [showRes, setShowRes] = useState(true);
   const fit = useRef<View | null>(null);
   const ptrs = useRef(new Map<number, { x: number; y: number }>());
   const moved = useRef(0);
@@ -45,6 +52,7 @@ export function SpotMap({ spots, island, favourites }: { spots: SpotSummary[]; i
     fit.current = fitView(island, size.w, size.h);
     setView(fit.current);
     setSel(null);
+    setSelRes(null);
   }, [island, size.w, size.h]);
 
   const clamp = useCallback((v: View): View => {
@@ -121,13 +129,26 @@ export function SpotMap({ spots, island, favourites }: { spots: SpotSummary[]; i
     return out;
   }, [pts, favourites, size.w, size.h]);
 
+  // Reserves on screen, with a tap target at the centre of each (a visible ring when the shape is tiny).
+  const resPts = useMemo(() => {
+    if (!view || !showRes) return [];
+    return RESERVES.map((r) => {
+      const x = (r.cx - view.cx) * view.s + size.w / 2, y = (r.cy - view.cy) * view.s + size.h / 2;
+      const px = Math.max(r.box[2] - r.box[0], r.box[3] - r.box[1]) * view.s;
+      return { r, x, y, small: px < RES_MIN_PX };
+    }).filter((p) => p.x > -20 && p.x < size.w + 20 && p.y > -20 && p.y < size.h + 20);
+  }, [view, showRes, size.w, size.h]);
+
   const selected = sel ? inIsland.find((s) => s.id === sel) : undefined;
+  const selReserve = selRes ? RESERVES.find((r) => r.id === selRes) : undefined;
+  const pickSpot = (id: string | null) => { setSel(id); setSelRes(null); };
+  const pickRes = (id: string | null) => { setSelRes(id); setSel(null); };
   useEffect(() => {
-    if (!sel) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setSel(null); };
+    if (!sel && !selRes) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") { setSel(null); setSelRes(null); } };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [sel]);
+  }, [sel, selRes]);
 
   const ctl = "flex h-11 w-11 items-center justify-center bg-white text-lg font-semibold text-slate-700 hover:bg-slate-50 focus-visible:outline-2 focus-visible:outline-ocean-700";
 
@@ -137,20 +158,32 @@ export function SpotMap({ spots, island, favourites }: { spots: SpotSummary[]; i
         className="relative h-[min(72vh,calc(100svh-21rem))] min-h-[420px] w-full select-none overflow-hidden rounded-2xl ring-1 ring-slate-200"
         style={{ background: SEA, touchAction: "none" }}
         onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp} onPointerLeave={onUp}
-        onClick={(e) => { if (!(e.target as HTMLElement).closest("[data-nopan]") && moved.current < 6) setSel(null); }}>
+        onClick={(e) => { if (!(e.target as HTMLElement).closest("[data-nopan]") && moved.current < 6) { setSel(null); setSelRes(null); } }}>
         {view && (
           <svg width={size.w} height={size.h} className="absolute inset-0 block" aria-hidden="true">
             <g transform={`translate(${size.w / 2} ${size.h / 2}) scale(${view.s}) translate(${-view.cx} ${-view.cy})`}>
               <path d={NZ_LAND_PATH} fill={LAND} stroke={COAST} strokeWidth={1 / view.s} strokeLinejoin="round" />
+              {showRes && RESERVES.map((r) => (
+                <path key={r.id} d={r.d} fillRule="evenodd" fill={RES_FILL} fillOpacity={selRes === r.id ? 0.6 : 0.35} stroke={RES_LINE} strokeOpacity={0.9}
+                  strokeWidth={(selRes === r.id ? 2 : 1) / view.s} strokeLinejoin="round" style={{ cursor: "pointer" }}
+                  onClick={(e) => { e.stopPropagation(); if (moved.current < 6) pickRes(selRes === r.id ? null : r.id); }} />
+              ))}
             </g>
           </svg>
         )}
+        {resPts.map(({ r, x, y, small }) => (
+          <button key={r.id} type="button" className="absolute -ml-[14px] -mt-[14px] flex h-7 w-7 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-ocean-700"
+            style={{ left: x, top: y, zIndex: 0 }} aria-label={`${r.name}: marine reserve`} aria-expanded={selRes === r.id}
+            onClick={(e) => { e.stopPropagation(); if (moved.current < 6) pickRes(selRes === r.id ? null : r.id); }}>
+            {small && <span aria-hidden="true" className="block h-3 w-3 rounded-full" style={{ background: "rgba(226,84,60,.35)", border: `1.5px solid ${RES_LINE}` }} />}
+          </button>
+        ))}
         {pts.map(({ s, x, y }) => {
           const fav = favourites.includes(s.id), side = labels.get(s.id), on = sel === s.id;
           return (
             <div key={s.id} className="absolute" style={{ left: x, top: y, zIndex: on ? 3 : fav ? 2 : 1 }}>
               <button type="button"
-                onClick={(e) => { e.stopPropagation(); if (moved.current < 6) setSel(on ? null : s.id); }}
+                onClick={(e) => { e.stopPropagation(); if (moved.current < 6) pickSpot(on ? null : s.id); }}
                 aria-label={`${s.name}: ${RATING_STYLE[s.rating].label}${fav ? ", saved" : ""}`} aria-expanded={on}
                 className="absolute -left-[22px] -top-[22px] flex h-11 w-11 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-ocean-700">
                 <span className="block rounded-full" style={{ width: on ? 20 : 16, height: on ? 20 : 16, background: FILL[s.rating], border: "2px solid white", boxShadow: fav ? "0 0 0 2.5px #0b3556" : "0 0 0 1px rgba(15,23,42,.25)" }} />
@@ -180,11 +213,25 @@ export function SpotMap({ spots, island, favourites }: { spots: SpotSummary[]; i
                 <div className="text-sm text-slate-700">{selected.best ?? selected.headline}</div>
               </div>
               <FavButton id={selected.id} compact />
-              <button type="button" onClick={() => setSel(null)} aria-label="Close" className="-mr-1 -mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-500 hover:bg-slate-100">
+              <button type="button" onClick={() => pickSpot(null)} aria-label="Close" className="-mr-1 -mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-500 hover:bg-slate-100">
                 <svg aria-hidden="true" viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 5l10 10M15 5 5 15" /></svg>
               </button>
             </div>
             <Link href={`/spots/${selected.id}`} className="mt-3 inline-flex rounded-full bg-ocean-900 px-4 py-2 text-sm font-semibold text-white">Open spot</Link>
+          </div>
+        )}
+        {selReserve && (
+          <div data-nopan role="dialog" aria-label={selReserve.name} className="absolute inset-x-2 bottom-2 z-20 rounded-2xl bg-white p-4 shadow-lg ring-1 ring-slate-200">
+            <div className="flex items-start gap-3">
+              <span aria-hidden="true" className="mt-1 inline-block h-3.5 w-3.5 shrink-0 rounded-sm" style={{ background: "rgba(226,84,60,.45)", border: `1px solid ${RES_LINE}` }} />
+              <div className="min-w-0 flex-1">
+                <div className="break-words font-semibold text-slate-900">{selReserve.name}</div>
+                <div className="text-sm text-slate-700">Marine reserve: no fishing or taking anything.</div>
+              </div>
+              <button type="button" onClick={() => pickRes(null)} aria-label="Close" className="-mr-1 -mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-slate-500 hover:bg-slate-100">
+                <svg aria-hidden="true" viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 5l10 10M15 5 5 15" /></svg>
+              </button>
+            </div>
           </div>
         )}
       </div>
@@ -193,9 +240,17 @@ export function SpotMap({ spots, island, favourites }: { spots: SpotSummary[]; i
           <span key={r} className="inline-flex items-center gap-1"><span aria-hidden="true" className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: FILL[r] }} />{RATING_STYLE[r].label}</span>
         ))}
         <span className="inline-flex items-center gap-1"><span aria-hidden="true" className="text-amber-500">★</span>Saved</span>
+        <button type="button" aria-pressed={showRes} onClick={() => { setShowRes((v) => !v); setSelRes(null); }}
+          className={`inline-flex min-h-8 items-center gap-1.5 rounded-full px-2.5 ring-1 focus-visible:outline-2 focus-visible:outline-ocean-700 ${showRes ? "bg-white text-slate-700 ring-slate-300" : "bg-slate-100 text-slate-400 ring-slate-200 line-through"}`}>
+          <span aria-hidden="true" className="inline-block h-2.5 w-2.5 rounded-sm" style={{ background: showRes ? "rgba(226,84,60,.45)" : "transparent", border: `1px solid ${showRes ? RES_LINE : "#94a3b8"}` }} />
+          Marine reserves
+        </button>
         <span className="text-slate-400">Tap a dot for the forecast.</span>
       </div>
-      <p className="px-1 text-[11px] text-slate-400">Coastline: Natural Earth.</p>
+      <div className="space-y-0.5 px-1 text-[11px] text-slate-400">
+        <p className="font-semibold text-slate-500">Not for navigation. Check official charts and MPI rules.</p>
+        <p>{RESERVES_CREDIT}. Coastline: Natural Earth.</p>
+      </div>
     </div>
   );
 }

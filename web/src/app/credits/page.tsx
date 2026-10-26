@@ -36,7 +36,7 @@ export default function Credits() {
 
       <section className="space-y-2">
         <h2 className="text-lg font-bold">Data</h2>
-        <p className="text-sm text-slate-700">Weather, marine and sea temperature data: <a href="https://open-meteo.com" {...ext} className="underline">Open-Meteo</a> (CC BY 4.0). Tide predictions: <a href="https://www.linz.govt.nz" {...ext} className="underline">LINZ</a> (CC BY 4.0), not for navigation.</p>
+        <p className="text-sm text-slate-700">Weather, marine and sea temperature data: <a href="https://open-meteo.com" {...ext} className="underline">Open-Meteo</a> (CC BY 4.0). Tide predictions: <a href="https://www.linz.govt.nz" {...ext} className="underline">LINZ</a> (CC BY 4.0), not for navigation. Marine reserves: <a href="https://doc-deptconservation.opendata.arcgis.com/datasets/8c8b619c000f449dadb69d2103424bd1_0" {...ext} className="underline">Department of Conservation</a> (CC BY 4.0), simplified for the map, data as at 26 October 2026.</p>
       </section>
     </div>
   );

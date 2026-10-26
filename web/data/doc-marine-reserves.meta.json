@@ -1,0 +1,18 @@
+{
+  "dataset": "DOC Marine Reserves",
+  "publisher": "Department of Conservation (DOC), Te Papa Atawhai",
+  "source_page": "https://doc-deptconservation.opendata.arcgis.com/datasets/8c8b619c000f449dadb69d2103424bd1_0",
+  "download_url": "https://doc-deptconservation.opendata.arcgis.com/datasets/8c8b619c000f449dadb69d2103424bd1_0.geojson",
+  "feature_service": "https://services1.arcgis.com/3JjYDyG3oajxU6HO/arcgis/rest/services/DOC_Marine_Reserves_FHV/FeatureServer/0",
+  "arcgis_item_id": "8c8b619c000f449dadb69d2103424bd1",
+  "licence": "CC BY 4.0",
+  "licence_url": "https://creativecommons.org/licenses/by/4.0/",
+  "attribution": "Marine reserves: Department of Conservation, CC BY 4.0",
+  "downloaded": "2026-10-26",
+  "data_as_at": "2026-10-26",
+  "data_last_edited_utc": "2026-10-25T17:26:04Z",
+  "features_in_source": 51,
+  "features_kept": 46,
+  "processing": "scripts/simplify-reserves.py: dropped the Kermadec and subantarctic reserves (off the site map), Douglas-Peucker simplified (~150 m) in the site's map projection, slivers dropped, coordinates rounded to 4 dp. Kept properties: name, NaPALIS id. Not for navigation.",
+  "not_included": "MPI fisheries closures, mātaitai, rāhui and other marine protections are not in this dataset or on the map."
+}

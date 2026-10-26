@@ -101,7 +101,7 @@ function HowItWorks({ f }: { f: SpotForecast }) {
   );
 }
 
-export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapData; caption: string[] } | null }) {
+export function ForecastView({ f, sst, reserves = [] }: { f: SpotForecast; sst?: { map: SstMapData; caption: string[] } | null; reserves?: string[] }) {
   const { plan } = useAuth();
   const pro = isPaid(plan);
   // "Today" = the next day with fishable daylight. Late at night the engine
@@ -297,6 +297,7 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
       {/* 6. Rules — always free */}
       <section className="space-y-2">
         <div className="flex items-end justify-between"><h2 className="text-lg font-bold">Rules here</h2><Link href="/rules" className="text-sm font-semibold text-ocean-700">Rules map →</Link></div>
+        {reserves.map((r) => <p key={r} className="rounded-2xl bg-white p-3 text-sm text-slate-700 ring-1 ring-slate-200"><span aria-hidden="true" className="mr-1.5 inline-block h-2.5 w-2.5 rounded-sm align-baseline" style={{ background: "rgba(226,84,60,.45)", border: "1px solid #B83A26" }} />Marine reserve nearby: {r}. No fishing inside it.</p>)}
         <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
           {species.map((s) => (
             <div key={s.id} className="rounded-2xl bg-white p-3 ring-1 ring-slate-100 text-sm">
