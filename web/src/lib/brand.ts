@@ -10,6 +10,6 @@ export const BRAND = {
   description: "Know when to fish. New Zealand fishing forecasts: whether it's worth going, when, and where. Wind, swell, tides and local rules.",
   // Pricing chosen by Alex (26 Oct 2026). Stripe test prices: lookup_keys pro_monthly_nzd, pro_yearly_nzd.
   proPriceNzd: 7.99,
-  proAnnualNzd: 49.99,
+  proAnnualNzd: 79.99,
   trialDays: 30, // no card needed; Stripe cancels at trial end if no card was added
 };

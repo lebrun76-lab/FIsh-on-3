@@ -46,7 +46,7 @@ eq("isLiveKey", [FAKE.skLive, FAKE.rkLive, "pk_live_x", FAKE.skTest, FAKE.rkTest
 }
 
 // ---- pricing and Checkout params
-eq("pricing", [BRAND.proPriceNzd, BRAND.proAnnualNzd, BRAND.trialDays], [7.99, 49.99, 30]);
+eq("pricing", [BRAND.proPriceNzd, BRAND.proAnnualNzd, BRAND.trialDays], [7.99, 79.99, 30]);
 eq("lookup keys", PRICE_LOOKUP_KEYS, { month: "pro_monthly_nzd", year: "pro_yearly_nzd" });
 eq("trial end behaviour", TRIAL_END_BEHAVIOR, "cancel");
 const cp = checkoutParams({ interval: "month", priceId: "price_x", userId: "u1", email: "a@b.nz", hadTrial: false, origin: "http://localhost:3000" });
@@ -110,7 +110,7 @@ eq("handled events", [...HANDLED_EVENTS].sort(), ["checkout.session.completed", 
   const all = (t: typeof m) => [t.subject, t.preheader, ...t.body, t.cta.label].join(" ");
   eq("trial email asks for a card", [/trial ends in 3 days/.test(m.body[0]), /Add a card to keep Pro/.test(m.body[0]), m.cta.label, m.cta.href.endsWith("/account?billing=card")], [true, true, "Add a card", true]);
   eq("trial email says what happens without one", /No card, no charge\. You just go back to Free\./.test(m.body[0]), true);
-  eq("trial email with card names the price", [/\$49\.99 a year on your card/.test(c.body[0]), c.cta.label], [true, "Your account"]);
+  eq("trial email with card names the price", [/\$79\.99 a year on your card/.test(c.body[0]), c.cta.label], [true, "Your account"]);
   for (const [n, t] of [["no card", m], ["card", c]] as const) {
     if (/—|–/.test(all(t))) probs.push(`trial email ${n}: dash`);
     if (/\p{Extended_Pictographic}/u.test(all(t))) probs.push(`trial email ${n}: emoji`);

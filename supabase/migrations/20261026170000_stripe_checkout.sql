@@ -1,4 +1,4 @@
--- Pro via Stripe Checkout: NZ$7.99/month or NZ$49.99/year, 30-day trial with no card.
+-- Pro via Stripe Checkout: NZ$7.99/month or NZ$79.99/year, 30-day trial with no card.
 -- NOT APPLIED ANYWHERE (prototype schema, like the others).
 -- Trial end with no card: Stripe cancels the subscription (trial_settings.end_behavior.missing_payment_method
 -- = 'cancel'), customer.subscription.deleted arrives, and the webhook sets profiles.plan = 'free'.
