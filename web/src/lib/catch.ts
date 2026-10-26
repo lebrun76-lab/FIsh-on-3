@@ -1,5 +1,5 @@
 /**
- * "Can I keep it?" logic. Data: src/data/catch-rules.json, hand-entered from MPI pages and the
+ * Size and bag limits logic. Data: src/data/catch-rules.json, hand-entered from MPI pages and the
  * Fisheries (Recreational Management Controls) Notice No.1 2026. Rebuild with scripts/catch-rules/build.py.
  * A guide only. The panel never says a fish can be kept, only what the rule is.
  */
@@ -91,21 +91,14 @@ export function dailyText(r: CatchRow, _z?: CatchZone) {
   return e.capped ? `Daily limit ${e.n}. The species limit is ${r.dailyLimit}, but the ${r.combinedDaily} finfish total caps it` : `Daily limit ${r.dailyLimit}`;
 }
 
-export type Tone = "back" | "limit" | "check" | "info";
-/** The verdict line. Never says the fish can be kept. */
-export function verdict(r: CatchRow | undefined, z: CatchZone | undefined, lengthCm: number | null, now = new Date()): { tone: Tone; text: string } {
-  if (!showable(r, now)) return { tone: "check", text: "We can't confirm this one. Check the MPI rules before you keep it." };
+export type Tone = "back" | "check";
+/** A banner only when the answer is a hard no or we can't show numbers. Never says the fish can be kept. */
+export function statusLine(r: CatchRow | undefined, now = new Date()): { tone: Tone; text: string } | null {
+  if (!showable(r, now)) return { tone: "check", text: "We can't confirm this one. Check the MPI rules." };
   const shut = closedNow(r, now);
   if (shut) return { tone: "back", text: `Closed here until ${shut.until}. Put it back.` };
   if (r.dailyLimit === "no-take") return { tone: "back", text: "No take here. Put it back." };
-  const lim = r.dailyLimit === "combined" ? `No separate limit, it counts toward the ${r.combinedDaily} finfish total.` : `Daily limit ${effectiveDaily(r).n}.`;
-  if (lengthCm === null || !Number.isFinite(lengthCm) || lengthCm <= 0) return { tone: "info", text: `${minText(r)}. ${lim}` };
-  const min = r.minSizeCm;
-  if (min === null) return { tone: "check", text: "We can't confirm this one. Check the MPI rules before you keep it." };
-  if (min === "none") return { tone: "limit", text: `No minimum size. ${lim}` };
-  if (lengthCm < min) return { tone: "back", text: `Under the ${min} cm minimum, put it back.` };
-  if (lengthCm === min) return { tone: "limit", text: `Right on the ${min} cm minimum. ${lim}` };
-  return { tone: "limit", text: `Over the minimum. ${lim}` };
+  return null;
 }
 
 /**
