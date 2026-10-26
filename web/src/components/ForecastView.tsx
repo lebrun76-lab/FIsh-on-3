@@ -5,7 +5,7 @@ import type { SstMapData } from "@/lib/sst";
 import { SstMap } from "./SstMap";
 import { DATUM_TEXT, speciesOf, confidenceText, noWindowText } from "@/lib/view";
 import { useAuth, isPaid } from "@/lib/auth";
-import { Photo, PhotoSlot, RatingBadge, RATING_STYLE } from "./ui";
+import { Photo, RatingBadge, RATING_STYLE } from "./ui";
 import { SPOT_BANNERS } from "@/lib/photos";
 import { bestCall, dayScore, isNearBest, ratingFor, targetList, todayStale, whenText } from "@/lib/call";
 import { FavButton } from "./FavButton";
@@ -165,9 +165,8 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
         </div>
         <FavButton id={f.spot.id} />
       </div>
-      {SPOT_BANNERS[f.spot.id]
-        ? <Photo p={SPOT_BANNERS[f.spot.id]} ratio="3 / 1" imgClassName="max-h-56" preload sizes="(min-width: 1024px) 992px, 100vw" />
-        : <PhotoSlot id={`spot-${f.spot.id}`} subject={`${f.spot.name.split(" (")[0]}: shoreline or ramp, wide`} ratio="3:1" className="max-h-56" />}
+      {/* Spots without a real photo show no photo block at all. */}
+      {SPOT_BANNERS[f.spot.id] && <Photo p={SPOT_BANNERS[f.spot.id]} ratio="3 / 1" imgClassName="max-h-56" preload sizes="(min-width: 1024px) 992px, 100vw" />}
 
       {mock ? (
         <div className="rounded-2xl bg-yellow-100 p-3 text-sm text-yellow-950 ring-2 ring-yellow-400"><b>MOCK FALLBACK: not a real forecast.</b> {f.fallback_reason} Numbers below are generated placeholders.</div>
@@ -307,7 +306,7 @@ export function ForecastView({ f, sst }: { f: SpotForecast; sst?: { map: SstMapD
           ))}
         </div>
         {near.map((c) => <div key={c.id} className="rounded-2xl bg-rose-50 p-3 text-sm text-rose-900 ring-1 ring-rose-100"><b>{c.name}</b> ({c.type}): {c.rule}</div>)}
-        <p className="text-xs text-slate-400">Sizes, bag limits and the closure map above are still SAMPLE data, not verified. Production pulls from MPI / DOC with a “last checked” date.</p>
+        <p className="text-xs text-slate-400">Sizes, bag limits and closures above are a guide only, not verified. Check the official MPI rules before you fish.</p>
       </section>
 
       {/* 7. Pro tools */}

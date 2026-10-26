@@ -1,7 +1,7 @@
 /** Real photos placed in the prototype, metadata stripped. Alex's own photos have no credit.
  * North Island spot banners are from Wikimedia Commons (credit set); they are resized, and shown
  * cropped to a 3:1 banner. CC BY-SA ones stay under their CC BY-SA licence. All credits: /credits.
- * Spots with no entry keep the grey PhotoSlot placeholder. */
+ * Spots with no entry show no photo block. */
 export type PhotoCredit = { author: string; licence: string; licenceUrl: string; sourceUrl: string };
 export type Photo = { src: string; width: number; height: number; place: string; alt: string; position?: string; credit?: PhotoCredit };
 

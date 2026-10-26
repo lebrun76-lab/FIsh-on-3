@@ -19,17 +19,6 @@ export function MockTag() {
   return <span className="ml-1 rounded bg-yellow-300 px-1.5 py-0.5 text-[10px] font-bold uppercase text-yellow-950" title="Engine output missing for this spot; showing generated mock data">mock fallback</span>;
 }
 
-/** Placeholder for a real photo (no stock or generated images). See docs/photo-shot-list.md. */
-export function PhotoSlot({ id, subject, ratio, className = "" }: { id: string; subject: string; ratio: "16:9" | "3:2" | "4:3" | "3:1" | "1:1"; className?: string }) {
-  const [w, h] = ratio.split(":").map(Number);
-  return (
-    <div role="img" aria-label={`Photo placeholder: ${subject}`} data-photo-id={id} style={{ aspectRatio: `${w} / ${h}` }}
-      className={`flex w-full items-center justify-center rounded-2xl border border-dashed border-slate-400 bg-slate-200 p-3 text-center text-xs font-semibold uppercase tracking-wide text-slate-500 ${className}`}>
-      PHOTO: {subject} ({ratio}) · {id}
-    </div>
-  );
-}
-
 /** A real photo with a small plain caption naming the place, plus the photographer and licence for third-party photos. `sizes` must match the rendered width. */
 export function Photo({ p, sizes, ratio, className = "", imgClassName = "", preload = false }: { p: PhotoData; sizes: string; ratio?: string; className?: string; imgClassName?: string; preload?: boolean }) {
   return (

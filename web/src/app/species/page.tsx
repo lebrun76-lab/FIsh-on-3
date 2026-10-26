@@ -13,7 +13,7 @@ export default function Species() {
           <div className="text-sm text-slate-600">How: {s.tactics}</div>
         </div>
       ))}</div>
-      <p className="text-xs text-slate-400">Sample sizes and limits, not verified; many vary by fishery area. Production uses MPI rules per area.</p>
+      <p className="text-xs text-slate-400">A guide only, not verified, and many limits vary by fishery area. Check the official MPI rules before you fish.</p>
     </div>
   );
 }

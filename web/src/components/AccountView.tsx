@@ -92,7 +92,7 @@ export function AccountView({ spots, alerts: alertMails, welcome, trial }: { spo
               <span className="mt-2 inline-block rounded-full bg-ocean-900 px-3 py-1 text-xs font-semibold text-white">{m.cta.label}</span>
               <div className="mt-1 text-xs text-slate-400">{m.footer} <span className="underline">{m.unsubscribe.label}</span></div>
             </div>))}
-            <p className="text-xs text-slate-400">Example sender addresses only. Sending isn’t set up in the prototype.</p>
+            <p className="text-xs text-slate-400">Email sending isn’t switched on yet.</p>
           </div>
         </details>
       </section>
