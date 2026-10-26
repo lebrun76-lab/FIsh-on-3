@@ -29,10 +29,24 @@ Each row is `zone x species` with `minSizeCm` (number, `"none"` or `null`), `dai
 it only counts toward the area total, `"no-take"`, or `null`), shared and accumulation limits, closures as `MM-DD`
 ranges, `sourceUrl`, `noticePart`, `dateChecked` and `verified: false`.
 
+Other row fields:
+
+* `combinedDaily` / `combinedVessel`: the combined finfish total for that zone, already the lowest that applies
+  (Challenger mātaitai 10 and 30 per boat, Akaroa 10, Lyttelton 10, East Otago taiāpure 10, the Fiords 10,
+  Fiordland Marine Area 20, otherwise the FMA's 20 or 30). If a species limit is higher than the total, the panel shows
+  the total as the daily limit.
+* `pageOnly`: the number is from an MPI area page (or a bylaw listed there), not the notice. The panel says so.
+* `disputed`: MPI's page and notice disagree. We store the stricter number and the panel says "MPI sources differ,
+  check MPI". These rows stay `verified: false`.
+* `verified`, `verifiedBy`, `verifiedOn`, `checkStatus`: from Forecast Brain's second check on 27 Oct 2026
+  (`scripts/catch-rules/second-check-2026-10-27.csv`). Only rows it matched, plus the two kingfish rows it filled in,
+  are `verified: true`.
+
 Rules in the UI:
 
 * `null` anywhere in a row, or `dateChecked` older than 60 days: no numbers, just a link to the MPI page.
-* `verified` stays `false` until someone has done the second check against the CSV.
+* The spot headline and Where to go show "Snapper: minimum 30 cm" from this data, and drop it for split, freshwater,
+  disputed or hidden rows.
 * Closures are worked out in Pacific/Auckland time.
 
 ## Boundary spots

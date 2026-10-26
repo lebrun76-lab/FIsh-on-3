@@ -14,7 +14,7 @@ Usage: python3 scripts/catch-rules/build.py [--csv /workspace/research/catch-rul
 import csv, json, sys, copy
 from pathlib import Path
 
-CHECKED = "2026-10-26"
+CHECKED = "2026-10-27"
 PAGE = "https://www.mpi.govt.nz/fishing-aquaculture/recreational-fishing/fishing-rules/"
 NOTICE = "https://www.mpi.govt.nz/dmsdocument/71138-Fisheries-Recreational-Management-Controls-Notice-No.-1-2026"
 SRC = {
@@ -95,8 +95,10 @@ westland = zone(CHA_BASE, "cha", {"blue_cod": r(33, 15, "41.9", landedState="Who
 southwest_cha = zone(CHA_BASE, "cha", {"blue_cod": r(33, 10, "41.6", landedState="Landed whole or gutted", accumulation=BC_ACC)})
 jackson_mataitai = zone(CHA_BASE, "cha", {
     "snapper": r(25, 5), "kingfish": r(75, 1), "hapuku_bass": r("none", 1), "bluenose": r("none", 2),
-    "blue_cod": r(33, None, landedState="Whole, gutted, or headed and gutted",
-                  notes=["MPI's table shows 5 and a vessel limit of 15 but the layout is unclear. Check the Challenger page."]),
+    "blue_cod": r(33, 5, None, shared="Vessel limit 15 blue cod.",
+                  landedState="Whole or gutted only. Check MPI before landing headed fish here.",
+                  notes=["Bylaw limit from the Challenger page Table 1 (Paringa, Popotai Taumaka/Open Bay Islands, Okahu/Jacksons Bay, Tauneke/Barn Bay mātaitai), not the notice.",
+                         "The Challenger table allows headed and gutted, but Jackson Bay is in the South West blue cod area, which is whole or gutted. Check MPI."]),
 })
 
 KAI_GROUP = "Albacore, bluenose, hāpuku/bass, kingfish and ling: 5 in total, no more than 3 of any one."
@@ -146,12 +148,12 @@ fio_outer = zone(NATIONAL, "fio", {
 fiords = zone(fio_outer, "fio", {
     "blue_cod": r(33, 1, "38.4", landedState="Landed whole or gutted", accumulation=FIO_ACC), "blue_moki": r(40, 1, "38.4"),
     "bluenose": r("none", 1, "38.4"), "flatfish": r(25, 2, "38.4", notes=["Sand flounder minimum is 23 cm."]),
-    "hapuku_bass": r("none", 1, "38.4"), "kahawai": r("none", 1, "38.4"), "red_gurnard": r(25, 2, "38.4"),
+    "hapuku_bass": r("none", 1, "38.4, 38.5", notes=["0 (no take) in Fiordland internal waters."]), "kahawai": r("none", 1, "38.4"), "red_gurnard": r(25, 2, "38.4"),
     "tarakihi": r(25, 1, "38.4"), "trevally": r(25, 1, "38.4"), "barracouta": r("none", 3, "38.4"),
     "john_dory": r("none", 4, "38.4", notes=["'Any other finfish' limit."]),
-    "kingfish": r(75, None, None, notes=["The Fiords limit for kingfish isn't clear on the MPI page."], shared=None),
-    "snapper": r(25, None, None, notes=["The Fiords limit for snapper isn't clear on the MPI page."]),
-    "red_moki": r(40, None, None, notes=["The Fiords limit for red moki isn't clear on the MPI page."]),
+    "kingfish": r(75, 3, "38.1", shared=None, notes=["The Fiordland page shows 3 in the Fiords column. Notice 38.1 sets 3."]),
+    "snapper": r(25, 4, "38.4", disputed=True, notes=["MPI sources differ, check MPI. The Fiordland page says 5, the notice's 'any other finfish' limit for the Fiords is 4. We show the stricter 4."]),
+    "red_moki": r(40, 4, "38.4", disputed=True, notes=["MPI sources differ, check MPI. The Fiordland page says 5, the notice's 'any other finfish' limit for the Fiords is 4. We show the stricter 4."]),
 })
 milford = zone(fiords, "fio", {
     "blue_cod": r(33, "no-take", None, notes=["No blue cod may be taken in Milford Sound (Piopiotahi) internal waters."]),
@@ -168,14 +170,14 @@ ZONES = [
     ("challenger-sounds", "Challenger: Marlborough Sounds", "Challenger", 20, [], sounds),
     ("challenger-westland", "Challenger: Westland (Heaphy River to Haast River)", "Challenger", 20, [], westland),
     ("challenger-southwest", "Challenger: south of the Haast River to Awarua Point", "Challenger", 20, [], southwest_cha),
-    ("challenger-mataitai", "Okahu/Jackson Bay and nearby mātaitai reserves", "Challenger", 10, ["Vessel limit of 30 finfish in these mātaitai."], jackson_mataitai),
+    ("challenger-mataitai", "Okahu/Jackson Bay and nearby mātaitai reserves", "Challenger", (10, 30, "Mātaitai bylaw, Challenger page Table 1."), [], jackson_mataitai),
     ("kaikoura-ma", "Kaikōura Marine Area", "South-East (Kaikōura)", 30, ["Hikurangi Marine Reserve and Waiopuka reef are closed to all fishing."], kaikoura_ma),
     ("kaikoura-taiapure", "Te Taumanu o Te Waka a Māui or Oaro-Haumuri taiāpure", "South-East (Kaikōura)", 30, ["Hikurangi Marine Reserve and Waiopuka reef are closed to all fishing."], kaikoura_taiapure),
     ("se-canterbury", "South-East: Canterbury (Hurunui River to Rakaia River)", "South-East", 30, [], canterbury),
-    ("se-akaroa", "Akaroa Harbour taiāpure", "South-East", 10, ["Butterfish, red cod, sea perch and trumpeter: 3 each."], akaroa),
-    ("se-lyttelton", "Lyttelton/Whakaraupō and Rāpaki mātaitai", "South-East", 10, ["Some species are closed or reduced inside these mātaitai. Read the South-East page."], lyttelton),
+    ("se-akaroa", "Akaroa Harbour taiāpure", "South-East", (10, None, "Notice 27.4."), ["Butterfish, red cod, sea perch and trumpeter: 3 each."], akaroa),
+    ("se-lyttelton", "Lyttelton/Whakaraupō and Rāpaki mātaitai", "South-East", (10, None, "Mātaitai bylaw, South-East page."), ["Some species are closed or reduced inside these mātaitai. Read the South-East page."], lyttelton),
     ("se-north-otago", "South-East: North Otago (Rakaia River to Taiaroa Head)", "South-East", 30, [], north_otago),
-    ("se-east-otago", "East Otago taiāpure", "South-East", 30, ["Combined limit drops to 10 in the southern part of the taiāpure."], east_otago),
+    ("se-east-otago", "East Otago taiāpure", "South-East", (10, None, "Notice 27.3 sets 10 in the southern part of the taiāpure. We show 10 for the whole taiāpure to be safe."), [], east_otago),
     ("se-southern", "South-East: Taiaroa Head to Slope Point", "South-East", 30, [], southern_se),
     ("sl-southern", "Southland: Slope Point to Sand Hill Point", "Southland", 30, [], southern_sl),
     ("sl-paterson", "Paterson Inlet (Whaka a Te Wera) mātaitai", "Southland", 30, [], paterson),
@@ -212,16 +214,33 @@ SPOTS = {
 }
 
 
+# Combined finfish limits, the usual one per FMA (notice part) unless a zone sets a lower one.
+COMBINED_SRC = {"ak": "Notice 9.1.", "cen": "Notice 14.1.", "cha": "Notice 20.1.", "kai": "Notice 27.1.", "se": "Notice 27.1.", "sl": "Notice 39.1.", "fio": "Notice 39.1."}
+
+# Forecast Brain's second check (27 Oct 2026). "matches" rows become verified:true.
+SECOND_CHECK = Path(__file__).with_name("second-check-2026-10-27.csv")
+VERIFIED_BY, VERIFIED_ON = "Forecast Brain second check against the MPI pages and the 2026 notice", "2026-10-27"
+# Rows the check found wrong (blank) and gave a value for, now filled from its sources and confirmed.
+FIXED_AND_CONFIRMED = {"fio-fiords:kingfish", "fio-milford:kingfish"}
+# Filled from the check but left unverified: the landed state for Jackson Bay is still open.
+FIXED_NOT_CONFIRMED = {"challenger-mataitai:blue_cod"}
+
+
 def main():
+    check = {x["row_id"]: x for x in csv.DictReader(open(SECOND_CHECK))} if SECOND_CHECK.exists() else {}
     names = {s[0]: {"id": s[0], "name": s[1], "maori": s[2]} for s in SPECIES}
     zones, rows = [], []
     for zid, name, fma, combined, notes, zrows in ZONES:
         src = next(iter(zrows.values()))["sourceKey"]
-        zones.append({"id": zid, "name": name, "fma": fma, "combinedDaily": combined, "notes": notes,
+        cd, cv, cn = combined if isinstance(combined, tuple) else (combined, None, COMBINED_SRC[src])
+        zones.append({"id": zid, "name": name, "fma": fma, "combinedDaily": cd, "combinedVessel": cv, "combinedSource": cn, "notes": notes,
                       "sourceUrl": SRC[src][0], "lastReviewedOnSource": SRC[src][1]})
         for sid, _, _ in SPECIES:
             v = zrows[sid]
             part = v.get("noticePart")
+            rid = f"{zid}:{sid}"
+            st = check.get(rid, {}).get("status")
+            ok = (st == "matches" and not v.get("disputed")) or rid in FIXED_AND_CONFIRMED
             rows.append({
                 "id": f"{zid}:{sid}", "zone": zid, "species": sid,
                 "minSizeCm": v["minSizeCm"], "dailyLimit": v["dailyLimit"],
@@ -229,28 +248,36 @@ def main():
                 "closure": v.get("closure"), "landedState": v.get("landedState") if sid == "blue_cod" else None,
                 "notes": v.get("notes", []),
                 "sourceUrl": v["sourceUrl"], "noticeUrl": NOTICE if part else None, "noticePart": part,
-                "lastReviewedOnSource": SRC[v["sourceKey"]][1], "dateChecked": CHECKED, "verified": False,
+                "lastReviewedOnSource": SRC[v["sourceKey"]][1], "dateChecked": CHECKED,
+                "combinedDaily": cd, "combinedVessel": cv,
+                "pageOnly": part is None and (isinstance(v["dailyLimit"], int) or v["dailyLimit"] == "no-take"),
+                "disputed": bool(v.get("disputed")),
+                "verified": ok, "verifiedBy": VERIFIED_BY if ok else None, "verifiedOn": VERIFIED_ON if ok else None,
+                "checkStatus": "fixed" if rid in FIXED_AND_CONFIRMED | FIXED_NOT_CONFIRMED else st,
             })
     spots = [{"spotId": k, "note": None if n == "freshwater" else n, "freshwater": n == "freshwater",
               "options": [{"zone": z, "label": l} for z, l in opts]} for k, (n, opts) in SPOTS.items()]
-    out = {"_about": "Recreational finfish size and daily limits, hand-entered from MPI area pages and the Fisheries (Recreational Management Controls) Notice No.1 2026. Guide only. verified:false until checked by a person. Built by scripts/catch-rules/build.py.",
+    out = {"_about": "Recreational finfish size and daily limits, hand-entered from MPI area pages and the Fisheries (Recreational Management Controls) Notice No.1 2026. Guide only. verified:true only where Forecast Brain's second check (27 Oct 2026) matched the sources. Built by scripts/catch-rules/build.py.",
            "attribution": "This work is based on/includes MPI data which is licensed by Ministry for Primary Industries (MPI) for re-use under the Creative Commons Attribution 4.0 International licence.",
            "noticeUrl": NOTICE, "dateChecked": CHECKED, "species": list(names.values()), "zones": zones, "rows": rows, "spots": spots}
     dest = Path(__file__).resolve().parents[2] / "src/data/catch-rules.json"
     dest.write_text(json.dumps(out, ensure_ascii=False, indent=1) + "\n")
     filled = sum(1 for x in rows if x["minSizeCm"] is not None and x["dailyLimit"] is not None)
-    print(f"{len(rows)} rows, {filled} fully filled, {len(rows) - filled} with a null; wrote {dest}")
+    ver = sum(x["verified"] for x in rows)
+    print(f"{len(rows)} rows, {filled} fully filled, {len(rows) - filled} with a null, {ver} verified, {sum(x['pageOnly'] for x in rows)} page-only, {sum(x['disputed'] for x in rows)} sources differ; wrote {dest}")
     if "--csv" in sys.argv:
         p = sys.argv[sys.argv.index("--csv") + 1]
         with open(p, "w", newline="") as f:
             w = csv.writer(f)
-            w.writerow(["row_id", "zone", "zone_name", "species", "min_size_cm", "daily_limit", "shared_limit", "accumulation", "closure", "landed_state", "notes", "source_url", "notice_part", "notice_url", "source_last_reviewed", "date_checked", "verified", "checker_initials", "checker_result"])
+            w.writerow(["row_id", "zone", "zone_name", "species", "min_size_cm", "daily_limit", "shared_limit", "accumulation", "closure", "landed_state", "notes", "source_url", "notice_part", "notice_url", "source_last_reviewed", "date_checked", "combined_daily", "combined_vessel", "page_only", "sources_differ", "verified", "verified_by", "verified_on", "check_status"])
             zn = {z["id"]: z["name"] for z in zones}
             for x in rows:
                 w.writerow([x["id"], x["zone"], zn[x["zone"]], names[x["species"]]["name"], "" if x["minSizeCm"] is None else x["minSizeCm"],
                             "" if x["dailyLimit"] is None else x["dailyLimit"], x["shared"] or "", x["accumulation"] or "",
                             (x["closure"] or {}).get("text", ""), x["landedState"] or "", " ".join(x["notes"]), x["sourceUrl"],
-                            x["noticePart"] or "", x["noticeUrl"] or "", x["lastReviewedOnSource"], x["dateChecked"], "no", "", ""])
+                            x["noticePart"] or "", x["noticeUrl"] or "", x["lastReviewedOnSource"], x["dateChecked"],
+                            x["combinedDaily"], x["combinedVessel"] or "", "yes" if x["pageOnly"] else "", "yes" if x["disputed"] else "",
+                            "yes" if x["verified"] else "no", x["verifiedBy"] or "", x["verifiedOn"] or "", x["checkStatus"] or ""])
         print("wrote", p)
 
 if __name__ == "__main__":

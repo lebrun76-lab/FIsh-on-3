@@ -1,7 +1,7 @@
 "use client";
 import { useMemo, useState } from "react";
 import {
-  CATCH_SPECIES, LINKS, MPI_ATTRIBUTION, closedNow, dailyText, minText, rowFor, showable, speciesIdsFor, spotRules, verdict, zoneById,
+  CATCH_SPECIES, LINKS, MPI_ATTRIBUTION, closedNow, dailyText, minText, totalText, rowFor, showable, speciesIdsFor, spotRules, verdict, zoneById,
   type CatchRow, type CatchZone, type Tone,
 } from "@/lib/catch";
 
@@ -36,7 +36,7 @@ function Answer({ row, zone, label, len }: { row?: CatchRow; zone?: CatchZone; l
         <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm">
           <dt className="text-slate-500">Size</dt><dd>{minText(row)}</dd>
           <dt className="text-slate-500">Limit</dt><dd>{dailyText(row, zone)}</dd>
-          {zone && row.dailyLimit !== "combined" && <><dt className="text-slate-500">Total</dt><dd>{zone.combinedDaily} finfish a day, all species</dd></>}
+          <dt className="text-slate-500">Total</dt><dd>{totalText(row)}</dd>
           {row.shared && <><dt className="text-slate-500">Shared</dt><dd>{row.shared}</dd></>}
           {row.closure && <><dt className="text-slate-500">Closure</dt><dd className={shut ? "font-semibold text-rose-800" : ""}>{row.closure.text}{shut ? " Closed now." : ""}</dd></>}
           {row.accumulation && <><dt className="text-slate-500">Over days</dt><dd>{row.accumulation}</dd></>}
@@ -45,12 +45,14 @@ function Answer({ row, zone, label, len }: { row?: CatchRow; zone?: CatchZone; l
       ) : (
         <p className="text-sm text-slate-700">No numbers shown for this one. <a className="font-semibold text-ocean-700 underline" href={src} target="_blank" rel="noopener noreferrer">Check the MPI page</a>.</p>
       )}
-      {row?.notes.map((n) => <p key={n} className="text-xs text-slate-500">{n}</p>)}
+      {row?.disputed && <p className="rounded-lg bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-900 ring-1 ring-amber-200">MPI sources differ, check MPI. We show the lower number.</p>}
+      {row?.pageOnly && <p className="text-xs text-slate-500">This number is from the MPI area page only, not the 2026 notice.</p>}
+      {row?.notes.map((n) => <p key={n} className="text-xs text-slate-500">{row.disputed ? n.replace("MPI sources differ, check MPI. ", "") : n}</p>)}
       {zone?.notes.map((n) => <p key={n} className="text-xs text-slate-500">{n}</p>)}
       <p className="text-xs text-slate-400">
         Source: <a className="underline" href={src} target="_blank" rel="noopener noreferrer">MPI {zone?.fma ?? ""} rules</a>{zone ? ` (last reviewed ${nzDate(zone.lastReviewedOnSource)})` : ""}
         {row?.noticePart && row.noticeUrl ? <>, <a className="underline" href={row.noticeUrl} target="_blank" rel="noopener noreferrer">2026 notice</a> cl. {row.noticePart}</> : null}
-        {row ? `. We checked it ${nzDate(row.dateChecked)}. Not yet verified.` : "."}
+        {row ? (row.verified && row.verifiedOn ? `. Checked against MPI twice, last on ${nzDate(row.verifiedOn)}.` : `. We checked it ${nzDate(row.dateChecked)}. Not confirmed by a second check.`) : "."}
       </p>
     </div>
   );

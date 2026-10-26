@@ -1,7 +1,8 @@
 import { allForecasts } from "./forecasts";
 import { speciesOf } from "./view";
 import type { Rating } from "./types";
-import { speciesFor, sizeText } from "./rules";
+import { speciesFor } from "./rules";
+import { headlineRule } from "./catch";
 import { dateLabel, nzTodayISO } from "./time";
 import { bestCall, targetList } from "./call";
 
@@ -26,10 +27,11 @@ export async function regionCalls(): Promise<RegionCall[]> {
     const open = speciesOf(f).filter((x) => x.status !== "closed").map((x) => x.name);
     const targets = (open.length ? open : s.species).slice(0, 2);
     const sp = speciesFor(targets);
+    const rule = targets[0] ? headlineRule(s.id, targets[0]) : null;
     const name = s.name.split(" (")[0];
     const fishable = c.kind === "window";
     const call = fishable
-      ? `${c.headline} at ${name}. ${targetList(targets)}${sp[0] ? `. ${sp[0].name}: ${sizeText(sp[0])}` : ""}.`
+      ? `${c.headline} at ${name}. ${targetList(targets)}${rule ? `. ${rule}` : ""}.`
       : `Give ${name} a miss for the next ${c.dates.length} days. Nothing scores well enough.`;
     const row: RegionCall = { region: s.region, spotId: s.id, spotName: name, rating: c.rating, score: c.score, call, tactics: (c.window ? speciesOf(f).find((x) => x.status !== "closed")?.how : undefined) ?? sp[0]?.tactics ?? "", species: targets, dayLabel: fishable ? (c.date === todayISO ? "Today" : dateLabel(c.date)) : "Next 3 days", mock: f.data_status === "mock-fallback", fishable };
     const prev = best.get(s.region);

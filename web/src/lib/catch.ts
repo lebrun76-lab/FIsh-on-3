@@ -11,9 +11,16 @@ export interface CatchRow {
   id: string; zone: string; species: string; minSizeCm: MinSize; dailyLimit: Daily;
   shared: string | null; accumulation: string | null; closure: { from: string; to: string; text: string } | null;
   landedState: string | null; notes: string[]; sourceUrl: string; noticeUrl: string | null; noticePart: string | null;
-  lastReviewedOnSource: string; dateChecked: string; verified: boolean;
+  lastReviewedOnSource: string; dateChecked: string;
+  /** Combined finfish a day for the zone, already the lowest that applies there. */
+  combinedDaily: number; combinedVessel: number | null;
+  /** The number comes from an MPI area page (or a bylaw on it), not the notice. */
+  pageOnly: boolean;
+  /** MPI's page and notice give different numbers; we store the stricter one. */
+  disputed: boolean;
+  verified: boolean; verifiedBy: string | null; verifiedOn: string | null; checkStatus: string | null;
 }
-export interface CatchZone { id: string; name: string; fma: string; combinedDaily: number; notes: string[]; sourceUrl: string; lastReviewedOnSource: string }
+export interface CatchZone { id: string; name: string; fma: string; combinedDaily: number; combinedVessel: number | null; combinedSource: string; notes: string[]; sourceUrl: string; lastReviewedOnSource: string }
 export interface CatchSpecies { id: string; name: string; maori: string | null }
 export interface SpotRules { spotId: string; note: string | null; freshwater: boolean; options: { zone: string; label: string | null }[] }
 
@@ -69,10 +76,19 @@ export function closedNow(r: CatchRow, now = new Date()) {
 }
 
 export function minText(r: CatchRow) { return r.minSizeCm === "none" ? "No minimum size" : `Minimum ${r.minSizeCm} cm`; }
-export function dailyText(r: CatchRow, z?: CatchZone) {
+/** The species limit, cut down to the combined finfish total when that is lower. */
+export function effectiveDaily(r: CatchRow): { n: number | null; capped: boolean } {
+  if (typeof r.dailyLimit !== "number") return { n: null, capped: false };
+  return r.dailyLimit > r.combinedDaily ? { n: r.combinedDaily, capped: true } : { n: r.dailyLimit, capped: false };
+}
+export function totalText(r: CatchRow) {
+  return `${r.combinedDaily} finfish a day, all species${r.combinedVessel ? ` (${r.combinedVessel} per boat)` : ""}`;
+}
+export function dailyText(r: CatchRow, _z?: CatchZone) {
   if (r.dailyLimit === "no-take") return "No take here";
-  if (r.dailyLimit === "combined") return z ? `No separate limit. Counts toward the ${z.combinedDaily} finfish a day total` : "No separate limit. Counts toward the area total";
-  return `Daily limit ${r.dailyLimit}`;
+  if (r.dailyLimit === "combined") return `No separate limit. Counts toward the ${r.combinedDaily} finfish a day total`;
+  const e = effectiveDaily(r);
+  return e.capped ? `Daily limit ${e.n}. The species limit is ${r.dailyLimit}, but the ${r.combinedDaily} finfish total caps it` : `Daily limit ${r.dailyLimit}`;
 }
 
 export type Tone = "back" | "limit" | "check" | "info";
@@ -82,7 +98,7 @@ export function verdict(r: CatchRow | undefined, z: CatchZone | undefined, lengt
   const shut = closedNow(r, now);
   if (shut) return { tone: "back", text: `Closed here until ${shut.until}. Put it back.` };
   if (r.dailyLimit === "no-take") return { tone: "back", text: "No take here. Put it back." };
-  const lim = r.dailyLimit === "combined" ? `No separate limit, it counts toward the ${z ? `${z.combinedDaily} finfish` : "area"} total.` : `Daily limit ${r.dailyLimit}.`;
+  const lim = r.dailyLimit === "combined" ? `No separate limit, it counts toward the ${r.combinedDaily} finfish total.` : `Daily limit ${effectiveDaily(r).n}.`;
   if (lengthCm === null || !Number.isFinite(lengthCm) || lengthCm <= 0) return { tone: "info", text: `${minText(r)}. ${lim}` };
   const min = r.minSizeCm;
   if (min === null) return { tone: "check", text: "We can't confirm this one. Check the MPI rules before you keep it." };
@@ -90,4 +106,21 @@ export function verdict(r: CatchRow | undefined, z: CatchZone | undefined, lengt
   if (lengthCm < min) return { tone: "back", text: `Under the ${min} cm minimum, put it back.` };
   if (lengthCm === min) return { tone: "limit", text: `Right on the ${min} cm minimum. ${lim}` };
   return { tone: "limit", text: `Over the minimum. ${lim}` };
+}
+
+/**
+ * Short rule for a headline, e.g. "Snapper: minimum 30 cm". Null when the spot is split across areas,
+ * freshwater, unmapped, or the row can't be shown, so the headline drops the size rather than guess.
+ */
+export function headlineRule(spotId: string, speciesName: string, now = new Date()): string | null {
+  const sr = spotRules(spotId);
+  if (!sr || sr.freshwater || sr.options.length !== 1) return null;
+  const id = speciesIdsFor([speciesName])[0];
+  const r = id ? rowFor(sr.options[0].zone, id) : undefined;
+  if (!showable(r, now) || r.disputed) return null;
+  const name = CATCH_SPECIES.find((s) => s.id === id)!.name;
+  const shut = closedNow(r, now);
+  if (shut) return `${name}: closed here until ${shut.until}`;
+  if (r.dailyLimit === "no-take") return `${name}: no take here`;
+  return `${name}: ${r.minSizeCm === "none" ? "no minimum size" : `minimum ${r.minSizeCm} cm`}`;
 }
