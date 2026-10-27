@@ -48,7 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <TopBar />
           <main className="mx-auto max-w-5xl px-4 pb-24 md:pb-12">{children}</main>
           <footer className="mx-auto max-w-5xl px-4 pb-24 md:pb-8 text-xs text-slate-500">
-            © {BRAND.name} · saltsupply.co.nz · Forecasts are guidance only. Always check the MetService marine forecast and local conditions before heading out. Weather & marine data: Open-Meteo (CC BY 4.0). Tides: LINZ (CC BY 4.0), not for navigation. <span className="guest-only inline">No pop-ups, no autoplay, no intrusive ads. </span><a href="/about" className="underline">About</a> · <a href="/credits" className="underline">Credits</a>
+            © {BRAND.name} · saltsupply.co.nz · Forecasts are guidance only. Always check the MetService marine forecast and local conditions before heading out. Weather & marine data: Open-Meteo (CC BY 4.0). Tides: LINZ (CC BY 4.0), not for navigation. <span className="guest-only inline">No pop-ups, no autoplay, no intrusive ads. </span><a href="/about" className="underline">About</a> · <a href="/credits" className="underline">Credits</a> · Contact: <a href={`mailto:${BRAND.emails.contact}`} className="underline">{BRAND.emails.contact}</a>
           </footer>
           <BottomTabs />
         </AuthProvider>
