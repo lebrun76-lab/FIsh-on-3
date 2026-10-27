@@ -13,16 +13,16 @@ export const SPECIES: Species[] = [
   { id: "gurnard", name: "Red gurnard", maori: "Kumukumu", minSizeCm: 25, dailyBag: null, season: "Year round over sand", tactics: "Drift over sand and mud with flasher rigs and fresh bait.", water: "salt" },
   { id: "trout", name: "Brown / rainbow trout", minSizeCm: null, dailyBag: null, season: "Season and limits set by Fish & Game region. Licence required", tactics: "Early and late in the day; nymph or wet fly near drop-offs and stream mouths.", water: "fresh" },
 ];
-export interface Closure { id: string; name: string; type: "Marine reserve" | "Seasonal closure" | "Rāhui" | "Area rule"; lat: number; lon: number; rule: string; }
+export interface Closure { id: string; name: string; type: "Marine reserve" | "Seasonal closure" | "Rāhui" | "Area rule"; island: "North" | "South"; lat: number; lon: number; rule: string; }
 export const CLOSURES: Closure[] = [
-  { id: "goat_island", name: "Cape Rodney–Okakari Point (Goat Island)", type: "Marine reserve", lat: -36.27, lon: 174.8, rule: "No fishing or taking of anything." },
-  { id: "poor_knights", name: "Poor Knights Islands", type: "Marine reserve", lat: -35.47, lon: 174.74, rule: "No fishing within the reserve." },
-  { id: "hauraki_scallops", name: "Hauraki Gulf & Coromandel scallops", type: "Seasonal closure", lat: -36.6, lon: 175.3, rule: "Scallop harvest closed (check current status)." },
-  { id: "te_tapuwae", name: "Te Tapuwae o Rongokako", type: "Marine reserve", lat: -38.8, lon: 178.05, rule: "No fishing within the reserve." },
-  { id: "tonga_island", name: "Tonga Island (Abel Tasman)", type: "Marine reserve", lat: -40.89, lon: 173.06, rule: "No fishing within the reserve." },
-  { id: "hikurangi", name: "Hikurangi (Kaikōura)", type: "Marine reserve", lat: -42.5, lon: 173.6, rule: "No fishing within the reserve." },
-  { id: "marlborough_cod", name: "Marlborough Sounds blue cod", type: "Area rule", lat: -41.1, lon: 174.0, rule: "Blue cod bag and size limits differ here." },
-  { id: "fiordland", name: "Fiordland internal waters", type: "Area rule", lat: -45.4, lon: 167.2, rule: "Lower bag limits and several reserves." },
+  { id: "goat_island", name: "Cape Rodney–Okakari Point (Goat Island)", type: "Marine reserve", island: "North", lat: -36.27, lon: 174.8, rule: "No fishing or taking of anything." },
+  { id: "poor_knights", name: "Poor Knights Islands", type: "Marine reserve", island: "North", lat: -35.47, lon: 174.74, rule: "No fishing within the reserve." },
+  { id: "hauraki_scallops", name: "Hauraki Gulf & Coromandel scallops", type: "Seasonal closure", island: "North", lat: -36.5, lon: 175.1, rule: "Scallop harvest closed (check current status)." },
+  { id: "te_tapuwae", name: "Te Tapuwae o Rongokako", type: "Marine reserve", island: "North", lat: -38.8, lon: 178.05, rule: "No fishing within the reserve." },
+  { id: "tonga_island", name: "Tonga Island (Abel Tasman)", type: "Marine reserve", island: "South", lat: -40.89, lon: 173.06, rule: "No fishing within the reserve." },
+  { id: "hikurangi", name: "Hikurangi (Kaikōura)", type: "Marine reserve", island: "South", lat: -42.48, lon: 173.78, rule: "No fishing within the reserve." },
+  { id: "marlborough_cod", name: "Marlborough Sounds blue cod", type: "Area rule", island: "South", lat: -41.1, lon: 174.0, rule: "Blue cod bag and size limits differ here." },
+  { id: "fiordland", name: "Fiordland internal waters", type: "Area rule", island: "South", lat: -45.0, lon: 166.95, rule: "Lower bag limits and several reserves." },
 ];
 export const speciesFor = (names: string[]) => names.map((n) => SPECIES.find((s) => n.toLowerCase().includes(s.name.toLowerCase().split(" ")[0].toLowerCase()) || (s.id === "trout" && /trout/i.test(n)))).filter(Boolean) as Species[];
 export const sizeText = (s?: Species) => (!s ? "" : s.minSizeCm ? `legal size ${s.minSizeCm} cm` : "no min. size");
