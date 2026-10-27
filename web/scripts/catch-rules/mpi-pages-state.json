@@ -1,0 +1,54 @@
+{
+  "_about": "Baseline for scripts/check-mpi-rules.py. Written with --update.",
+  "pages": {
+    "auckland-kermadec-fishing-rules": {
+      "url": "https://www.mpi.govt.nz/fishing-aquaculture/recreational-fishing/fishing-rules/auckland-kermadec-fishing-rules",
+      "lastReviewed": "2026-09-10",
+      "sha256": "86647ad8268952b11eba96fc2de0084af3d998f9fb0e015488eecc5b15344011",
+      "chars": 38290,
+      "checkedAt": "2026-10-26T05:23:22+00:00"
+    },
+    "central-fishing-rules": {
+      "url": "https://www.mpi.govt.nz/fishing-aquaculture/recreational-fishing/fishing-rules/central-fishing-rules",
+      "lastReviewed": "2026-10-16",
+      "sha256": "138aa584514a5294e9eeacc9698d9cc077967386c7f1438c48ba01bffd583580",
+      "chars": 18663,
+      "checkedAt": "2026-10-26T05:23:22+00:00"
+    },
+    "challenger-fishing-rules": {
+      "url": "https://www.mpi.govt.nz/fishing-aquaculture/recreational-fishing/fishing-rules/challenger-fishing-rules",
+      "lastReviewed": "2026-07-15",
+      "sha256": "25ec05e071ea6afae370e6a158edf3d0f1bef1e6a5577789ff0317d89c61f23b",
+      "chars": 31157,
+      "checkedAt": "2026-10-26T05:23:22+00:00"
+    },
+    "kaikoura-fishing-rules": {
+      "url": "https://www.mpi.govt.nz/fishing-aquaculture/recreational-fishing/fishing-rules/kaikoura-fishing-rules",
+      "lastReviewed": "2026-07-15",
+      "sha256": "ac673ac69b890908fc8b3708a59059f12bc23d287e1f0420d09560efb9a69b77",
+      "chars": 13694,
+      "checkedAt": "2026-10-26T05:23:22+00:00"
+    },
+    "south-east-fishing-rules": {
+      "url": "https://www.mpi.govt.nz/fishing-aquaculture/recreational-fishing/fishing-rules/south-east-fishing-rules",
+      "lastReviewed": "2026-09-28",
+      "sha256": "fdf7290596345ad0483764f8d5235e8c59e4beb73b00dccbf2e0b817c68dcb4e",
+      "chars": 27014,
+      "checkedAt": "2026-10-26T05:23:22+00:00"
+    },
+    "southland-fishing-rules": {
+      "url": "https://www.mpi.govt.nz/fishing-aquaculture/recreational-fishing/fishing-rules/southland-fishing-rules",
+      "lastReviewed": "2026-07-15",
+      "sha256": "2344e52b6d5df7d30b308f70d646dea14d354161fbb73f370a921d9467eb4715",
+      "chars": 15373,
+      "checkedAt": "2026-10-26T05:23:22+00:00"
+    },
+    "fiordland-marine-area-fishing-rules": {
+      "url": "https://www.mpi.govt.nz/fishing-aquaculture/recreational-fishing/fishing-rules/fiordland-marine-area-fishing-rules",
+      "lastReviewed": "2026-07-15",
+      "sha256": "5e7992f04897348c208f9daa080254abd361e12fd7446729c2ff00e40f8f2025",
+      "chars": 31259,
+      "checkedAt": "2026-10-26T05:23:22+00:00"
+    }
+  }
+}

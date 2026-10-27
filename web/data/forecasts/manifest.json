@@ -1,0 +1,50 @@
+{
+ "run_id": "2693d266-c3fd-4102-82ce-014dafe90d52",
+ "started_at": "2026-10-26T01:08:25+13:00",
+ "finished_at": "2026-10-26T01:09:32+13:00",
+ "status": "ok",
+ "engine_version": "2.2.0",
+ "mapper_version": "2026-10-26.1",
+ "api_version": "1",
+ "days": 10,
+ "spots_ok": [
+  "banks_peninsula",
+  "bay_of_islands",
+  "bay_of_plenty",
+  "bluff",
+  "catlins",
+  "central_otago_lakes",
+  "coromandel",
+  "dunedin",
+  "east_cape",
+  "far_north",
+  "fiordland",
+  "greymouth",
+  "haast_jackson",
+  "hauraki_gulf",
+  "hawkes_bay",
+  "kaikoura",
+  "marlborough_sounds",
+  "moeraki",
+  "nelson_bays",
+  "southern_lakes",
+  "stewart_island",
+  "taranaki",
+  "wellington"
+ ],
+ "spots_failed": {},
+ "contract_problems": {},
+ "model_run": "ECMWF IFS 2026-10-25T00:00Z (latest run ingested by Open-Meteo best_match)",
+ "model_runs": {
+  "ecmwf_ifs": "2026-10-25T00:00Z",
+  "ncep_gfs013": "2026-10-25T06:00Z",
+  "dwd_icon": "2026-10-25T06:00Z",
+  "meteofrance_wave": "2026-10-25T00:00Z",
+  "ecmwf_wam": "2026-10-25T06:00Z"
+ },
+ "sst_map": {
+  "valid_time_nz": "2026-10-26T01:00",
+  "api_calls_counted": 469
+ },
+ "open_meteo_tier": "free (non-commercial)"
+}

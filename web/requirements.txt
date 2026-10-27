@@ -1,0 +1,5 @@
+# Python deps for api/refresh_forecasts.py (Vercel Python function). The site itself is Next.js.
+requests==2.34.2
+numpy==2.5.4
+contourpy==1.4.0
+tzdata==2026.5

@@ -1,0 +1,21 @@
+@import "tailwindcss";
+@theme {
+  --color-ocean-950: #06223a;
+  --color-ocean-900: #0b3556;
+  --color-ocean-700: #13608f;
+  --color-ocean-500: #1f8ac0;
+  --color-ocean-100: #e3f2fa;
+  --color-sand-50: #EEF3F6;
+  /* Salt Supply Co. logo colours */
+  --color-salt-navy: #1B2541;
+  --color-salt-bone: #EEE6D3;
+  --color-salt-red: #C8323B;
+}
+html, body { background: var(--color-sand-50); color: #0f172a; }
+body { -webkit-tap-highlight-color: transparent; }
+
+/* Signed-in vs guest content (html[data-auth] is set before paint, see layout.tsx and AuthHint). */
+.member-only { display: none; }
+html[data-auth="free"] .member-only, html[data-auth="paid"] .member-only { display: block; }
+html[data-auth="free"] .guest-only, html[data-auth="paid"] .guest-only { display: none; }
+html[data-auth="paid"] .free-only { display: none; }

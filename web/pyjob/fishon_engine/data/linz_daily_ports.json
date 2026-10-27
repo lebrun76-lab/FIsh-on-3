@@ -1,0 +1,706 @@
+{
+ "meta": {
+  "source": "https://static.charts.linz.govt.nz/tide-tables/maj-ports/csv/<file> <year>.csv line 1; site list from https://www.linz.govt.nz/products-services/tides-and-tidal-streams/tide-predictions/tide-predictions-list-view",
+  "licence": "CC BY 4.0, Land Information New Zealand (LINZ)",
+  "year_checked": 2026,
+  "built": "2026-10-25"
+ },
+ "ports": [
+  {
+   "name": "Akaroa",
+   "file": "Akaroa",
+   "linz_no": "356",
+   "csv_name": "Akaroa",
+   "lat": -43.8,
+   "lon": 172.9667
+  },
+  {
+   "name": "Anakakata Bay",
+   "file": "Anakakata Bay",
+   "linz_no": "421",
+   "csv_name": "Anakakata Bay",
+   "lat": -41.05,
+   "lon": 174.2833
+  },
+  {
+   "name": "Anawhata",
+   "file": "Anawhata",
+   "linz_no": "372",
+   "csv_name": "Anawhata",
+   "lat": -36.9333,
+   "lon": 174.45
+  },
+  {
+   "name": "Auckland",
+   "file": "Auckland",
+   "linz_no": "070",
+   "csv_name": "Auckland",
+   "lat": -36.85,
+   "lon": 174.7667
+  },
+  {
+   "name": "Ben Gunn Wharf",
+   "file": "Ben Gunn Wharf",
+   "linz_no": "376",
+   "csv_name": "Ben Gunn Wharf",
+   "lat": -35.0,
+   "lon": 173.2667
+  },
+  {
+   "name": "Bluff",
+   "file": "Bluff",
+   "linz_no": "072",
+   "csv_name": "Bluff",
+   "lat": -46.6,
+   "lon": 168.35
+  },
+  {
+   "name": "Castlepoint",
+   "file": "Castlepoint",
+   "linz_no": "313",
+   "csv_name": "Castlepoint",
+   "lat": -40.9167,
+   "lon": 176.2167
+  },
+  {
+   "name": "Charleston",
+   "file": "Charleston",
+   "linz_no": "407",
+   "csv_name": "Charleston",
+   "lat": -41.9083,
+   "lon": 171.4333
+  },
+  {
+   "name": "Dargaville",
+   "file": "Dargaville",
+   "linz_no": "210",
+   "csv_name": "Dargaville",
+   "lat": -35.9333,
+   "lon": 173.8667
+  },
+  {
+   "name": "Deep Cove",
+   "file": "Deep Cove",
+   "linz_no": "019",
+   "csv_name": "Deep Cove",
+   "lat": -45.4667,
+   "lon": 167.15
+  },
+  {
+   "name": "Dog Island",
+   "file": "Dog Island",
+   "linz_no": "353",
+   "csv_name": "Dog Island",
+   "lat": -46.65,
+   "lon": 168.4167
+  },
+  {
+   "name": "Dunedin",
+   "file": "Dunedin",
+   "linz_no": "028",
+   "csv_name": "Dunedin",
+   "lat": -45.8833,
+   "lon": 170.5
+  },
+  {
+   "name": "Elaine Bay",
+   "file": "Elaine Bay",
+   "linz_no": "105",
+   "csv_name": "Elaine Bay",
+   "lat": -41.05,
+   "lon": 173.7667
+  },
+  {
+   "name": "Elie Bay",
+   "file": "Elie Bay",
+   "linz_no": "446",
+   "csv_name": "Elie Bay",
+   "lat": -41.1317,
+   "lon": 173.9917
+  },
+  {
+   "name": "Fishing Rock - Raoul Island",
+   "file": "Fishing Rock - Raoul Island",
+   "linz_no": "198",
+   "csv_name": "Fishing Rock - Raoul Island",
+   "lat": -29.25,
+   "lon": -177.9167
+  },
+  {
+   "name": "Flour Cask Bay",
+   "file": "Flour Cask Bay",
+   "linz_no": "015",
+   "csv_name": "Flour Cask Bay",
+   "lat": -47.2833,
+   "lon": 167.4833
+  },
+  {
+   "name": "Fresh Water Basin",
+   "file": "Fresh Water Basin",
+   "linz_no": "330",
+   "csv_name": "Fresh Water Basin",
+   "lat": -44.6667,
+   "lon": 167.9333
+  },
+  {
+   "name": "Gisborne",
+   "file": "Gisborne",
+   "linz_no": "078",
+   "csv_name": "Gisborne",
+   "lat": -38.6667,
+   "lon": 178.0333
+  },
+  {
+   "name": "Green Island",
+   "file": "Green Island",
+   "linz_no": "354",
+   "csv_name": "Green Island",
+   "lat": -45.95,
+   "lon": 170.3833
+  },
+  {
+   "name": "Halfmoon Bay / Oban",
+   "file": "Halfmoon Bay - Oban",
+   "linz_no": "056",
+   "csv_name": "Halfmoon Bay / Oban",
+   "lat": -46.9,
+   "lon": 168.1333
+  },
+  {
+   "name": "Havelock",
+   "file": "Havelock",
+   "linz_no": "017",
+   "csv_name": "Havelock",
+   "lat": -41.2833,
+   "lon": 173.7667
+  },
+  {
+   "name": "Helensville",
+   "file": "Helensville",
+   "linz_no": "239",
+   "csv_name": "Helensville",
+   "lat": -36.6667,
+   "lon": 174.45
+  },
+  {
+   "name": "Huruhi Harbour",
+   "file": "Huruhi Harbour",
+   "linz_no": "140",
+   "csv_name": "Huruhi Harbour",
+   "lat": -36.6,
+   "lon": 175.7667
+  },
+  {
+   "name": "Jackson Bay",
+   "file": "Jackson Bay",
+   "linz_no": "142",
+   "csv_name": "Jackson Bay",
+   "lat": -43.9833,
+   "lon": 168.6333
+  },
+  {
+   "name": "Kaikōura",
+   "file": "Kaikōura",
+   "linz_no": "106",
+   "csv_name": "Kaikōura",
+   "lat": -42.4167,
+   "lon": 173.7
+  },
+  {
+   "name": "Kaingaroa - Chatham Island",
+   "file": "Kaingaroa - Chatham Island",
+   "linz_no": "374",
+   "csv_name": "Kaingaroa - Chatham Island",
+   "lat": -43.7333,
+   "lon": -176.2667
+  },
+  {
+   "name": "Kaiteriteri",
+   "file": "Kaiteriteri",
+   "linz_no": "349",
+   "csv_name": "Kaiteriteri",
+   "lat": -41.05,
+   "lon": 173.0167
+  },
+  {
+   "name": "Kaituna River Entrance",
+   "file": "Kaituna River Entrance",
+   "linz_no": "397",
+   "csv_name": "Kaituna River",
+   "lat": -37.75,
+   "lon": 176.4167
+  },
+  {
+   "name": "Kawhia",
+   "file": "Kawhia",
+   "linz_no": "044",
+   "csv_name": "Kawhia",
+   "lat": -38.0667,
+   "lon": 174.8167
+  },
+  {
+   "name": "Korotiti Bay",
+   "file": "Korotiti Bay",
+   "linz_no": "371",
+   "csv_name": "Korotiti Bay",
+   "lat": -36.1833,
+   "lon": 175.4833
+  },
+  {
+   "name": "Leigh",
+   "file": "Leigh",
+   "linz_no": "054",
+   "csv_name": "Leigh",
+   "lat": -36.2833,
+   "lon": 174.8
+  },
+  {
+   "name": "Long Island",
+   "file": "Long Island",
+   "linz_no": "207",
+   "csv_name": "Long Island",
+   "lat": -41.1167,
+   "lon": 174.2833
+  },
+  {
+   "name": "Lottin Point / Wakatiri",
+   "file": "Lottin Point - Wakatiri",
+   "linz_no": "357",
+   "csv_name": "Lottin Point / Wakatiri",
+   "lat": -37.55,
+   "lon": 178.1667
+  },
+  {
+   "name": "Lyttelton",
+   "file": "Lyttelton",
+   "linz_no": "107",
+   "csv_name": "Lyttelton",
+   "lat": -43.6,
+   "lon": 172.7167
+  },
+  {
+   "name": "Man o‘War Bay",
+   "file": "Man o‘War Bay",
+   "linz_no": "147",
+   "csv_name": "Man O' War Bay",
+   "lat": -36.7833,
+   "lon": 175.15
+  },
+  {
+   "name": "Mana Marina",
+   "file": "Mana Marina",
+   "linz_no": "323",
+   "csv_name": "Mana Marina",
+   "lat": -41.1,
+   "lon": 174.8667
+  },
+  {
+   "name": "Manu Bay",
+   "file": "Manu Bay",
+   "linz_no": "396",
+   "csv_name": "Manu Bay",
+   "lat": -37.8167,
+   "lon": 174.8167
+  },
+  {
+   "name": "Māpua",
+   "file": "Māpua",
+   "linz_no": "206",
+   "csv_name": "Māpua",
+   "lat": -41.25,
+   "lon": 173.1
+  },
+  {
+   "name": "Marsden Point",
+   "file": "Marsden Point",
+   "linz_no": "079",
+   "csv_name": "Marsden Point",
+   "lat": -35.8333,
+   "lon": 174.5
+  },
+  {
+   "name": "Mātiatia Bay",
+   "file": "Mātiatia Bay",
+   "linz_no": "150",
+   "csv_name": "Mātiatia Bay",
+   "lat": -36.7833,
+   "lon": 174.9833
+  },
+  {
+   "name": "Motuara Island",
+   "file": "Motuara Island",
+   "linz_no": "472",
+   "csv_name": "Motuara Island",
+   "lat": -41.0933,
+   "lon": 174.2717
+  },
+  {
+   "name": "Moturiki Island",
+   "file": "Moturiki Island",
+   "linz_no": "158",
+   "csv_name": "Moturiki Island",
+   "lat": -37.6333,
+   "lon": 176.1833
+  },
+  {
+   "name": "Napier",
+   "file": "Napier",
+   "linz_no": "097",
+   "csv_name": "Napier",
+   "lat": -39.4833,
+   "lon": 176.9167
+  },
+  {
+   "name": "Nelson",
+   "file": "Nelson",
+   "linz_no": "077",
+   "csv_name": "Nelson",
+   "lat": -41.2667,
+   "lon": 173.2667
+  },
+  {
+   "name": "New Brighton Pier",
+   "file": "New Brighton Pier",
+   "linz_no": "468",
+   "csv_name": "New Brighton Pier",
+   "lat": -43.5067,
+   "lon": 172.735
+  },
+  {
+   "name": "North Cape / Otou",
+   "file": "North Cape - Otou",
+   "linz_no": "162",
+   "csv_name": "North Cape / Otou",
+   "lat": -34.4167,
+   "lon": 173.0333
+  },
+  {
+   "name": "Oamaru",
+   "file": "Oamaru",
+   "linz_no": "164",
+   "csv_name": "Oamaru",
+   "lat": -45.1,
+   "lon": 170.9833
+  },
+  {
+   "name": "Ōkukari Bay",
+   "file": "Ōkukari Bay",
+   "linz_no": "258",
+   "csv_name": "Ōkukari Bay",
+   "lat": -41.2,
+   "lon": 174.3167
+  },
+  {
+   "name": "Omaha Bridge",
+   "file": "Omaha Bridge",
+   "linz_no": "462",
+   "csv_name": "Omaha Bridge",
+   "lat": -36.3417,
+   "lon": 174.765
+  },
+  {
+   "name": "Ōmokoroa",
+   "file": "Ōmokoroa",
+   "linz_no": "261",
+   "csv_name": "Ōmokoroa",
+   "lat": -37.6667,
+   "lon": 176.05
+  },
+  {
+   "name": "Onehunga",
+   "file": "Onehunga",
+   "linz_no": "027",
+   "csv_name": "Onehunga",
+   "lat": -36.9333,
+   "lon": 174.7833
+  },
+  {
+   "name": "Opononi",
+   "file": "Opononi",
+   "linz_no": "171",
+   "csv_name": "Opononi",
+   "lat": -35.5,
+   "lon": 173.4
+  },
+  {
+   "name": "Ōpōtiki Wharf",
+   "file": "Ōpōtiki Wharf",
+   "linz_no": "104",
+   "csv_name": "Ōpōtiki Wharf",
+   "lat": -38.0333,
+   "lon": 177.2333
+  },
+  {
+   "name": "Opua",
+   "file": "Opua",
+   "linz_no": "085",
+   "csv_name": "Opua",
+   "lat": -35.3167,
+   "lon": 174.1167
+  },
+  {
+   "name": "Owenga - Chatham Island",
+   "file": "Owenga - Chatham Island",
+   "linz_no": "352",
+   "csv_name": "Owenga - Chatham Island",
+   "lat": -44.0333,
+   "lon": -176.3667
+  },
+  {
+   "name": "Paratutae Island",
+   "file": "Paratutae Island",
+   "linz_no": "090",
+   "csv_name": "Paratutae Island",
+   "lat": -37.05,
+   "lon": 174.5167
+  },
+  {
+   "name": "Picton",
+   "file": "Picton",
+   "linz_no": "043",
+   "csv_name": "Picton",
+   "lat": -41.2833,
+   "lon": 174.0
+  },
+  {
+   "name": "Port Chalmers",
+   "file": "Port Chalmers",
+   "linz_no": "030",
+   "csv_name": "Port Chalmers",
+   "lat": -45.8167,
+   "lon": 170.65
+  },
+  {
+   "name": "Port Ōhope Wharf",
+   "file": "Port Ōhope Wharf",
+   "linz_no": "102",
+   "csv_name": "Port Ōhope Wharf",
+   "lat": -37.9833,
+   "lon": 177.1
+  },
+  {
+   "name": "Port Taranaki",
+   "file": "Port Taranaki",
+   "linz_no": "076",
+   "csv_name": "Port Taranaki",
+   "lat": -39.05,
+   "lon": 174.0333
+  },
+  {
+   "name": "Pouto Point",
+   "file": "Pouto Point",
+   "linz_no": "081",
+   "csv_name": "Pouto Point",
+   "lat": -36.3667,
+   "lon": 174.1833
+  },
+  {
+   "name": "Raglan",
+   "file": "Raglan",
+   "linz_no": "180",
+   "csv_name": "Raglan",
+   "lat": -37.8,
+   "lon": 174.8833
+  },
+  {
+   "name": "Rangatira Point",
+   "file": "Rangatira Point",
+   "linz_no": "351",
+   "csv_name": "Rangatira Point",
+   "lat": -40.85,
+   "lon": 174.9333
+  },
+  {
+   "name": "Rangitaiki River Entrance",
+   "file": "Rangitaiki River Entrance",
+   "linz_no": "398",
+   "csv_name": "Rangitaiki River",
+   "lat": -37.9167,
+   "lon": 176.8667
+  },
+  {
+   "name": "Richmond Bay",
+   "file": "Richmond Bay",
+   "linz_no": "445",
+   "csv_name": "Richmond Bay",
+   "lat": -41.015,
+   "lon": 173.9883
+  },
+  {
+   "name": "Riverton / Aparima",
+   "file": "Riverton - Aparima",
+   "linz_no": "058",
+   "csv_name": "Riverton - Aparima",
+   "lat": -46.3667,
+   "lon": 168.0167
+  },
+  {
+   "name": "Scott Base",
+   "file": "Scott Base",
+   "linz_no": "333",
+   "csv_name": "Scott Base",
+   "lat": -77.8333,
+   "lon": 166.6667
+  },
+  {
+   "name": "Spit Wharf",
+   "file": "Spit Wharf",
+   "linz_no": "032",
+   "csv_name": "Spit Wharf",
+   "lat": -45.7833,
+   "lon": 170.7167
+  },
+  {
+   "name": "Sumner Head",
+   "file": "Sumner Head",
+   "linz_no": "370",
+   "csv_name": "Sumner Head",
+   "lat": -43.5667,
+   "lon": 172.7667
+  },
+  {
+   "name": "Tāmaki River",
+   "file": "Tāmaki River",
+   "linz_no": "463",
+   "csv_name": "Tāmaki River",
+   "lat": -36.9117,
+   "lon": 174.8617
+  },
+  {
+   "name": "Tarakohe",
+   "file": "Tarakohe",
+   "linz_no": "189",
+   "csv_name": "Tarakohe",
+   "lat": -40.8167,
+   "lon": 172.9
+  },
+  {
+   "name": "Tauranga",
+   "file": "Tauranga",
+   "linz_no": "073",
+   "csv_name": "Tauranga",
+   "lat": -37.65,
+   "lon": 176.1833
+  },
+  {
+   "name": "Thames",
+   "file": "Thames",
+   "linz_no": "233",
+   "csv_name": "Thames",
+   "lat": -37.1333,
+   "lon": 175.5167
+  },
+  {
+   "name": "Timaru",
+   "file": "Timaru",
+   "linz_no": "034",
+   "csv_name": "Timaru",
+   "lat": -44.3833,
+   "lon": 171.25
+  },
+  {
+   "name": "Town Basin",
+   "file": "Town Basin",
+   "linz_no": "373",
+   "csv_name": "Town Basin - Whangarei",
+   "lat": -35.7167,
+   "lon": 174.3333
+  },
+  {
+   "name": "Waihopai River Entrance",
+   "file": "Waihopai River Entrance",
+   "linz_no": "141",
+   "csv_name": "Waihopai River Entrance",
+   "lat": -46.4167,
+   "lon": 168.3333
+  },
+  {
+   "name": "Waitangi - Chatham Island",
+   "file": "Waitangi - Chatham Island",
+   "linz_no": "094",
+   "csv_name": "Waitangi - Chatham Island",
+   "lat": -43.95,
+   "lon": -176.5667
+  },
+  {
+   "name": "Weiti River Entrance",
+   "file": "Weiti River Entrance",
+   "linz_no": "291",
+   "csv_name": "Weiti River Entrance",
+   "lat": -36.65,
+   "lon": 174.7333
+  },
+  {
+   "name": "Welcombe Bay",
+   "file": "Welcombe Bay",
+   "linz_no": "355",
+   "csv_name": "Welcombe Bay",
+   "lat": -46.0833,
+   "lon": 166.5833
+  },
+  {
+   "name": "Wellington",
+   "file": "Wellington",
+   "linz_no": "071",
+   "csv_name": "Wellington",
+   "lat": -41.2833,
+   "lon": 174.7833
+  },
+  {
+   "name": "Westport",
+   "file": "Westport",
+   "linz_no": "074",
+   "csv_name": "Westport",
+   "lat": -41.75,
+   "lon": 171.6
+  },
+  {
+   "name": "Whakatāne",
+   "file": "Whakatāne",
+   "linz_no": "031",
+   "csv_name": "Whakatāne",
+   "lat": -37.95,
+   "lon": 177.0
+  },
+  {
+   "name": "Whanganui River Entrance",
+   "file": "Whanganui River Entrance",
+   "linz_no": "075",
+   "csv_name": "Whanganui River Entrance",
+   "lat": -39.95,
+   "lon": 174.9833
+  },
+  {
+   "name": "Whangārei",
+   "file": "Whangārei",
+   "linz_no": "108",
+   "csv_name": "Whangārei",
+   "lat": -35.7667,
+   "lon": 174.35
+  },
+  {
+   "name": "Whangaroa",
+   "file": "Whangaroa",
+   "linz_no": "401",
+   "csv_name": "Whangaroa",
+   "lat": -35.05,
+   "lon": 173.75
+  },
+  {
+   "name": "Whitianga",
+   "file": "Whitianga",
+   "linz_no": "022",
+   "csv_name": "Whitianga",
+   "lat": -36.8333,
+   "lon": 175.7
+  },
+  {
+   "name": "Wilson Bay",
+   "file": "Wilson Bay",
+   "linz_no": "237",
+   "csv_name": "Wilson Bay",
+   "lat": -41.0833,
+   "lon": 173.9
+  }
+ ]
+}

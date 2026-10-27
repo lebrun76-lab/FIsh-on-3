@@ -1,0 +1,14 @@
+node_modules/
+.next/
+next-env.d.ts
+*.tsbuildinfo
+
+# local secrets: never commit
+.env
+.env*.local
+.env.*
+!.env.example
+
+# python job
+__pycache__/
+*.pyc

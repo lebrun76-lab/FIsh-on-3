@@ -1,0 +1,31 @@
+{
+  "name": "saltsupply-web",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Salt Supply Co. (saltsupply.co.nz) web prototype: Know when to fish.",
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "screenshots": "python3 scripts/screenshots.py",
+    "test": "npx -y tsx --test src/lib/*.test.ts"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.118.0",
+    "next": "16.4.3",
+    "react": "^19",
+    "react-dom": "^19",
+    "recharts": "^3.10.1",
+    "stripe": "23.0.1",
+    "web-push": "^3.6.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^22",
+    "@types/react": "^19",
+    "@types/web-push": "^3.6.4",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^5"
+  }
+}

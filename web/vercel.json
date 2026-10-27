@@ -1,0 +1,14 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "regions": ["syd1"],
+  "functions": {
+    "api/refresh_forecasts.py": {
+      "maxDuration": 300,
+      "memory": 1024,
+      "excludeFiles": "{.next/**,node_modules/**,src/**,public/**,data/**,docs/**,scripts/**,.vercel/**,**/__pycache__/**}"
+    }
+  },
+  "crons": [
+    { "path": "/api/refresh_forecasts", "schedule": "15 17 * * *" }
+  ]
+}
